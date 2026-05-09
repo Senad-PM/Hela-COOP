@@ -1,34 +1,38 @@
-exports.errorhandler=async(err,req,res,next,)=>{
-      
-   let statusCode =err.statusCode || 500;
+exports.errorhandler = (err, req, res, next) => {
 
-   let message=err.message || "internal server error";
+   let statusCode = err.statusCode || 500;
 
-   //mongoose duplecate key error
-   if(err.code===11000){
-       statusCode=400;
-       message="duplicate field value";
+   let message = err.message || "internal server error";
+
+   // mongoose duplicate key error
+   if (err.code === 11000) {
+       statusCode = 400;
+       message = "duplicate field value";
    }
 
-   //mongoose validation error
-   if(err.name==="validationError"){
-       statusCode=400;
-       message=Object.values(err.errors)
-       .map((val) =>val.message)
-       .join(", ");
+   // mongoose validation error
+   if (err.name === "ValidationError") {
+       statusCode = 400;
+       message = Object.values(err.errors)
+           .map((val) => val.message)
+           .join(", ");
    }
-   if(err.name="jsonWebTokenError"){
-    statusCode=401;
-    message="invalid token";
+
+   // jwt invalid token
+   if (err.name === "JsonWebTokenError") {
+       statusCode = 401;
+       message = "invalid token";
    }
-   if(err.name="TokenExpiredError"){
-    statusCode=401;
-    message="Token expired";
+
+   // jwt expired token
+   if (err.name === "TokenExpiredError") {
+       statusCode = 401;
+       message = "Token expired";
    }
+
    res.status(statusCode).json({
-     success:false,
-    message
-    });
+       success: false,
+       message
+   });
 
 };
-module.exports=errorhandler;

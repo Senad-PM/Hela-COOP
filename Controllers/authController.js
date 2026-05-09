@@ -8,7 +8,9 @@ exports.signin=async(req,res,next)=>{
         const{email,password}=req.body;
        const result=await login(email,password);
        res.status(200).json(result);
-    }catch{
-        next (error)
+    }catch(error){
+        console.log(error);
+        next (console.error);
+        
     }
 };

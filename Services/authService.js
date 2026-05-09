@@ -2,7 +2,7 @@ const User =require("../Models/user");
 const generateToken=require("../Utils/generateToken");
 const generateRefreshToken=require("../Utils/generateRefreshToken");
 
-const login=async(email,password)=>{
+exports.login=async(email,password)=>{
     const userExist=await User.findOne({email}).select("+password");
     if(!userExist){
         throw new Error("Invalid credentials");
