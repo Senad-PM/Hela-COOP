@@ -1,7 +1,7 @@
 const user=require("../Models/user");
 const bcrypt=require("bcrypt");
 constjwt=require("jsonwebtoken");
-const{login}=require("../Services/authService");
+const{ login }=require("../Services/authService");
 
 exports.signin=async(req,res,next)=>{
     try{

@@ -14,7 +14,9 @@ app.use(express.json());
 const {errorhandler}=require("./Middlewares/errorHandler");
 
 const authRoutes=require("./Routes/authRoutes");
+const userRoutes=require("./Routes/userRoutes");
 app.use("/api/auth",authRoutes);
+app.use("/api/user",userRoutes);
 app.use(errorhandler);
 const PORT=process.env.PORT || 5000;
 app.listen(PORT,()=>{
