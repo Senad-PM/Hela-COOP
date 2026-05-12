@@ -1,5 +1,6 @@
 const User=require("../Models/user");
 const bcrypt=require("bcrypt");
+const { search } = require("../Routes/userRoutes");
 constjwt=require("jsonwebtoken");
 
 exports.createUser=async(userName,email,password,role)=>{
@@ -40,18 +41,46 @@ const buildFilter=(query)=>{
      if(query.isActive!==undefined){
        filter.isActive = query.isActive === "true"; 
      }
+     if(query.search && query.search.trim() !== ""){
+
+    filter.$or = [
+        {
+            userName: {
+                $regex: query.search,
+                $options: "i"
+            }
+        },
+        {
+            email: {
+                $regex: query.search,
+                $options: "i"
+            }
+        }
+    ];
+   }
      return filter;
 }
+const buildsort=(query)=>{
+         let sortOption = { createdAt: -1 };
+                if(query.sort && query.sort.trim()!== ""){
+                    const[field,order]=query.sort.split("_");
+                      sortOption = {
+                     [field]: order === "desc" ? -1 : 1
+                     };
+                }
+        return sortOption;
+};
 
 exports.getUsers=async(query)=>{
        const filter=buildFilter(query);
+       const sortoption=buildsort(query);
        console.log(filter);
        const{limit,skip,page}=buildpagination(query);
        const count=await User.countDocuments(filter);
                  if(count > 0 && skip >= count){
                     throw new Error("page not found");
                  }
-       const users=await User.find(filter).skip(skip).limit(limit).select("-password -refreshToken");
+       const users=await  User.find(filter).sort(sortoption).skip(skip).limit(limit).select("-password -refreshToken");
         
        return({
             "total":count,
