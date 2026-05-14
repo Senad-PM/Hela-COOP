@@ -2,29 +2,49 @@ const User=require("../Models/user");
 const bcrypt=require("bcrypt");
 const { search } = require("../Routes/userRoutes");
 constjwt=require("jsonwebtoken");
+const crypto=require("crypto");
+const sendEmail=require("../Utils/sendEmail");
 
 exports.createUser=async(userName,email,password,role)=>{
-           console.log(userName, email, password, role);
-           if(!userName || !email || !password || !role){
+           console.log(userName, email, role);
+           if(!userName || !email|| !role){
              throw new Error("all field must be filled ");
            }
            const userExist=await User.findOne({email})
            if(userExist){
             throw new Error("user already exists");
            }
+           const temporaryPassword=`Temp@${Math.floor(Math.random() * 100000)}`;
           const newUser=await User.create({
             userName,
             email,
-            password,
-            role,
+            password:temporaryPassword,
+            role
             
           })
+          const resetToken=newUser.genarateResetPasswordToken();
+          const resetUrl=`http://localhost:5000/api/auth/reset-password/${resetToken}`;
+          try {
+          await sendEmail({
+            email: newUser.email,
+            subject: "Set Your Password",
+            message:
+              `Welcome to Hela COOP.\n\n` +
+              `Set your password using this link:\n\n${resetUrl}`
+          });
+        }catch(error){
+          console.log(error);
+          throw new Error("email sending failed")
+        }
+        
+          await newUser.save();
            return({
              id:newUser._id,
              userName:newUser.userName,
              email:newUser.email,
              role:newUser.role,
-             isActive:newUser.isActive   
+             isActive:newUser.isActive,
+             message: "user created and setup email sent"
            });
 };
 const buildpagination=(query)=>{

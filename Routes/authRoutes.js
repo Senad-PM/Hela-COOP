@@ -1,5 +1,5 @@
 const express=require("express");
-const {signin}=require("../Controllers/authController");
+const {signin,resetPasswords}=require("../Controllers/authController");
 const{
     protect,
     authorize
@@ -7,7 +7,7 @@ const{
 
 const router=express.Router();
 router.post("/login",signin);
-
+router.post("/reset-password/:token",resetPasswords);
 module.exports=router;  
 
 
