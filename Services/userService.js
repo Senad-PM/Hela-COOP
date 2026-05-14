@@ -88,4 +88,55 @@ exports.getUsers=async(query)=>{
             "limit":limit,
             "data":users
         });
+};
+exports.getUsersById=async(id)=>{
+      console.log('id');
+      const findUser=await User.findById(id).select("-password -refreshToken");
+      if(!findUser){
+        throw new Error("user not found ");
+      }
+      return findUser;
+};
+exports.update=async(id,updatebody)=>{
+    const{userName,role,isActive}=updatebody;
+    const updateData={};
+    if(userName !== undefined){
+      updateData.userName=userName;
+    }
+    if(role !== undefined){
+      updateData.role=role;
+    }
+    if(isActive !== undefined){
+      updateData.isActive=isActive;
+    }
+    const userExist=await User.findByIdAndUpdate(id,updateData,{new:true}).select("-password -refreshToken");
+    if(!userExist){
+      throw new Error("user not found");
+    }
+    return userExist;
+}
+exports.deactivate=async(id)=>{
+  const userExist=await User.findById(id).select("-password -refreshToken");
+  if(!userExist){
+    throw new Error("User not found");
+  }
+  if(userExist.isActive===false){
+    throw new Error("User already deactivated");
+  }
+  userExist.isActive=false;
+  await userExist.save();
+
+  return userExist;
+}
+exports.activate=async(id)=>{
+  const userExist=await User.findById(id).select("-password -refreshToken");
+  if(!userExist){
+    throw new Error("User not found");
+  }
+  if(userExist.isActive===true){
+    throw new Error("User already activated");
+  }
+  userExist.isActive=true;
+  await userExist.save();
+  return userExist;
 }
