@@ -1,7 +1,7 @@
 const user=require("../Models/user");
 const bcrypt=require("bcrypt");
 constjwt=require("jsonwebtoken");
-const{ login,forgotPassword,resetPassword}=require("../Services/authService");
+const{ login,forgotPassword,resetPassword,refreshTokenGenarate,logOut}=require("../Services/authService");
 
 exports.signin=async(req,res,next)=>{
     try{
@@ -32,4 +32,22 @@ exports.resetPasswords=async(req,res,next)=>{
      }catch(error){
         next(error);
      }
-}
+};
+exports.refreshTokenGen=async(req,res,next)=>{
+    try{
+        const{refreshToken}=req.body;
+        const result= await refreshTokenGenarate(refreshToken);
+        res.status(200).json(result);
+    }catch(error){
+        next(error);
+    }
+};
+exports.logOutUser=async(req,res,next)=>{
+    try{
+        const{refreshToken}=req.body;
+        const result=await logOut(refreshToken);
+        res.status(200).json(result);
+    }catch(error){
+        next(error)
+    }
+};

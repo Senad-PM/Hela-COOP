@@ -2,6 +2,7 @@ const User =require("../Models/user");
 const generateToken=require("../Utils/generateToken");
 const generateRefreshToken=require("../Utils/generateRefreshToken");
 const sendEmail=require("../Utils/sendEmail");
+const jwt=require("jsonwebtoken");
 const crypto=require("crypto");
 const user = require("../Models/user");
 
@@ -66,4 +67,30 @@ exports.resetPassword=async(token,password)=>{
             return{
                 message:"password reset successful"
             };
+};
+exports.refreshTokenGenarate=async(refreshToken)=>{
+     if(!refreshToken){
+         throw new Error("no refresh token");
+    }
+    const decoded=jwt.verify(refreshToken,process.env.JWT_REFRESH_SECRET);
+    const finduser=await User.findById(decoded.id);
+    if(!finduser || finduser.refreshToken !==refreshToken){
+        throw new Error("invalid refresh token");
+    }
+    const newAccessToken=generateToken(finduser._id);
+   return ({
+        accessToken:newAccessToken
+    });
+};
+exports.logOut=async(refreshToken)=>{
+    if(!refreshToken){
+        throw new Error("refreshToken is not found");
+    }
+    const findUser=await User.findOne({refreshToken});
+    if(!findUser){
+        throw new Error("user already logout");
+    }
+    findUser.refreshToken=null;
+    await findUser.save();
+    return("user logOut successfully");
 };
