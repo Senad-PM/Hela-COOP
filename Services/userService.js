@@ -4,6 +4,8 @@ const { search } = require("../Routes/userRoutes");
 constjwt=require("jsonwebtoken");
 const crypto=require("crypto");
 const sendEmail=require("../Utils/sendEmail");
+const buildPagination=require("../Utils/buildPaginations");
+const buildSort=require("../Utils/buildSort");
 
 exports.createUser=async(userName,email,password,role)=>{
            console.log(userName, email, role);
@@ -47,12 +49,7 @@ exports.createUser=async(userName,email,password,role)=>{
              message: "user created and setup email sent"
            });
 };
-const buildpagination=(query)=>{
-                const page= +query.page || 1;
-                const limit= +query.limit || 10;
-                const skip= (page-1)*limit;
-                 return {limit,skip,page};
-};
+
 const buildFilter=(query)=>{
      const filter={};
      if(query.role!==undefined){
@@ -79,23 +76,13 @@ const buildFilter=(query)=>{
     ];
    }
      return filter;
-}
-const buildsort=(query)=>{
-         let sortOption = { createdAt: -1 };
-                if(query.sort && query.sort.trim()!== ""){
-                    const[field,order]=query.sort.split("_");
-                      sortOption = {
-                     [field]: order === "desc" ? -1 : 1
-                     };
-                }
-        return sortOption;
 };
 
 exports.getUsers=async(query)=>{
        const filter=buildFilter(query);
-       const sortoption=buildsort(query);
+       const sortoption=buildSort(query);
        console.log(filter);
-       const{limit,skip,page}=buildpagination(query);
+       const{limit,skip,page}=buildPagination(query);
        const count=await User.countDocuments(filter);
                  if(count > 0 && skip >= count){
                     throw new Error("page not found");
