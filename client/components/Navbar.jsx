@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { X, Menu, XIcon} from 'lucide-react'
 import axios from 'axios'
+import { motion } from 'framer-motion'
 
 const Navbar = () => {
 
@@ -51,14 +52,14 @@ const Navbar = () => {
             <div>
                 <h1 className='font-serif font-semibold text-2xl'>Hela-COOP</h1>
             </div>
-            <ul className='gap-3 font-semibold md:flex hidden cursor-pointer'>
-                <li>Feature</li>
-                <li>Benefits & Tools</li>
-                <li>About Us</li>
-                <li>Contact</li>
+            <ul className='gap-3 font-semibold md:flex hidden cursor-pointer rounded-2xl bg-white/30'>
+                <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>Feature</li>
+                <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'> Benefits & Tools</li>
+                <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>About Us</li>
+                <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>Contact</li>
             </ul>
             <div onClick={openForm} className='gap-5 md:flex hidden'>
-                <button className='bg-white rounded-2xl pr-5 pl-5 p-2 font-semibold hover:bg-lime-400 hover:text-white duration-300 ease-in-out transition-all'>Log in</button>
+                <button className='bg-white rounded-2xl pr-5 pl-5 p-2 font-semibold hover:bg-emerald-400 hover:text-white hover:scale-105 duration-300 ease-in-out transition-all'>Log in</button>
             </div>
             <div className='md:hidden'>
                 <button onClick={ toggleMenu }>
@@ -69,17 +70,27 @@ const Navbar = () => {
         {mobileMenu && (
             <div className='w-full md:hidden text-lg font-semibold border-t'>
                 <ul className='flex flex-col items-center text-center mt-3 mb-3 space-y-3'>
-                    <li className='px-3 py-1 rounded-full hover:bg-lime-400 hover:text-white transition-colors duration-300 cursor-pointer'>Feature</li>
-                    <li className='px-3 py-1 rounded-full hover:bg-lime-400 hover:text-white transition-colors duration-300 cursor-pointer'>Benefits & Tools</li>
-                    <li className='px-3 py-1 rounded-full hover:bg-lime-400 hover:text-white transition-colors duration-300 cursor-pointer'>About Us</li>
-                    <li className='px-3 py-1 rounded-full hover:bg-lime-400 hover:text-white transition-colors duration-300 cursor-pointer'>Contact</li>
+                    <li className='px-3 py-1 rounded-full hover:bg-emerald-400 hover:text-white transition-colors duration-300 cursor-pointer'>Feature</li>
+                    <li className='px-3 py-1 rounded-full hover:bg-emerald-400 hover:text-white transition-colors duration-300 cursor-pointer'>Benefits & Tools</li>
+                    <li className='px-3 py-1 rounded-full hover:bg-emerald-400 hover:text-white transition-colors duration-300 cursor-pointer'>About Us</li>
+                    <li className='px-3 py-1 rounded-full hover:bg-emerald-400 hover:text-white transition-colors duration-300 cursor-pointer'>Contact</li>
                     <button onClick={openForm} className='bg-white rounded-2xl pr-5 pl-5 p-2 font-semibold hover:bg-lime-400 hover:text-white duration-300 ease-in-out transition-all'>Log in</button>
                 </ul>
             </div>
         )}
         {formISOpen && (
-            <div className='fixed top-0 left-0 w-screen h-screen backdrop-blur-2xl bg-transparent z-50 flex items-center justify-center p-4 overflow-y-auto'>
-                <div className='bg-white dark:bg-lime-400/20 shadow-xl w-full max-w-md p-6 rounded-xl max-h-[90vh] overflow-y-auto'>
+            <div className='fixed top-0 left-0 w-screen h-screen bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4'>
+                <motion.div
+                    initial={{opacity: 0, y: -100}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{
+                        type:'spring',
+                        stiffness:100,
+                        damping:25,
+                        delay:0.3,
+                        duration:1.2,
+                    }}
+                className='bg-white/80 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl w-full max-w-md p-8'>
                     <div className='flex justify-between items-center'>
                         <h1 className='font-bold text-xl'>Log in</h1>
                         <XIcon className='font-bold cursor-pointer' onClick={closeForm} />
@@ -96,7 +107,8 @@ const Navbar = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className='w-full text-gray-300 bg-slate-800 px-6 py-2 rounded-lg mt-3'
+                                placeholder='Enter your email here'
+                                className='w-full text-black bg-gray-200 border-2 border-lime-500 px-6 py-2 rounded-lg mt-3'
                             />
                         </div>
                         <div className='mt-5'>
@@ -106,7 +118,8 @@ const Navbar = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className='w-full text-gray-300 bg-slate-800 px-6 py-2 rounded-lg mt-3'
+                                placeholder='Enter the password'
+                                className='w-full text-black bg-gray-200 border-2 border-lime-500 px-6 py-2 rounded-lg mt-3'
                             />
                             <h4 className='mt-2 text-base text-blue-800 cursor-pointer'>Forgot password?</h4>
                         </div>
@@ -114,13 +127,13 @@ const Navbar = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className='w-full rounded-lg bg-white p-2 font-semibold text-xl cursor-pointer hover:bg-lime-400 hover:text-white transition-colors duration-300 disabled:opacity-50'
+                                className='w-full rounded-lg bg-white p-2 font-semibold text-xl cursor-pointer hover:bg-emerald-400 hover:text-white transition-colors duration-300 disabled:opacity-50'
                             >
                                 {loading ? 'Logging in...' : 'Log in'}
                             </button>
                         </div>
                     </form>
-                </div>
+                </motion.div>
             </div>
         )}
     </header>

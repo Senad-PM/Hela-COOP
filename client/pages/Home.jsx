@@ -1,22 +1,37 @@
 import React from 'react'
+import { useGSAP } from '@gsap/react'
+import { gsap }from 'gsap/all'
 
 const Home = () => {
+
+    useGSAP(() => {
+        gsap.to(".title", {
+          duration: 5,
+          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+          ease: 'power4.out',
+        })
+    })
+
   return (
     <>
         <section className='relative min-h-screen flex items-center justify-center pt-16 sm:pt-20 bg-green-50'>
             <div>
+                <div className='absolute top-10 left-4 sm:left-5 w-48 sm:w-72 h-48 sm:h-72 bg-lime-400/50 rounded-full blur-3xl animate-pulse'></div>
+                <div className='absolute bottom-5 right-3 sm:right-2 w-64 sm:w-96 h-64 sm:h-96 bg-lime-400/50 rounded-full blur-3xl animate-pulse delay-1000'></div>
                 <div className='absolute inset-0 m-20 rounded-3xl overflow-hidden'>
                     <img src="/public/HeroImg.png" alt="" className='w-full h-full object-cover' />
                     <div className='absolute inset-0 bg-black/40'></div>
                 </div>
                 <div className='relative text-white z-10 text-center'>
                     <div className='p-15'>
-                        <h1 className='font-bold font-sans text-8xl'>Cooperative Finance, Simplified</h1>
-                        <div className='flex items-center justify-center mt-5'>
-                            <p className='font-semibold font-sans text-2xl'> Reliable, secure, and built for you.</p>
+                        <div className='title' style={{clipPath: "polygon(50% 0, 50% 0, 50% 100%, 50% 100%)",}}>
+                            <h1 className='font-bold font-sans text-9xl' style={{ fontFamily: '"Antonio", serif' }}>Cooperative Finance, Simplified</h1>
+                            <div className='flex items-center justify-center mt-5'>
+                                <p className='font-semibold font-sans text-2xl mt-5'> Reliable, secure, and built for you.</p>
+                            </div>
                         </div>
-                        <div className='flex items-center justify-center mt-10'>
-                            <button className='text-xl text-black font-semibold rounded-3xl bg-white hover:bg-lime-400 hover:text-white hover:scale-105 p-3 transition-all duration-300'>Explore Tools</button>
+                        <div className='flex items-center justify-center mt-5'>
+                            <button className='text-xl text-black font-semibold rounded-3xl bg-white hover:bg-emerald-400 hover:text-white hover:scale-105 p-3 transition-all duration-300'>Explore Tools</button>
                         </div>
                     </div>
                 </div>
@@ -34,7 +49,7 @@ const Home = () => {
                         <p>Banking made easy, secure and rewarding for you.</p>
                     </div>
                 </div>
-                <div className='flex items-center justify-between mt-20'>
+                <div className='flex items-center justify-between mt-20 gap-5'>
                     <div className='bg-amber-100 rounded-2xl'>
                         <div className='p-10'>
                             <div className='flex items-center justify-center'>
