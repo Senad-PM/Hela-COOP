@@ -1,4 +1,4 @@
-const {createCustomer,getcustomer,getCustomerByCN}=require("../Services/customerService");
+const {createCustomer,getcustomer,getCustomerByCN,update,deactivate,activate}=require("../Services/customerService");
 
 
 
@@ -25,6 +25,34 @@ exports.getCustomerByCustomerNumber=async(req,res,next)=>{
         const {customerNumber}=req.params;
         const result=await getCustomerByCN(customerNumber);
         res.status(200).json(result);
+    }catch(error){
+        next(error);
+    }
+};
+exports.updateCustomer=async(req,res,next)=>{
+     try{
+        const{customerNumber}=req.params;
+        const updateBody=req.body;
+        const result=await update(customerNumber,updateBody);
+        res.status(200).json(result); 
+     }catch(error){
+        next(error);
+     }
+};
+exports.deactivateCustomer=async(req,res,next)=>{
+    try{
+        const{customerNumber}=req.params;
+        const result=await deactivate(customerNumber);
+        res.status(200).json(result);
+    }catch(error){
+        next(error)
+    }
+};
+exports.activateCustomer=async(req,res,next)=>{
+    try{
+       const{customerNumber}=req.params;
+       const result=await activate(customerNumber);
+       res.status(200).json(result);
     }catch(error){
         next(error);
     }

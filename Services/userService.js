@@ -81,7 +81,7 @@ const buildFilter=(query)=>{
 exports.getUsers=async(query)=>{
        const filter=buildFilter(query);
        const sortoption=buildSort(query);
-       console.log(filter);
+      // console.log(filter);
        const{limit,skip,page}=buildPagination(query);
        const count=await User.countDocuments(filter);
                  if(count > 0 && skip >= count){

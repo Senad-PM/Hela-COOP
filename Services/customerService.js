@@ -4,6 +4,7 @@ const { countDocuments } = require("../Models/user");
 const { update } = require("./userService");
 const buildPagination=require("../Utils/buildPaginations");
 const buildSort=require("../Utils/buildSort");
+const customer = require("../Models/customer");
 
 exports.createCustomer=async(customerData,user)=>{
     const{NIC,firstName,lastName,email,phoneNumber,occupation,city,address,postalCode,dateOfBirth}=customerData;
@@ -126,5 +127,58 @@ exports.getCustomerByCN=async(customerNumber)=>{
         throw new Error("customer not found");
     }
     return(findCustomer);
+};
+exports.update=async(customerNumber,updatebody)=>{
+   const {firstName,lastName,phoneNumber,city,address,postalCode}=updatebody;
+   const updateData={};
+   if(firstName!==undefined){
+       updateData.firstName=firstName;
+   }
+   if(lastName !== undefined){
+      updateData.lastName=lastName;
+   }
+   if(phoneNumber!==undefined){
+      updateData.phoneNumber=phoneNumber;
+   }
+   if(city!==undefined){
+    updateData.city=city;
+   }
+   if(address!==undefined){
+    updateData.address=address;
+   }
+   if(postalCode!==undefined){
+    updateData.postalCode=postalCode;
+   }
+   const customerExist=await Customer.findOneAndUpdate({customerNumber},updateData,{new:true,runValidators:true});
+   if(!customerExist){
+         throw new Error ("user not found");
+   }
+   return customerExist;
+   
+};
+exports.deactivate=async(customerNumber)=>{
+    const customerExist=await Customer.findOne({customerNumber});
+    if(!customerExist){
+        throw new Error("customer not found");
+    }
+    if(customerExist.isActive===false){
+        throw new Error("customer already deactivated");
+    }
+    customerExist.isActive=false;
+    await customerExist.save();
+    return("customer succesfully deactivated");
+};
+
+exports.activate=async(customerNumber)=>{
+    const customerExist=await Customer.findOne({customerNumber});
+    if(!customerExist){
+        throw new Error("customer not found");
+    }
+    if(customerExist.isActive===true){
+        throw new Error("customer already activated");
+    }
+    customerExist.isActive=true;
+    await customerExist.save();
+    return("customer succesfully activated");
 };
 
