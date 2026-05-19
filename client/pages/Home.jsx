@@ -1,14 +1,54 @@
 import React from 'react'
 import { useGSAP } from '@gsap/react'
-import { gsap }from 'gsap/all'
+import { SplitText, gsap }from 'gsap/all'
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { Star } from 'lucide-react'
 
 const Home = () => {
 
     useGSAP(() => {
+
+        gsap.registerPlugin(SplitText, ScrollTrigger)
+
         gsap.to(".title", {
           duration: 5,
           clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
           ease: 'power4.out',
+        });
+
+        const m1Split = SplitText.create(".m1", {
+            type: "words",
+        });
+        const m2Split = SplitText.create(".m2", {
+            type: "words",
+        });
+        const m3Split = SplitText.create(".m3", {
+            type: "words",
+        });
+
+        const t1 = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".splitContent",
+                start: "top 80%",
+                end: "bottom 50%",
+                scrub: true,
+                pin: false,
+            },
+        });
+        t1.to(m1Split.words, {
+            color: "#10b981",
+            stagger: 0.1,
+            ease: "power1.in",
+        })
+        .to(m2Split.words, {
+            color: "#10b981",
+            stagger: 0.1,
+            ease: "power1.in",
+        })
+        .to(m3Split.words, {
+            color: "#10b981",
+            stagger: 0.1,
+            ease: "power1.in",
         })
     })
 
@@ -38,7 +78,7 @@ const Home = () => {
             </div>
         </section>
         <section className='relative min-h-screen pt-1 bg-green-50'>
-            <div className='m-20'>
+            <div className='m-20 mb-0'>
                 <div className='flex justify-between'>
                     <div className='block'>
                         <h2 className='font-semibold'>Modern finance,</h2>
@@ -50,11 +90,11 @@ const Home = () => {
                     </div>
                 </div>
                 <div className='flex items-center justify-between mt-20 gap-5'>
-                    <div className='bg-amber-100 rounded-2xl'>
+                    <div className='bg-amber-100 rounded-2xl hover:scale-105 transition-all duration-300'>
                         <div className='p-10'>
                             <div className='flex items-center justify-center'>
                                 <div>
-                                   <img src="" alt="logo" />
+                                   <img src="/public/Images/Landing Page/1.png" alt="logo" className='w-37.5 h-33'/>
                                 </div>
                             </div>
                             <div className='items-center justify-center text-center mt-5'>
@@ -63,11 +103,11 @@ const Home = () => {
                             </div>
                         </div>
                     </div>
-                    <div className='bg-slate-100 rounded-2xl'>
+                    <div className='bg-slate-100 rounded-2xl hover:scale-105 transition-all duration-300'>
                         <div className='p-10'>
                             <div className='flex items-center justify-center'>
                                 <div>
-                                   <img src="" alt="logo" />
+                                   <img src="/public/Images/Landing Page/2..png" alt="logo" className='w-37.5 h-33'/>
                                 </div>
                             </div>
                             <div className='items-center justify-center text-center mt-5'>
@@ -76,11 +116,11 @@ const Home = () => {
                             </div>
                         </div>
                     </div>
-                    <div className='bg-cyan-100 rounded-2xl'>
+                    <div className='bg-cyan-100 rounded-2xl hover:scale-105 transition-all duration-300'>
                         <div className='p-10'>
                             <div className='flex items-center justify-center'>
                                 <div>
-                                   <img src="" alt="logo" />
+                                   <img src="/public/Images/Landing Page/3.png" alt="logo" className='w-37.5 h-33'/>
                                 </div>
                             </div>
                             <div className='items-center justify-center text-center mt-5'>
@@ -90,7 +130,63 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
+                <div className='flex items-center justify-between mt-10 gap-5'>
+                    <div className='bg-emerald-100 rounded-xl w-full h-40'>
+                        <div className='flex items-center justify-center w-full h-20'>
+                            <div>
+                                <img src="/public/Images/Landing Page/4.png" alt="" className='w-10 h-10'/>
+                            </div>
+                        </div>
+                        <div className='items-center justify-center text-center'>
+                            <h1 className='text-3xl font-bold'>1K+</h1>
+                            <p className='text-lg'>Active Users</p>
+                        </div>
+                    </div>
+                    <div className='bg-emerald-100 rounded-xl w-full h-40'>
+                        <div className='flex items-center justify-center w-full h-20'>
+                            <div>
+                                <img src="/public/Images/Landing Page/5.png" alt=""  className='w-10 h-10'/>
+                            </div>
+                        </div>
+                        <div className='items-center justify-center text-center'>
+                            <h1 className='text-2xl font-bold'>100%</h1>
+                            <p>Secure & encrypted</p>
+                        </div>
+                    </div>
+                    <div className='bg-emerald-100 rounded-xl w-full h-40'>
+                        <div className='flex items-center justify-center w-full h-20'>
+                            <div>
+                                <img src="/public/Images/Landing Page/6.png" alt="" className='w-10 h-10'/>
+                            </div>
+                        </div>
+                        <div className='items-center justify-center text-center'>
+                            <h1 className='text-2xl font-bold'>24/7</h1>
+                            <p>Up-time Guaranteed</p>
+                        </div>
+                    </div>
+                    <div className='bg-emerald-100 rounded-xl w-full h-40'>
+                        <div className='flex items-center justify-center w-full h-20'>
+                            <div>
+                                <img src="/public/Images/Landing Page/7.png" alt="" className='w-10 h-10'/>
+                            </div>
+                        </div>
+                        <div className='items-center justify-center text-center'>
+                            <h1 className='text-2xl font-bold flex items-center justify-center text-center gap-1'>4.9 <Star /></h1>
+                            <p>Web-site store rating</p>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </section>
+        <section className='splitContent relative min-h-screen flex items-center justify-center bg-[#0d1f1a]'>
+            <div className='items-center justify-center text-center text-9xl font-bold p-20 space-y-3 text-[#17161610]' style={{ fontFamily: '"Antonio", serif'}}>
+                <h1 className='m1'>Your money. Your community. Your future.</h1>
+                <h1 className='m2'>Cooperative finance isn't just a service -</h1>
+                <h1 className='m3'>it's a promise we keep together.</h1>
+            </div>
+        </section>
+        <section className='w-full min-h-screen'>
+
         </section>
     </>
   )
