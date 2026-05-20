@@ -1,4 +1,4 @@
-const {createCustomer,getcustomer,getCustomerByCN,update,deactivate,activate}=require("../Services/customerService");
+const {createCustomer,getcustomer,getCustomerByCN,update,deactivate,activate,getCustomerBYId}=require("../Services/customerService");
 
 
 
@@ -24,6 +24,14 @@ exports.getCustomerByCustomerNumber=async(req,res,next)=>{
     try{
         const {customerNumber}=req.params;
         const result=await getCustomerByCN(customerNumber);
+        res.status(200).json(result);
+    }catch(error){
+        next(error);
+    }
+};
+exports.getCustomerById=async(req,res,next)=>{
+    try{
+        const result=await getCustomerBYId(req.params.id);
         res.status(200).json(result);
     }catch(error){
         next(error);
@@ -57,3 +65,4 @@ exports.activateCustomer=async(req,res,next)=>{
         next(error);
     }
 };
+

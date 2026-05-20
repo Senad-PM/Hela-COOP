@@ -126,8 +126,15 @@ exports.getCustomerByCN=async(customerNumber)=>{
     if(!findCustomer){
         throw new Error("customer not found");
     }
-    return(findCustomer);
+    return findCustomer;
 };
+exports.getCustomerBYId=async(id)=>{
+    const findCustomer=await Customer.findById(id);
+    if(!findCustomer){
+        throw new Error("Customer not found");
+    }
+    return findCustomer;
+}
 exports.update=async(customerNumber,updatebody)=>{
    const {firstName,lastName,phoneNumber,city,address,postalCode}=updatebody;
    const updateData={};
