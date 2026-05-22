@@ -7,11 +7,15 @@ const savingsSchema= new mongoose.Schema({
         unique:true,
         trim:true,
         match: [
-           /^(SAV|FIX)-[0-9]{4}$/,
+           /^(REG|FIX)-[0-9]{4}$/,
            "Invalid account number format"
         ]
     },
-    Customer:{
+    customerNumber:{
+        type:String,
+        required:true
+    },
+    customer:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Customer",
         required:true
@@ -32,6 +36,14 @@ const savingsSchema= new mongoose.Schema({
         required:true,
         min:0,
         max:100
+    },
+    durationMonths:{
+         type:Number,
+         required:function(){
+            return this.accountType==="fixed";
+         },
+         enum:[3,6,12],
+         min:1
     },
     isActive:{
           type:Boolean,

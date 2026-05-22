@@ -97,7 +97,7 @@ exports.getUsers=async(query)=>{
         });
 };
 exports.getUsersById=async(id)=>{
-      console.log('id');
+      //console.log('id');
       const findUser=await User.findById(id).select("-password -refreshToken");
       if(!findUser){
         throw new Error("user not found ");
