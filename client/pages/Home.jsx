@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import { SplitText, gsap }from 'gsap/all'
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Star } from 'lucide-react'
 
 const Home = () => {
+
+    const sectionRef = useRef(null)
+    const sliderRef = useRef(null)
 
     useGSAP(() => {
 
@@ -50,7 +53,62 @@ const Home = () => {
             stagger: 0.1,
             ease: "power1.in",
         })
+
+        const slider = sliderRef.current
+        const section = sectionRef.current
+
+        if(slider && section) {
+            const totalWidth = slider.scrollWidth - window.innerWidth
+
+            gsap.to(slider, {
+                x: -totalWidth,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top top',
+                    end: () => `+=${totalWidth}`,
+                    scrub: 1,
+                    pin: true,
+                },
+            });
+        }
+        return() => {
+            ScrollTrigger.getAll().forEach(t => t.kill())
+        }
     })
+
+    const testimonials = [
+        {
+            id: 1,
+            name: "Ravindra Silva",
+            role: "CEO Hela-COOP",
+            message: "HelaCOOP was my dream. I wanted to give everyone a simple, fair banking experience with nothing hidden. Today, that dream is real. I use it every day.",
+        },
+        {
+            id: 2,
+            name: "Nihal Jayawardena",
+            role: "Board Member, HelaCOOP",
+            message: "I've worked in banking for 20 years. HelaCOOP is the simplest and most trustworthy digital banking experience I've seen. Not as a CEO, but as an ordinary customer — I recommend this.",
+        },
+        {
+            id: 3,
+            name: "Shanika Perera",
+            role: "Secretary, Hela-COOP",
+            message: "No time to make banking complicated with piles of papers and fees. With HelaCOOP, everything is simple. As a secretary, I transact every day. Never had a single issue.",
+        },
+        {
+            id: 4,
+            name: "Kamal Dissanayake",
+            role: "Treasurer, Hela-COOP",
+            message: "Managing cooperative funds used to mean hours of manual cashbook entries. HelaCOOP cut that work in half. Every rupee is accounted for, and our audits have never been cleaner.",
+        },
+        {
+            id: 5,
+            name: "Priya Rathnayake",
+            role: "Branch Coordinator, Hela-COOP",
+            message: "Our members — most of them not very tech-savvy — picked it up within minutes. When your members trust the system, your whole cooperative runs better. That's what HelaCOOP gave us.",
+        },
+    ]
 
   return (
     <>
@@ -246,6 +304,62 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
+        <section className='w-full min-h-screen bg-emerald-50'>
+            <div className='p-20'>
+                <div>
+                    <h1 className='text-4xl font-bold'>Achieve Your Goals in Three Simple Steps</h1>
+                    <p className='w-1/2 mt-3 text-lg'>Open your account, set your goals, and start tracking your finances with ease. Our tools make it simple,fast, and secure.</p>
+                    <p className='w-1/2 border-b-2 border-b-gray-500 mt-3'></p>
+                </div>
+                <div className='flex justify-between items-center mt-20 gap-10'>
+                    <div className='space-y-10 w-1/2'>
+                        <div className='relative group'>
+                            <h1 className='font-semibold text-2xl text-gray-500 hover:text-black transition-all duration-300'><span className='text-2xl'>01.</span> Add Member</h1>
+                            <p className='max-h-0 overflow-hidden opacity-0 group-hover:max-h-40 group-hover:opacity-100 ml-5 transition-all duration-500 ease-in-out delay-100 text-gray-600 text-sm mt-1'>
+                                Enroll new cooperative members with their personal details, account type, and <br />opening balance - building your member registry securely from day one.
+                            </p>
+                        </div>
+                        <div className='relative group'>
+                            <h1 className='font-semibold text-2xl text-gray-500 hover:text-black transition-all duration-300'><span className='text-2xl'>02.</span> Add savings or loan payment to ledger</h1>
+                            <p className='max-h-0 overflow-hidden opacity-0 group-hover:max-h-40 group-hover:opacity-100 ml-5 transition-all duration-500 ease-in-out delay-100 text-gray-600 text-sm mt-1'>
+                                Post savings deposits or loan repayments directly to the member ledger - balances <br />update instantly, keeping every account accurate and audit-ready.
+                            </p>
+                        </div>
+                        <div className='relative group'>
+                            <h1 className='font-semibold text-2xl text-gray-500 hover:text-black transition-all duration-300'><span className='text-2xl'>03.</span> Print cashbook or member balance sheet</h1>
+                            <p className='max-h-0 overflow-hidden opacity-0 group-hover:max-h-40 group-hover:opacity-100 ml-5 transition-all duration-500 ease-in-out delay-100 text-gray-600 text-sm mt-1'>
+                                Export end-of-day cashbook totals or individual member passbook statements - ready for branch audits, committee reviews, and regulatory compliance.
+                            </p>
+                        </div>
+                    </div>
+                    <div className='w-1/2'>
+                        <img src="/public/Images/Landing Page/w.7.png" alt="" className='rounded-3xl w-full h-full object-cover' />
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section ref={ sectionRef } className='w-full min-h-screen bg-[#0d1f1a] flex flex-col justify-center overflow-hidden relative'>
+            <div className='absolute top-10 left-4 sm:left-5 w-48 sm:w-72 h-48 sm:h-72 bg-emerald-400/10 rounded-full blur-3xl animate-pulse'></div>
+            <div className='absolute bottom-5 right-3 sm:right-2 w-64 sm:w-96 h-64 sm:h-96 bg-emerald-400/20 rounded-full blur-3xl animate-pulse delay-1000 z-0'></div>
+            <h1 className='text-7xl font-bold text-center mb-30 text-emerald-100' style={{ fontFamily: '"Antonio", serif' }}>What our team say!</h1>
+            <div ref={ sliderRef } className='flex gap-6 px-20 w-max z-10' style={{ paddingLeft: 'calc(50vw - 225px)'}}>
+                {testimonials.map((item) => (
+                    <div key={ item.id } className='bg-green-200 rounded-2xl p-8 items-center w-[450px] min-h-[280px] flex-shrink-0 overflow-hidden'>
+                        <span className='text-4xl text-green-400'>"</span>
+                        <p className='text-gray-600 mt-2'>{ item.message }</p>
+                        <hr className='my-4 border-gray-300'/>
+                        <div className='flex items-center gap-3'>
+                            <div>
+                                <div>
+                                    <h3 className='font-semibold'>{ item.name }</h3>
+                                    <p className='text-sm text-gray-500'>{ item.role }</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
         </section>
     </>
