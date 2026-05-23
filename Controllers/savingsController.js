@@ -1,4 +1,4 @@
-const{createsavings}=require("../Services/savingsService");
+const{createsavings,deposit,withdraw}=require("../Services/savingsService");
 
 
 exports.addSavingsAcount=async(req,res,next)=>{
@@ -12,3 +12,24 @@ exports.addSavingsAcount=async(req,res,next)=>{
         next(error);
     }
 };
+exports.savingsDeposit=async(req,res,next)=>{
+  try{
+    const depositData=req.body;
+    const user=req.user._id;
+    const result=await deposit(depositData,user);
+    res.status(200).json(result);
+  }catch(error){
+    next(error);
+  }
+};
+exports.savingsWithdraw=async(req,res,next)=>{
+  try{
+    const withdrawData=req.body;
+    const user=req.user._id;
+    const result=await withdraw(withdrawData,user)
+    res.status(200).json(result);
+  }catch(error){
+    next(error);
+  }
+};
+

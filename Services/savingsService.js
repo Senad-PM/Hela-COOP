@@ -1,6 +1,9 @@
 const Savings=require("../Models/savings");
 const Customer=require("../Models/customer");
 const customer = require("../Models/customer");
+const Transaction=require("../Models/transactions");
+const { default: mongoose } = require("mongoose");
+const savings = require("../Models/savings");
 
 exports.createsavings=async(savingsData,user)=>{
         const{customerNumber,accountType,balance,durationMonths,initialDeposit}=savingsData;
@@ -50,7 +53,7 @@ exports.createsavings=async(savingsData,user)=>{
                 const fomatNumber=nextAcount.toString().padStart(4,"0");
                 accountNumber=`FIX-${fomatNumber}`;
         }
-        const newAcount=Savings.create({
+        const newAcount= await Savings.create({
                 accountNumber,
                 customer:customerExist._id,
                 customerNumber:customerExist.customerNumber,
@@ -60,5 +63,97 @@ exports.createsavings=async(savingsData,user)=>{
                 durationMonths,
                 createdBy:user
         });
+        let transactionNumber
+        const transactionsCount=await Transaction.countDocuments(transactionNumber);
+        const nextCount=transactionsCount+1;
+        const transNumber=nextCount.toString().padStart(4,0);
+        transactionNumber=`TRAN-${transNumber}`;
+        const newTransaction=Transaction.create({
+                 transactionNumber,
+                 savingsAccount:newAcount._id,
+                 accountNumber,
+                 transactionType:"deposit",
+                 amount:initialDeposit,
+                 balanceAfter:initialDeposit,
+                 performedBy:user._id,
+                 description:"acount opening"
+        });
         return(newAcount);
+};
+exports.deposit=async(depositData,user)=>{
+      const{accountNumber,amount}=depositData;
+      if(!accountNumber || !amount){
+        throw new Error("all must be filled");
+      }
+      const savingsExist=await Savings.findOne({accountNumber});
+      if(!savingsExist){
+        throw new Error("invalid account number");
+      }
+      if(savingsExist.isActive===false){
+         throw new Error("account is not active cannot deposit");
+      }
+      if(!savingsExist.accountType==="regular"){
+        throw new Error("only regular savings can deposit money");
+      }
+      const balance=savingsExist.balance+amount;
+      let transactionNumber
+      const transactionsCount=await Transaction.countDocuments();
+      const nextCount=transactionsCount+1;
+      const transNumber=nextCount.toString().padStart(4,"0");
+      transactionNumber=`TRAN-${transNumber}`;
+      //console.log(savingsExist);
+      const newTransaction=await Transaction.create({
+                 transactionNumber,
+                 savingsAccount:savingsExist._id,
+                 accountNumber,
+                 transactionType:"deposit",
+                 amount,
+                 balanceAfter:balance,
+                 performedBy:user._id,
+                 description:"deposit"
+        });
+        
+       savingsExist.balance = balance;
+       await savingsExist.save();
+        return (balance);
+      
+};
+exports.withdraw=async(withdrawData,user)=>{
+   const {accountNumber,amount}=withdrawData;
+   if(!accountNumber || !amount){
+        throw new Error("all field must be field");
+   }
+   const savingsExist=await Savings.findOne({accountNumber});
+   if(!savingsExist){
+        throw new Error("savings account not found ");
+   }
+   if(savingsExist.isActive===false){
+        throw new Error("account is not active")
+   }
+   if(!savingsExist.accountType==="regular"){
+         throw new Error("accountType should be regular");
+   }
+   if(savingsExist.balance-amount<=1000){
+        throw new Error("insufficient balance");
+   }
+   const balance=savingsExist.balance-amount;
+    let transactionNumber
+      const transactionsCount=await Transaction.countDocuments();
+      const nextCount=transactionsCount+1;
+      const transNumber=nextCount.toString().padStart(4,"0");
+      transactionNumber=`TRAN-${transNumber}`;
+      //console.log(savingsExist);
+      const newTransaction=await Transaction.create({
+                 transactionNumber,
+                 savingsAccount:savingsExist._id,
+                 accountNumber,
+                 transactionType:"withdraw",
+                 amount,
+                 balanceAfter:balance,
+                 performedBy:user._id,
+                 description:"withdraw"
+        });
+        savingsExist.balance=balance;
+        await savingsExist.save();
+        return(balance);
 }
