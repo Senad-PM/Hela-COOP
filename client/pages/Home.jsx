@@ -185,8 +185,68 @@ const Home = () => {
                 <h1 className='m3'>it's a promise we keep together.</h1>
             </div>
         </section>
-        <section className='w-full min-h-screen'>
-
+        <section className='w-full min-h-screen bg-emerald-50 flex flex-col justify-center'>
+            <div className='p-20 flex justify-between items-center gap-20'>
+                <div className='space-y-5 w-2/3'>
+                    <div>
+                        <h1 className='text-5xl font-bold'>Your Money.</h1>
+                        <h1 className='text-5xl font-bold mt-3'>Your Tools.</h1>
+                    </div>
+                    <div>
+                        <p className='text-lg mt-3'>Safe, Simple, and smart digital banking - all in one place.</p>
+                    </div>
+                    <div className='w-3/4 mt-10'>
+                        <img src="/public/Images/Landing Page/landing.png" alt="" className='w-full h-full object-cover rounded-3xl' />
+                    </div>
+                </div>
+                <div className='space-y-5'>
+                    <div className='flex items-center gap-5 border-b-2 border-b-gray-400'>
+                        <div className='w-20 h-20 flex-shrink-0'>
+                            <img src="/public/Images/Landing Page/w1-removebg-preview.png" alt="" className='w-full h-full object-contain' />
+                        </div>
+                        <div className='pb-2'>
+                            <h1 className='font-semibold text-2xl'>Member Ledger</h1>
+                            <p>Add credit/debit entries per member instantly</p>
+                        </div>
+                    </div>
+                    <div className='flex items-center gap-5 border-b-2 border-b-gray-400'>
+                        <div className='w-20 h-20 flex-shrink-0'>
+                            <img src="/public/Images/Landing Page/w2-removebg-preview.png" alt="" className='w-full h-full object-contain' />
+                        </div>
+                        <div className='pb-2'>
+                            <h1 className='font-semibold text-2xl'>Savings Collection</h1>
+                            <p>Track daily/weekly member savings.</p>
+                        </div>
+                    </div>
+                    <div className='flex items-center gap-5 border-b-2 border-b-gray-400'>
+                        <div className='w-20 h-20 flex-shrink-0'>
+                            <img src="/public/Images/Landing Page/w3-removebg-preview.png" alt="" className='w-full h-full object-contain' />
+                        </div>
+                        <div className='pb-2'>
+                            <h1 className='font-semibold text-2xl'>Loan Management</h1>
+                            <p>Monitor repayments & outstanding balance.</p>
+                        </div>
+                    </div>
+                    <div className='flex items-center gap-5 border-b-2 border-b-gray-400'>
+                        <div className='w-20 h-20 flex-shrink-0'>
+                            <img src="/public/Images/Landing Page/w4-removebg-preview.png" alt="" className='w-full h-full object-contain' />
+                        </div>
+                        <div className='pb-2'>
+                            <h1 className='font-semibold text-2xl'>Cashbook Reports</h1>
+                            <p>Print daily & monthly summaries for audit.</p>
+                        </div>
+                    </div>
+                    <div className='flex items-center gap-5 border-b-2 border-b-gray-400'>
+                        <div className='w-20 h-20 flex-shrink-0'>
+                            <img src="/public/Images/Landing Page/w5-removebg-preview.png" alt="" className='w-full h-full object-contain' />
+                        </div>
+                        <div className='pb-2'>
+                            <h1 className='font-semibold text-2xl'>Member Ledger</h1>
+                            <p>Members check their own balance & history only.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </>
   )
