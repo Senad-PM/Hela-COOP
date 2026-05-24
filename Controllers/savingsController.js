@@ -1,4 +1,4 @@
-const{createsavings,deposit,withdraw}=require("../Services/savingsService");
+const{createsavings,deposit,withdraw,getByAccountNumber,getAllSavings}=require("../Services/savingsService");
 
 
 exports.addSavingsAcount=async(req,res,next)=>{
@@ -32,4 +32,20 @@ exports.savingsWithdraw=async(req,res,next)=>{
     next(error);
   }
 };
-
+exports.getSavingsByAccountNumber=async(req,res,next)=>{
+   try{
+        const {accountNumber}=req.params;
+        const result=await getByAccountNumber(accountNumber);
+        res.status(200).json(result);
+   }catch(error){
+      next(error);
+   }
+};
+exports.getSavings=async(req,res,next)=>{
+  try{
+       const result=await getAllSavings(req.query);
+       res.status(200).json(result);
+  }catch(error){
+    next(error);
+  }
+}

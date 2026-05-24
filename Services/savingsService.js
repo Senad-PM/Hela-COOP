@@ -4,6 +4,8 @@ const customer = require("../Models/customer");
 const Transaction=require("../Models/transactions");
 const { default: mongoose } = require("mongoose");
 const savings = require("../Models/savings");
+const buildPagination=require("../Utils/buildPaginations");
+const buildSort=require("../Utils/buildSort");
 
 exports.createsavings=async(savingsData,user)=>{
         const{customerNumber,accountType,balance,durationMonths,initialDeposit}=savingsData;
@@ -156,4 +158,55 @@ exports.withdraw=async(withdrawData,user)=>{
         savingsExist.balance=balance;
         await savingsExist.save();
         return(balance);
+};
+exports.getByAccountNumber=async(accountNumber)=>{
+        if(!accountNumber){
+                throw new Error("all filed must be filled");
+        }
+        const accountExist=await Savings.findOne({accountNumber}).populate("customer","customerNumber firstName lastName");
+        if(!accountExist){
+                throw new Error("account not found");
+        }
+        return(accountExist);
+};
+const buildFilter=(query)=>{
+        const filter={};
+        if(query.isActive!==undefined){
+                filter.isActive=query.isActive==="true";
+        }
+        if(query.accountType!==undefined){
+                filter.accountType=query.accountType;
+        }
+        if(query.search && query.search.trim() !==""){
+                filter.$or=[
+                        {
+                              accountNumber:{
+                                $regex:query.search,
+                                $options:"i"
+                              }  
+                        }
+                ];
+        }
+        return filter;
+
 }
+exports.getAllSavings=async(query)=>{
+        const filter=buildFilter(query);
+            const sortoption=buildSort(query);
+              const{limit,skip,page}=buildPagination(query);
+              const count=await Savings.countDocuments(filter);
+                        if(count > 0 && skip >= count){
+                           throw new Error("page not found");
+                        }
+              const savings=await  Savings.find(filter).populate(
+                              "customer",
+                              "customerNumber firstName lastName"
+                               ).sort(sortoption).skip(skip).limit(limit);
+               
+              return({
+                   "total":count,
+                   "page":page,
+                   "limit":limit,
+                   "data":savings
+               });
+};
