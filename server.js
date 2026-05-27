@@ -17,10 +17,12 @@ const authRoutes=require("./Routes/authRoutes");
 const userRoutes=require("./Routes/userRoutes");
 const customerRoutes=require("./Routes/customerRoutes");
 const savingsRoutes=require("./Routes/savingsRoutes");
+const transactionRouter=require("./Routes/transactionRoutes");
 app.use("/api/auth",authRoutes);
 app.use("/api/user",userRoutes);
 app.use("/api/customer",customerRoutes);
 app.use("/api/savings",savingsRoutes);
+app.use("/api/transactions",transactionRouter);
 
 app.use(errorhandler);
 const PORT=process.env.PORT || 5000;

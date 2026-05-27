@@ -210,3 +210,28 @@ exports.getAllSavings=async(query)=>{
                    "data":savings
                });
 };
+exports.deactivate=async(accountNumber)=>{
+        const savingsExist=await Savings.findOne({accountNumber});
+        if(!savingsExist){
+                throw new Error("account not found");
+        }
+        if(savingsExist.isActive==="false"){
+                throw new Error("account is already deactivated");
+        }
+        savingsExist.isActive=false;
+        await savingsExist.save();
+        return("acount is deactivated");
+};
+exports.activate=async(accountNumber)=>{
+        const savingsExist=await Savings.findOne({accountNumber});
+        if(!savingsExist){
+                throw new Error("account not found");
+        }
+        if(savingsExist.isActive==="true"){
+                throw new Error("account is already activated");
+        }
+        savingsExist.isActive=true;
+        await savingsExist.save();
+        return("acount is activated");
+};
+

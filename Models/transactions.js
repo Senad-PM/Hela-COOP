@@ -10,7 +10,7 @@ const transactionSchema=new mongoose.Schema({
         },
         savingsAccount:{
             type:mongoose.Schema.Types.ObjectId,
-            reference:"Savings",
+            ref:"Savings",
             required:true
         },
         accountNumber:{
@@ -33,7 +33,7 @@ const transactionSchema=new mongoose.Schema({
         },
         performedBy:{
             type:mongoose.Schema.Types.ObjectId,
-            reference:"User",
+            ref:"User",
             required:true
         },
         description:{
