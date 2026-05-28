@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { X, Menu, XIcon} from 'lucide-react'
 import axios from 'axios'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
 
@@ -15,6 +16,8 @@ const Navbar = () => {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+
+    const navigate = useNavigate()
 
     const openForm = () => SetFormIsOpen(true)
     const closeForm = () => {
@@ -36,8 +39,15 @@ const Navbar = () => {
                 password
             })
             console.log('Login success:', response.data)
-            closeForm()
-            alert('Login successful!')
+            closeForm() 
+
+            if (response.data.role == 'admin'){
+                localStorage.setItem('isAdmin', 'true')
+                navigate('/admin')
+            }else{
+                alert('Login successful!')
+            }
+
         } catch (err) {
             console.error(err)
             setError(err.response?.data?.message || 'Login failed. Check your credentials.')
