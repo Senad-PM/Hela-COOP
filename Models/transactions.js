@@ -13,6 +13,10 @@ const transactionSchema=new mongoose.Schema({
             ref:"Savings",
             required:true
         },
+        accountType:{
+            type:String,
+            required:true
+        },
         accountNumber:{
             type:String,
             required:true

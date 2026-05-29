@@ -73,6 +73,7 @@ exports.createsavings=async(savingsData,user)=>{
         const newTransaction=Transaction.create({
                  transactionNumber,
                  savingsAccount:newAcount._id,
+                 accountType:newAcount.accountType,
                  accountNumber,
                  transactionType:"deposit",
                  amount:initialDeposit,
@@ -107,6 +108,7 @@ exports.deposit=async(depositData,user)=>{
       const newTransaction=await Transaction.create({
                  transactionNumber,
                  savingsAccount:savingsExist._id,
+                 accountType:savingsExist.accountType,
                  accountNumber,
                  transactionType:"deposit",
                  amount,
@@ -148,6 +150,7 @@ exports.withdraw=async(withdrawData,user)=>{
       const newTransaction=await Transaction.create({
                  transactionNumber,
                  savingsAccount:savingsExist._id,
+                 accountType:savingsExist.accountType,
                  accountNumber,
                  transactionType:"withdraw",
                  amount,
