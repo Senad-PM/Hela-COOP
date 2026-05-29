@@ -2,7 +2,16 @@ import React from 'react'
 
 const Admin = () => {
   return (
-    <div>Admin</div>
+    <>
+        <section className='w-full min-h-screen bg-green-300'>
+            <div>
+                <div>
+
+                </div>
+                <div></div>
+            </div>
+        </section>
+    </>
   )
 }
 
