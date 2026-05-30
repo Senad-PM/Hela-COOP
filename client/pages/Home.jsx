@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import { SplitText, gsap }from 'gsap/all'
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Star } from 'lucide-react'
+import { Star, UserPlus, ChevronRight, AtSign } from 'lucide-react'
 
 const Home = () => {
 
@@ -360,6 +360,56 @@ const Home = () => {
                         </div>
                     </div>
                 ))}
+            </div>
+        </section>
+        <section className='w-full bg-emerald-50'>
+            <div className='pb-10 px-20 pt-20'>
+                <div className='relative'>
+                    <img src="/public/Images/Landing Page/footer.png" alt="" className='w-full h-[340px] object-cover rounded-2xl' />
+                    <div className='absolute inset-0 flex flex-col items-center justify-center text-center'>
+                        <h1 className='text-5xl font-bold text-white'>Apply for a <br /> <span className='text-emerald-400'>Hela-COOP</span> account</h1>
+                        <button className='mt-5 border-2 text-white font-semibold p-3 rounded-2xl items-center justify-center flex gap-3 mx-auto cursor-pointer hover:text-white hover:bg-emerald-500 transition-all duration-300 hover:scale-105'><UserPlus />Join Us as a Client</button>
+                    </div>
+                </div>
+                <div className='mt-20 flex justify-between gap-10'>
+                    <div>
+                        <h1 className='text-3xl font-bold'>Hela-COOP</h1>
+                        <p className='text-gray-600'>Simple. Fast. Secure. Trusted.</p>
+                    </div>
+                    <div className=''>
+                        <h1 className='font-bold text-xl'>Features</h1>
+                        <div className='space-y-7 text-gray-600 text-sm'>
+                            <p className='mt-5 flex items-center cursor-pointer'> <ChevronRight className='w-4 h-4' /> Member Ledger</p>
+                            <p className='mt-5 flex items-center cursor-pointer'> <ChevronRight className='w-4 h-4' /> Saving Collection</p>
+                            <p className='mt-5 flex items-center cursor-pointer'> <ChevronRight className='w-4 h-4' /> Loan Management</p>
+                            <p className='mt-5 flex items-center cursor-pointer'> <ChevronRight className='w-4 h-4' /> Report & Audit</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 className='font-bold text-xl'>Resources</h1>
+                        <div className='space-y-7 text-gray-600 text-sm'>
+                            <p className='mt-5 flex items-center cursor-pointer'> <ChevronRight className='w-4 h-4' /> Staff Guide</p>
+                            <p className='mt-5 flex items-center cursor-pointer'> <ChevronRight className='w-4 h-4' /> Tranning Videos</p>
+                            <p className='mt-5 flex items-center cursor-pointer'> <ChevronRight className='w-4 h-4' /> FAQs</p>
+                            <p className='mt-5 flex items-center cursor-pointer'> <ChevronRight className='w-4 h-4' /> Documentation</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 className='font-bold text-xl'>Company</h1>
+                        <div className='space-y-7 text-gray-600 text-sm'>
+                            <p className='mt-5 flex items-center cursor-pointer'> <ChevronRight className='w-4 h-4' /> About Hela-COOP</p>
+                            <p className='mt-5 flex items-center cursor-pointer'> <ChevronRight className='w-4 h-4' /> Our Cooperatives</p>
+                            <p className='mt-5 flex items-center cursor-pointer'> <ChevronRight className='w-4 h-4' /> Contact Support</p>
+                        </div>
+                    </div>
+                </div>
+                <hr className='mt-10'/>
+                <div className='flex items-center justify-center'>
+                    <h1 className='text-sm text-gray-700 flex items-center justify-center gap-1 mt-5'><AtSign className='w-3 h-3' /> 2026 HelaCOOP. All Right Reserved.</h1>
+                </div>
+                <div className='flex items-center justify-center mt-2 text-sm text-gray-700'>
+                    <p className=''>Terms Privacy Cookies</p>
+                </div>
             </div>
         </section>
     </>
