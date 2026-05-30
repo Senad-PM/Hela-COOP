@@ -1,5 +1,5 @@
 const express=require("express");
-const {addSavingsAcount,savingsDeposit,savingsWithdraw,getSavingsByAccountNumber,getSavings,acountDeactivate,accountActivate}=require("../Controllers/savingsController");
+const {addSavingsAcount,savingsDeposit,savingsWithdraw,getSavingsByAccountNumber,getSavings,acountDeactivate,accountActivate,interestApply}=require("../Controllers/savingsController");
 const{protect,authorize}=require("../Middlewares/authMiddleware");
 
 
@@ -11,6 +11,7 @@ router.get("/:accountNumber",protect,authorize("staff"),getSavingsByAccountNumbe
 router.get("/",protect,authorize("staff"),getSavings);
 router.patch("/deactivate/:accountNumber",protect,authorize("staff"),acountDeactivate);
 router.patch("/activate/:accountNumber",protect,authorize("staff"),accountActivate);
+router.post("/interest/:accountNumber",protect,authorize("admin"),interestApply);
 
 
 module.exports=router;

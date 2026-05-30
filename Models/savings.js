@@ -49,6 +49,9 @@ const savingsSchema= new mongoose.Schema({
           type:Boolean,
           default:true
     },
+    lastInterestApplied:{
+        type:Date
+    },
     createdBy:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",

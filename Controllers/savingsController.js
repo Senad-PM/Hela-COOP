@@ -1,4 +1,4 @@
-const{createsavings,deposit,withdraw,getByAccountNumber,getAllSavings,deactivate,activate}=require("../Services/savingsService");
+const{createsavings,deposit,withdraw,getByAccountNumber,getAllSavings,deactivate,activate,applyInterest}=require("../Services/savingsService");
 
 
 exports.addSavingsAcount=async(req,res,next)=>{
@@ -66,4 +66,14 @@ exports.accountActivate=async(req,res,next)=>{
       }catch(error){
         next(error);
       }
-}
+};
+exports.interestApply=async(req,res,next)=>{
+  try{
+     const{accountNumber}=req.params;
+     const result=await applyInterest(accountNumber);
+     res.status(200).json(result);
+  }catch(error){
+    next(error);
+  }
+
+};

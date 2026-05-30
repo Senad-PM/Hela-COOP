@@ -24,7 +24,7 @@ const transactionSchema=new mongoose.Schema({
         transactionType:{
              type:String,
              required:true,
-             enum:["deposit","withdraw"]
+             enum:["deposit","withdraw","interest"]
         },
         amount:{
             type:Number,
@@ -38,7 +38,7 @@ const transactionSchema=new mongoose.Schema({
         performedBy:{
             type:mongoose.Schema.Types.ObjectId,
             ref:"User",
-            required:true
+            required:false
         },
         description:{
             type:String,

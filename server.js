@@ -12,6 +12,7 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 const {errorhandler}=require("./Middlewares/errorHandler");
+require("./Cron/interestCron");
 
 const authRoutes=require("./Routes/authRoutes");
 const userRoutes=require("./Routes/userRoutes");

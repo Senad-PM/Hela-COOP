@@ -6,6 +6,7 @@ const { default: mongoose } = require("mongoose");
 const savings = require("../Models/savings");
 const buildPagination=require("../Utils/buildPaginations");
 const buildSort=require("../Utils/buildSort");
+const calculateInterest=require("../Utils/calculateInterest");
 
 exports.createsavings=async(savingsData,user)=>{
         const{customerNumber,accountType,balance,durationMonths,initialDeposit}=savingsData;
@@ -237,4 +238,57 @@ exports.activate=async(accountNumber)=>{
         await savingsExist.save();
         return("acount is activated");
 };
+exports.applyInterest=async(accountNumber)=>{
+        const saving=await Savings.findOne({accountNumber});
+        if(!saving){
+                throw new Error("account not found");
+        }
+        if(saving.isActive===false){
+                throw new Error("account is not active");
+        }
+        const today = new Date();
 
+        if(saving.lastInterestApplied){
+
+        const lastDate =
+          saving.lastInterestApplied;
+
+        const sameMonth =
+           lastDate.getMonth() ===
+           today.getMonth();
+
+        const sameYear =
+           lastDate.getFullYear() ===
+           today.getFullYear();
+
+        if(sameMonth && sameYear){
+               return { skipped: true };
+         }
+      }
+      
+        const interest=calculateInterest(saving.balance,saving.interestRate);
+        const balance=saving.balance+interest;
+        let transactionNumber
+        const transactionsCount=await Transaction.countDocuments();
+        const nextCount=transactionsCount+1;
+        const transNumber=nextCount.toString().padStart(4,"0");
+        transactionNumber=`TRAN-${transNumber}`;
+        saving.balance=balance;
+        saving.lastInterestApplied=new Date();
+        await saving.save();
+      const newTransaction=await Transaction.create({
+                 transactionNumber,
+                 savingsAccount:saving._id,
+                 accountType:saving.accountType,
+                 accountNumber,
+                 transactionType:"interest",
+                 amount:interest,
+                 balanceAfter:balance,
+                 description:"monthly interest"
+        });
+       return{
+        accountNumber,
+        interestAdded:interest,
+        newBalance:balance
+       };
+};
