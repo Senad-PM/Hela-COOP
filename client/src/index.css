@@ -1,0 +1,8 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Antonio:wght@100..700&display=swap");
+@import "tailwindcss";
+
+@font-face {
+    font-family: "ProximaNova";
+    src: url("/fonts/ProximaNova-Regular.otf");
+}
