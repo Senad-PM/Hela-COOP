@@ -238,7 +238,7 @@ exports.activate=async(accountNumber)=>{
         await savingsExist.save();
         return("acount is activated");
 };
-exports.applyInterest=async(accountNumber)=>{
+exports.applyDailyInterest=async(accountNumber)=>{
         const saving=await Savings.findOne({accountNumber});
         if(!saving){
                 throw new Error("account not found");
@@ -253,42 +253,79 @@ exports.applyInterest=async(accountNumber)=>{
         const lastDate =
           saving.lastInterestApplied;
 
-        const sameMonth =
-           lastDate.getMonth() ===
-           today.getMonth();
+        const sameDate =
+           lastDate.toDateString() ===
+           today.toDateString();
 
-        const sameYear =
-           lastDate.getFullYear() ===
-           today.getFullYear();
-
-        if(sameMonth && sameYear){
+        if(sameDate){
                return { skipped: true };
          }
-      }
-      
+      } 
         const interest=calculateInterest(saving.balance,saving.interestRate);
-        const balance=saving.balance+interest;
+      //  console.log(interest);
+        const accuredBalance=saving.accuredInterest+interest;
+      //  console.log(accuredBalance);
+        saving.accuredInterest=accuredBalance;
+        saving.lastInterestApplied=new Date();
+        await saving.save();
+       return{
+        accountNumber,
+        interestAdded:interest,
+       };
+};
+exports.applyMonthlyInterest=async(accountNumber)=>{
+        const saving=await Savings.findOne({accountNumber});
+        if(!saving){
+                throw new Error("account is not found");
+        }
+        if(saving.isActive===false){
+                throw new Error("account is deactivated");
+        }
+        const today = new Date();
+
+        if(saving.lastInterestApplied){
+
+        const lastDate =
+          saving.lastInterestApplied;
+
+        const sameDate =
+           lastDate.getDate() ===
+           today.getDate();
+        
+        const sameMonth=
+            lastDate.getMonth()===
+            today.getMonth();
+        if(sameDate && sameMonth){
+               return { skipped: true };
+         }
+      } 
+        const accountBalance=saving.balance+saving.accuredInterest;
+        saving.balance=accountBalance;
+        const interestAmount=saving.accuredInterest;
+        if(interestAmount<=0){
+                return{skipped:true};
+        }
+        saving.accuredInterest = 0;
+        await saving.save();
         let transactionNumber
         const transactionsCount=await Transaction.countDocuments();
         const nextCount=transactionsCount+1;
         const transNumber=nextCount.toString().padStart(4,"0");
         transactionNumber=`TRAN-${transNumber}`;
-        saving.balance=balance;
-        saving.lastInterestApplied=new Date();
-        await saving.save();
       const newTransaction=await Transaction.create({
                  transactionNumber,
                  savingsAccount:saving._id,
                  accountType:saving.accountType,
                  accountNumber,
                  transactionType:"interest",
-                 amount:interest,
-                 balanceAfter:balance,
+                 amount:interestAmount,
+                 balanceAfter:accountBalance,
                  description:"monthly interest"
         });
-       return{
-        accountNumber,
-        interestAdded:interest,
-        newBalance:balance
-       };
+        return {
+          accountNumber,
+          interestCredited: interestAmount,
+          newBalance: saving.balance
+        };
+
 };

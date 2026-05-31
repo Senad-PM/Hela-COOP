@@ -13,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 const {errorhandler}=require("./Middlewares/errorHandler");
 require("./Cron/interestCron");
+require("./Cron/addIntersetCron");
 
 const authRoutes=require("./Routes/authRoutes");
 const userRoutes=require("./Routes/userRoutes");

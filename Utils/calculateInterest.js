@@ -5,7 +5,7 @@ const calculateInterest=(balance,interestRate)=>{
     if(balance<0){
         throw new Error("negative balance not accepted");
     }
-    const monthlyinterest=(balance*interestRate/100)/12;
+    const monthlyinterest=(balance*interestRate/100)/365;
     const interest=Number(monthlyinterest.toFixed(2));
     return (interest);
 
