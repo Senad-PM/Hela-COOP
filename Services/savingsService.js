@@ -7,6 +7,7 @@ const savings = require("../Models/savings");
 const buildPagination=require("../Utils/buildPaginations");
 const buildSort=require("../Utils/buildSort");
 const calculateInterest=require("../Utils/calculateInterest");
+const calculateFixedInterest=require("../Utils/calculateFixedInterest");
 
 exports.createsavings=async(savingsData,user)=>{
         const{customerNumber,accountType,balance,durationMonths,initialDeposit}=savingsData;
@@ -50,12 +51,17 @@ exports.createsavings=async(savingsData,user)=>{
                 accountNumber=`REG-${fomatNumber}`;
 
         }
+        let maturityDate=new Date();
         if(accountType==="fixed"){
                 const fixedCount=await Savings.countDocuments({accountType:"fixed"});
                 const nextAcount=fixedCount+1;
                 const fomatNumber=nextAcount.toString().padStart(4,"0");
-                accountNumber=`FIX-${fomatNumber}`;
+                accountNumber=`FIX-${fomatNumber}`;      
+                maturityDate.setMonth(
+                        maturityDate.getMonth()+durationMonths
+                );
         }
+
         const newAcount= await Savings.create({
                 accountNumber,
                 customer:customerExist._id,
@@ -64,6 +70,7 @@ exports.createsavings=async(savingsData,user)=>{
                 balance:initialDeposit || 0,
                 interestRate,
                 durationMonths,
+                maturityDate:maturityDate,
                 createdBy:user
         });
         let transactionNumber
@@ -329,3 +336,49 @@ exports.applyMonthlyInterest=async(accountNumber)=>{
         };
 
 };
+exports.fixedAccountMaturety=async(accountNumber)=>{
+        const fixedSaving=await Savings.findOne({accountNumber});
+        if(!fixedSaving){
+                throw new Error("account not found");
+        }
+        if(fixedSaving.isActive===false){
+                throw new Error("account is deactivated");
+        }
+        if(fixedSaving.isMatured===true){
+                throw new Error("account is already matured");
+        }
+        const today = new Date();
+        if(today < fixedSaving.maturityDate){
+               throw new Error("fixed deposit has not matured yet");
+        }  
+        const interest=calculateFixedInterest(fixedSaving.balance,fixedSaving.interestRate,fixedSaving.durationMonths);
+        console.log("Balance:", fixedSaving.balance);
+        console.log("Rate:", fixedSaving.interestRate);
+        console.log("Duration:", fixedSaving.durationMonths);
+        console.log("Interest:", interest);
+        fixedSaving.balance+=interest;
+        fixedSaving.isMatured=true;
+        await fixedSaving.save();
+         let transactionNumber
+        const transactionsCount=await Transaction.countDocuments();
+        const nextCount=transactionsCount+1;
+        const transNumber=nextCount.toString().padStart(4,"0");
+        transactionNumber=`TRAN-${transNumber}`;
+        const newTransaction=await Transaction.create({
+                 transactionNumber,
+                 savingsAccount:fixedSaving._id,
+                 accountType:fixedSaving.accountType,
+                 accountNumber,
+                 transactionType:"interest",
+                 amount:interest,
+                 balanceAfter:fixedSaving.balance,
+                 description:"maturety interested debited"
+        });
+        return {
+          accountNumber,
+          interestCredited: interest,
+          newBalance: fixedSaving.balance,
+          matured:true
+        };
+
+}

@@ -45,6 +45,13 @@ const savingsSchema= new mongoose.Schema({
          enum:[3,6,12],
          min:1
     },
+    maturityDate:{
+        type:Date,
+    },
+    isMatured:{
+        type:Boolean,
+        default:false
+    },
     isActive:{
           type:Boolean,
           default:true
