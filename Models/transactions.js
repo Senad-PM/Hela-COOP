@@ -11,7 +11,10 @@ const transactionSchema=new mongoose.Schema({
         savingsAccount:{
             type:mongoose.Schema.Types.ObjectId,
             ref:"Savings",
-            required:true
+        },
+        loanAccount:{
+             type:mongoose.Schema.Types.ObjectId,
+             ref:"Loan",
         },
         accountType:{
             type:String,
