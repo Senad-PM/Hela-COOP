@@ -65,7 +65,7 @@ exports.createsavings=async(savingsData,user)=>{
         const newAcount= await Savings.create({
                 accountNumber,
                 customer:customerExist._id,
-                customerNumber:customerExist.customerNumber,
+               // customerNumber:customerExist.customerNumber,
                 accountType,
                 balance:initialDeposit || 0,
                 interestRate,

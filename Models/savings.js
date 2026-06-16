@@ -11,10 +11,10 @@ const savingsSchema= new mongoose.Schema({
            "Invalid account number format"
         ]
     },
-    customerNumber:{
+   /* customerNumber:{
         type:String,
         required:true
-    },
+    }, */
     customer:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Customer",
