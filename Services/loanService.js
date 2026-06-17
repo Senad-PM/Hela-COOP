@@ -77,6 +77,43 @@ exports.createLoan=async(loanData,user)=>{
                  performedBy:user._id,
                  description:"loan acount opening"
         });
-        return(newLoan);
+        return({ 
+            loanNumber,
+            customer:customerExist.customerNumber,
+            loanType,
+            principalAmount,
+            interestRate,
+            durationMonths,
+            monthlyInstallment:installment,
+            outstandingBalance:principalAmount,
+            createdBy:user,});
              
+};
+exports.loanApproved=async(loanNumber,user)=>{
+      const loanExist=await Loan.findOne({loanNumber});
+      if(!loanExist){
+        throw new Error("loan is not found");
+      }
+      if(loanExist.status!=="pending"){
+        throw new Error("only pending loans can be approved");
+      }
+      loanExist.status="active";
+      loanExist.approvedBy=user._id;
+      loanExist.approvedDate=new Date();
+      await loanExist.save();
+      return(loanExist);
+};
+exports.loanReject=async(loanNumber,user)=>{
+      const loanExist=await Loan.findOne({loanNumber});
+      if(!loanExist){
+        throw new Error("loan is not found");
+      }
+      if(loanExist.status!=="pending"){
+        throw new Error("Only pending loans can be rejected");
+      }
+      loanExist.status="rejected";
+      loanExist.rejectedBy=user._id;
+      loanExist.rejectedDate=new Date();
+      await loanExist.save();
+      return(loanExist);
 };

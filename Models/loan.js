@@ -68,7 +68,13 @@ const loanSchema=new mongoose.Schema({
     approvedDate:{
         type:Date
     },
-
+    rejectedBy:{
+       type:mongoose.Schema.Types.ObjectId,
+       ref:"User"
+    },
+    rejectedDate:{
+        type:Date
+    },
     disbursedDate:{
         type:Date
     },
