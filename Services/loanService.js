@@ -2,6 +2,8 @@ const Loan=require("../Models/loan");
 const calculateEmi=require("../Utils/calculateEmi");
 const Customer=require("../Models/customer");
 const Transaction=require("../Models/transactions");
+const Savings=require("../Models/savings");
+const debitLoanMoney=require("../Utils/depositLoan");
 
 exports.createLoan=async(loanData,user)=>{
 
@@ -29,6 +31,14 @@ exports.createLoan=async(loanData,user)=>{
     if(loanType==="emergency"){
         interestRate=15;
     }
+    const savingExist=await Savings.findOne({customer:customerExist._id,accountType:"regular"});
+    if(!savingExist){
+        throw new Error("savings account not found");
+    }
+    if(savingExist.isActive===false){
+        throw new Error("savings account is not active");
+    }
+    //console.log(savingExist.accountNumber);
     let loanNumber;
     if(loanType==="personal"){
     const loanCount=await Loan.countDocuments({loanType:"personal"});
@@ -52,6 +62,7 @@ exports.createLoan=async(loanData,user)=>{
     const newLoan=await Loan.create({
             loanNumber,
             customer:customerExist._id,
+            savingAccount:savingExist._id,
             loanType,
             principalAmount,
             interestRate,
@@ -71,7 +82,7 @@ exports.createLoan=async(loanData,user)=>{
                   loanAccount:newLoan._id,
                  accountType:newLoan.loanType,
                  accountNumber:loanNumber,
-                 transactionType:"deposit",
+                 transactionType:"loanAccountOpening",
                  amount:principalAmount,
                  balanceAfter:principalAmount,
                  performedBy:user._id,
@@ -80,6 +91,7 @@ exports.createLoan=async(loanData,user)=>{
         return({ 
             loanNumber,
             customer:customerExist.customerNumber,
+            savingAccount:savingExist.accountNumber,
             loanType,
             principalAmount,
             interestRate,
@@ -97,7 +109,7 @@ exports.loanApproved=async(loanNumber,user)=>{
       if(loanExist.status!=="pending"){
         throw new Error("only pending loans can be approved");
       }
-      loanExist.status="active";
+      loanExist.status="approved";
       loanExist.approvedBy=user._id;
       loanExist.approvedDate=new Date();
       await loanExist.save();
@@ -116,4 +128,42 @@ exports.loanReject=async(loanNumber,user)=>{
       loanExist.rejectedDate=new Date();
       await loanExist.save();
       return(loanExist);
+};
+
+exports.loanDistribution=async(loanNumber,user)=>{
+       if(loanNumber===undefined || user===undefined){
+          throw new Error("all field must filled");
+       }
+       const loanExist=await Loan.findOne({loanNumber});
+       if(!loanExist){
+          throw new Error("loan not found ");
+       }
+       if(loanExist.status!=="approved"){
+          throw new Error("only approved loans can be distribute");
+       }
+       const savingExist=await Savings.findById(loanExist.savingAccount);
+       const balance=await debitLoanMoney(savingExist.accountNumber,loanExist.principalAmount);
+       let transactionNumber
+             const transactionsCount=await Transaction.countDocuments();
+             const nextCount=transactionsCount+1;
+             const transNumber=nextCount.toString().padStart(4,"0");
+             transactionNumber=`TRAN-${transNumber}`;
+             //console.log(savingsExist);
+             const newTransaction=await Transaction.create({
+                        transactionNumber,
+                        savingsAccount:savingExist._id,
+                        accountType:savingExist.accountType,
+                        accountNumber:savingExist.accountNumber,
+                        transactionType:"loanDistribute",
+                        amount:loanExist.principalAmount,
+                        balanceAfter:balance,
+                        performedBy:user._id,
+                        description:"deposit"
+               });
+               loanExist.disbursedBy = user._id;
+               loanExist.disbursedDate = new Date(); 
+               loanExist.status="active";
+               await loanExist.save();
+               return(loanExist);
+
 };

@@ -16,6 +16,11 @@ const loanSchema=new mongoose.Schema({
         ref:"Customer",
         required:true
     },
+    savingAccount:{
+       type:mongoose.Schema.Types.ObjectId,
+       ref:"Savings",
+       required:true
+    },
     loanType:{
         type:String,
         enum:[
