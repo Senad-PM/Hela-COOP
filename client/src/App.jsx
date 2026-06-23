@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Home from '../pages/Home'
 import Admin from '../pages/Admin'
+import ProtectedRoute from '../pages/ProtectedRoute'
 
 const App = () => {
 
@@ -13,7 +14,11 @@ const App = () => {
       {location.pathname !== '/admin' && <Navbar />}
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/admin' element={<Admin />} />
+        <Route path='/admin' element={
+          <ProtectedRoute>
+            <Admin />
+          </ProtectedRoute>
+        } />
       </Routes>
     </div>
   )
