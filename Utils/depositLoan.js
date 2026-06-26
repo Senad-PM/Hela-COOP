@@ -5,7 +5,7 @@ const debitLoanMoney=async(accountNumber,principalAmount)=>{
         if(!savingExist){
             throw new Error("account not found");
         }
-        if(savingExist.isActive=false){
+        if(savingExist.isActive===false){
             throw new Error("account is not active");
         }
         const balance=savingExist.balance+principalAmount;

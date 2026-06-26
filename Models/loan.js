@@ -54,6 +54,36 @@ const loanSchema=new mongoose.Schema({
     remainingInstallments:{
     type:Number
     },
+    installments:[
+    {
+        installmentNo:{
+            type:Number
+        },
+        dueDate:{
+            type:Date
+        },
+        emi:{
+            type:Number
+        },
+        principalAmount:{
+            type:Number
+        },
+        interestAmount:{
+            type:Number
+        },
+        remainingBalance:{
+            type:Number
+        },
+        status:{
+            type:String,
+            enum:["pending","paid","overdue"],
+            default:"pending"
+        },
+        paidDate:{
+            type:Date
+        }
+     }
+   ],
     status:{
         type:String,
         enum:[
@@ -80,10 +110,27 @@ const loanSchema=new mongoose.Schema({
     rejectedDate:{
         type:Date
     },
+    disbursedBy:{
+        type:mongoose.Schema.Types.ObjectId,
+         ref:"User"
+    },
     disbursedDate:{
         type:Date
     },
-
+    nextDueDate:{
+        type:Date
+    },
+    lastRepaymentDate:{
+    type:Date
+    },
+    isOverdue: {
+    type: Boolean,
+    default: false
+    },
+    overdueCount: {
+    type: Number,
+    default: 0
+    },
     createdBy:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",

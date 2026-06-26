@@ -4,6 +4,8 @@ const Customer=require("../Models/customer");
 const Transaction=require("../Models/transactions");
 const Savings=require("../Models/savings");
 const debitLoanMoney=require("../Utils/depositLoan");
+const savings = require("../Models/savings");
+const  calculateAmortizationShedule=require("../Utils/calculateAmortizationShedule");
 
 exports.createLoan=async(loanData,user)=>{
 
@@ -69,8 +71,8 @@ exports.createLoan=async(loanData,user)=>{
             durationMonths,
             monthlyInstallment:installment,
             outstandingBalance:principalAmount,
-            createdBy:user,
-            
+            remainingInstallments:durationMonths,
+            createdBy:user,          
     });
     let transactionNumber
         const transactionsCount=await Transaction.countDocuments(transactionNumber);
@@ -163,7 +165,44 @@ exports.loanDistribution=async(loanNumber,user)=>{
                loanExist.disbursedBy = user._id;
                loanExist.disbursedDate = new Date(); 
                loanExist.status="active";
+               const shedule=calculateAmortizationShedule(loanExist.principalAmount,loanExist.interestRate,loanExist.durationMonths,loanExist.disbursedDate,loanExist.monthlyInstallment);
+               console.log(shedule); 
+               console.log(Array.isArray(shedule));
+               console.log(shedule.length);
+               loanExist.installments=shedule;
+               console.log(loanExist.installments.length);
                await loanExist.save();
+             const checkLoan = await Loan.findOne({
+      loanNumber: loanExist.loanNumber
+      });      
+               console.log(checkLoan.toObject());
+               console.log(checkLoan);
+               console.log(checkLoan.installments); 
                return(loanExist);
 
 };
+exports.repayLoan=async(loanNumber)=>{
+    const loanExist=await Loan.findOne({loanNumber});
+    if(loanExist.status!=="active"){
+        throw new Error("loan acount is not a active account");
+    }
+    const savingExist=await savings.findById(loanExist.savingAccount);
+    if(!savingExist){
+        throw new Error("saving account not found");
+    }
+    if(savingExist.isActive=false){
+        throw new Error("account is not a active account");
+    }
+    const balance=savingExist.balance;
+    if(balanc<=loanExist.monthlyInstallment){
+        loanExist.isOverdue=true;
+        loanExist.overdueCount += 1;
+        await loanExist.save();
+        return {
+             skippped:true,
+             reason:"insufficient balance"
+        };
+    }
+    
+
+}
