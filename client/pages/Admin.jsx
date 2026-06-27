@@ -213,8 +213,53 @@ const UsersSection = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-4 px-4 py-2 text-sm font-semibold text-gray-500 bg-gray-100/80">
+        <div className="grid grid-cols-4 px-4 py-2 text-sm font-semibold uppercase text-gray-500 bg-gray-100/80 rounded-xl mb-1">
+          <span>Username</span>
+          <span>Role</span>
+          <span>Status</span>
+          <span>Last active</span>
+        </div>
+        <div className="max-h-96 overflow-y-auto pr-1 space-y-1">
+          {filtered.length === 0 ? (
+            <p className="text-center text-sm text-gray-400 py-8">No user found</p>
+          ) : (
+            filtered.map((user, i) => (
+              <div key={i}
+                className={`grid grid-cols-4 px-4 py-3 rounded-xl items-center text-sm ${i % 2 === 0 ? "bg-amber-50/60" : "bg-stone-100/40"}`}
+              >
+                
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-full ${user.color} text-white flex items-center justify-center text-xs font-bold flex-shrink-0`}>
+                    {user.initials}
+                  </div>
+                  <span className="font-medium text-gray-800">{user.name}</span>
+                </div>
+                
+                <span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    user.role === "Manager" ? "bg-purple-100 text-purple-600" : "bg-sky-100 text-sky-600"
+                  }`}
+                  >
+                    {user.role}
+                  </span>
+                </span>
+                
+                <span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    user.status === "Active" ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"
+                  }`}
+                  >
+                    {user.status}
+                  </span>
+                </span>
 
+                <span className="text-xs text-gray-500 bg-amber-50 px-3 py-1 rounded-full w-fit">
+                  Last seen {user.time}
+                </span>
+
+              </div>
+            ))
+          )}
         </div>
 
       </div>
