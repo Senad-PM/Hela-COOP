@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { X, Menu, XIcon} from 'lucide-react'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom' 
 
 const Navbar = () => {
 
@@ -34,7 +34,7 @@ const Navbar = () => {
         setLoading(true)
         setError('')
         try {
-            const response = await axios.post('http://localhost:8000/api/auth/login', {
+            const response = await axios.post('http://localhost:8080/api/auth/login', {
                 email,
                 password
             })
@@ -44,6 +44,8 @@ const Navbar = () => {
             if (response.data.role == 'admin'){
                 localStorage.setItem('isAdmin', 'true')
                 navigate('/admin')
+                localStorage.setItem('accessToken', response.data.accessToken)
+                localStorage.setItem('refreshToken', response.data.refreshToken)
             }else{
                 alert('Login successful!')
             }

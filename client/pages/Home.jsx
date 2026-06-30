@@ -117,7 +117,7 @@ const Home = () => {
                 <div className='absolute top-10 left-4 sm:left-5 w-48 sm:w-72 h-48 sm:h-72 bg-lime-400/50 rounded-full blur-3xl animate-pulse'></div>
                 <div className='absolute bottom-5 right-3 sm:right-2 w-64 sm:w-96 h-64 sm:h-96 bg-lime-400/50 rounded-full blur-3xl animate-pulse delay-1000'></div>
                 <div className='absolute inset-0 m-20 rounded-3xl overflow-hidden'>
-                    <img src="/public/HeroImg.png" alt="" className='w-full h-full object-cover' />
+                    <img src="/HeroImg.png" alt="" className='w-full h-full object-cover' />
                     <div className='absolute inset-0 bg-black/40'></div>
                 </div>
                 <div className='relative text-white z-10 text-center'>
@@ -152,7 +152,7 @@ const Home = () => {
                         <div className='p-10'>
                             <div className='flex items-center justify-center'>
                                 <div>
-                                   <img src="/public/Images/Landing Page/1.png" alt="logo" className='w-37.5 h-33'/>
+                                   <img src="/Images/Landing Page/1.png" alt="logo" className='w-37.5 h-33'/>
                                 </div>
                             </div>
                             <div className='items-center justify-center text-center mt-5'>
@@ -165,7 +165,7 @@ const Home = () => {
                         <div className='p-10'>
                             <div className='flex items-center justify-center'>
                                 <div>
-                                   <img src="/public/Images/Landing Page/2..png" alt="logo" className='w-37.5 h-33'/>
+                                   <img src="/Images/Landing Page/2..png" alt="logo" className='w-37.5 h-33'/>
                                 </div>
                             </div>
                             <div className='items-center justify-center text-center mt-5'>
@@ -178,7 +178,7 @@ const Home = () => {
                         <div className='p-10'>
                             <div className='flex items-center justify-center'>
                                 <div>
-                                   <img src="/public/Images/Landing Page/3.png" alt="logo" className='w-37.5 h-33'/>
+                                   <img src="/Images/Landing Page/3.png" alt="logo" className='w-37.5 h-33'/>
                                 </div>
                             </div>
                             <div className='items-center justify-center text-center mt-5'>
@@ -192,7 +192,7 @@ const Home = () => {
                     <div className='bg-emerald-100 rounded-xl w-full h-40'>
                         <div className='flex items-center justify-center w-full h-20'>
                             <div>
-                                <img src="/public/Images/Landing Page/4.png" alt="" className='w-10 h-10'/>
+                                <img src="/Images/Landing Page/4.png" alt="" className='w-10 h-10'/>
                             </div>
                         </div>
                         <div className='items-center justify-center text-center'>
@@ -203,7 +203,7 @@ const Home = () => {
                     <div className='bg-emerald-100 rounded-xl w-full h-40'>
                         <div className='flex items-center justify-center w-full h-20'>
                             <div>
-                                <img src="/public/Images/Landing Page/5.png" alt=""  className='w-10 h-10'/>
+                                <img src="/Images/Landing Page/5.png" alt=""  className='w-10 h-10'/>
                             </div>
                         </div>
                         <div className='items-center justify-center text-center'>
@@ -214,7 +214,7 @@ const Home = () => {
                     <div className='bg-emerald-100 rounded-xl w-full h-40'>
                         <div className='flex items-center justify-center w-full h-20'>
                             <div>
-                                <img src="/public/Images/Landing Page/6.png" alt="" className='w-10 h-10'/>
+                                <img src="/Images/Landing Page/6.png" alt="" className='w-10 h-10'/>
                             </div>
                         </div>
                         <div className='items-center justify-center text-center'>
@@ -225,7 +225,7 @@ const Home = () => {
                     <div className='bg-emerald-100 rounded-xl w-full h-40'>
                         <div className='flex items-center justify-center w-full h-20'>
                             <div>
-                                <img src="/public/Images/Landing Page/7.png" alt="" className='w-10 h-10'/>
+                                <img src="/Images/Landing Page/7.png" alt="" className='w-10 h-10'/>
                             </div>
                         </div>
                         <div className='items-center justify-center text-center'>
@@ -254,13 +254,13 @@ const Home = () => {
                         <p className='text-lg mt-3'>Safe, Simple, and smart digital banking - all in one place.</p>
                     </div>
                     <div className='w-3/4 mt-10'>
-                        <img src="/public/Images/Landing Page/landing.png" alt="" className='w-full h-full object-cover rounded-3xl' />
+                        <img src="/Images/Landing Page/landing.png" alt="" className='w-full h-full object-cover rounded-3xl' />
                     </div>
                 </div>
                 <div className='space-y-5'>
                     <div className='flex items-center gap-5 border-b-2 border-b-gray-400'>
                         <div className='w-20 h-20 flex-shrink-0'>
-                            <img src="/public/Images/Landing Page/w1-removebg-preview.png" alt="" className='w-full h-full object-contain' />
+                            <img src="/Images/Landing Page/w1-removebg-preview.png" alt="" className='w-full h-full object-contain' />
                         </div>
                         <div className='pb-2'>
                             <h1 className='font-semibold text-2xl'>Member Ledger</h1>
@@ -269,7 +269,7 @@ const Home = () => {
                     </div>
                     <div className='flex items-center gap-5 border-b-2 border-b-gray-400'>
                         <div className='w-20 h-20 flex-shrink-0'>
-                            <img src="/public/Images/Landing Page/w2-removebg-preview.png" alt="" className='w-full h-full object-contain' />
+                            <img src="/Images/Landing Page/w2-removebg-preview.png" alt="" className='w-full h-full object-contain' />
                         </div>
                         <div className='pb-2'>
                             <h1 className='font-semibold text-2xl'>Savings Collection</h1>
@@ -278,7 +278,7 @@ const Home = () => {
                     </div>
                     <div className='flex items-center gap-5 border-b-2 border-b-gray-400'>
                         <div className='w-20 h-20 flex-shrink-0'>
-                            <img src="/public/Images/Landing Page/w3-removebg-preview.png" alt="" className='w-full h-full object-contain' />
+                            <img src="/Images/Landing Page/w3-removebg-preview.png" alt="" className='w-full h-full object-contain' />
                         </div>
                         <div className='pb-2'>
                             <h1 className='font-semibold text-2xl'>Loan Management</h1>
@@ -287,7 +287,7 @@ const Home = () => {
                     </div>
                     <div className='flex items-center gap-5 border-b-2 border-b-gray-400'>
                         <div className='w-20 h-20 flex-shrink-0'>
-                            <img src="/public/Images/Landing Page/w4-removebg-preview.png" alt="" className='w-full h-full object-contain' />
+                            <img src="/Images/Landing Page/w4-removebg-preview.png" alt="" className='w-full h-full object-contain' />
                         </div>
                         <div className='pb-2'>
                             <h1 className='font-semibold text-2xl'>Cashbook Reports</h1>
@@ -296,7 +296,7 @@ const Home = () => {
                     </div>
                     <div className='flex items-center gap-5 border-b-2 border-b-gray-400'>
                         <div className='w-20 h-20 flex-shrink-0'>
-                            <img src="/public/Images/Landing Page/w5-removebg-preview.png" alt="" className='w-full h-full object-contain' />
+                            <img src="/Images/Landing Page/w5-removebg-preview.png" alt="" className='w-full h-full object-contain' />
                         </div>
                         <div className='pb-2'>
                             <h1 className='font-semibold text-2xl'>Member Ledger</h1>
@@ -335,7 +335,7 @@ const Home = () => {
                         </div>
                     </div>
                     <div className='w-1/2'>
-                        <img src="/public/Images/Landing Page/w.7.png" alt="" className='rounded-3xl w-full h-full object-cover' />
+                        <img src="/Images/Landing Page/w.7.png" alt="" className='rounded-3xl w-full h-full object-cover' />
                     </div>
                 </div>
             </div>
@@ -365,7 +365,7 @@ const Home = () => {
         <section className='w-full bg-emerald-50'>
             <div className='pb-10 px-20 pt-20'>
                 <div className='relative'>
-                    <img src="/public/Images/Landing Page/footer.png" alt="" className='w-full h-[340px] object-cover rounded-2xl' />
+                    <img src="/Images/Landing Page/footer.png" alt="" className='w-full h-[340px] object-cover rounded-2xl' />
                     <div className='absolute inset-0 flex flex-col items-center justify-center text-center'>
                         <h1 className='text-5xl font-bold text-white'>Apply for a <br /> <span className='text-emerald-400'>Hela-COOP</span> account</h1>
                         <button className='mt-5 border-2 text-white font-semibold p-3 rounded-2xl items-center justify-center flex gap-3 mx-auto cursor-pointer hover:text-white hover:bg-emerald-500 transition-all duration-300 hover:scale-105'><UserPlus />Join Us as a Client</button>
