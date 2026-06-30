@@ -2,9 +2,182 @@ import {
   Bell, RotateCcw, Search, Users, MoveUp, User,
   CircleCheckBig, CircleSlash2,
   CreditCard, Calendar, AtSign, Shield, KeyRound, CheckCircle, X,
-  Settings, TriangleAlert
+  Settings, TriangleAlert, ChevronRight, ChevronLeft, Download, Trash2
 } from "lucide-react";
 import React, { useState } from "react";
+
+const HomeSection = () => {
+
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("All roles");
+
+  const users = [
+    { initials: "CK", name: "Chamod Janith",    role: "Manager", status: "Active",   time: "Today at 12:04", color: "bg-emerald-700" },
+    { initials: "BD", name: "Buddhika Dilini",  role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-violet-700"  },
+    { initials: "JK", name: "Janith Kushara",   role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-emerald-800" },
+    { initials: "BC", name: "Buddhika Chatura", role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-blue-700"    },
+    { initials: "CK", name: "Chatura Kumara",   role: "Manager", status: "Active",   time: "Today at 12:04", color: "bg-emerald-700" },
+    { initials: "PN", name: "Piumi Nikeshala",  role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-pink-700"    },
+    { initials: "CD", name: "Chatumi Dilhara",  role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-cyan-700"    },
+    { initials: "WA", name: "Wenu Adhikari",    role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-green-700"   },
+    { initials: "TK", name: "Tharushi Kaushika",role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-teal-700"    },
+    { initials: "PM", name: "Praveen Manahara", role: "Staff",   status: "Inactive", time: "Today at 12:04", color: "bg-gray-600"    },
+  ];
+
+  const filtered = users.filter((u) => {
+    const matchSearch = u.name.toLowerCase().includes(search.toLocaleLowerCase());
+    const matchRole = roleFilter === "All roles" || u.role.roleFilter;
+    return matchSearch && matchRole;
+  });
+
+  return (
+    <div className="flex flex-col gap-5 pt-4 px-2">
+
+      <div className="bg-white/90 border border-emerald-100 p-2 rounded-2xl flex items-center justify-between">
+        <h1>Welcome to Hela-COOP</h1>
+        <div className="flex items-center justify-center bg-emerald-100/80 p-2 rounded-2xl gap-2">
+          <input
+            type="search"
+            placeholder="Search here"
+            className="rounded-xl"
+          />
+          <Search size={18} className="cursor-pointer text-gray-500 hover:text-gray-700 transition" />
+        </div>
+        <div className="flex gap-5">
+          <Bell size={18} className="cursor-pointer text-gray-500 hover:text-gray-700 transition" />
+          <RotateCcw size={18} className="cursor-pointer text-gray-500 hover:text-gray-700 transition" />
+        </div>
+      </div>
+
+      <div className="flex gap-5">
+        <div className="bg-white w-full rounded-2xl space-y-5 p-4">
+          <div className="flex items-center justify-center gap-3 font-bold text-xl">
+            <Users /> <h1>Total Users</h1>
+          </div>
+          <div className="flex items-center justify-center font-bold text-3xl">
+            <h1>100</h1>
+          </div>
+          <div className="flex items-center justify-center gap-2 text-green-500 font-semibold">
+            <MoveUp size={16} /> <p>1 this month</p>
+          </div>
+        </div>
+
+        <div className="bg-white w-full rounded-2xl space-y-5 p-4">
+          <div className="flex items-center justify-center gap-3 font-bold text-xl">
+            <User /> <h1>Users</h1>
+          </div>
+          <div className="flex items-center justify-center font-bold text-3xl">
+            <h1>03</h1>
+          </div>
+          <div className="flex items-center justify-center gap-2 text-green-500 font-semibold">
+            <MoveUp size={16} /> <p>2 this month</p>
+          </div>
+        </div>
+
+        <div className="bg-white w-full rounded-2xl space-y-5 p-4">
+          <div className="flex items-center justify-center gap-3 font-bold text-xl">
+            <CircleCheckBig /> <h1>Active</h1>
+          </div>
+          <div className="flex items-center justify-center font-bold text-3xl">
+            <h1>102</h1>
+          </div>
+          <div className="flex items-center justify-center font-semibold text-gray-500">
+            <p>of 3 users</p>
+          </div>
+        </div>
+
+        <div className="bg-white w-full rounded-2xl space-y-5 p-4">
+          <div className="flex items-center justify-center gap-3 font-bold text-xl">
+            <CircleSlash2 /> <h1>Inactive</h1>
+          </div>
+          <div className="flex items-center justify-center font-bold text-3xl">
+            <h1>01</h1>
+          </div>
+          <div className="flex items-center justify-center font-semibold">
+            <p className="text-red-500">needs review</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white/90 rounded-2xl p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3 font-bold text-lg text-gray-700">
+            <User size={22} />
+            <h1>Managers & Staff</h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 border border-green-500 px-3 py-2 rounded-2xl bg-white">
+              <input type="search" placeholder="Search user..." 
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="bg-transparent outline-none text-sm w-40 text-gray-700 placeholder:text-gray-400"
+              />
+              <Search size={15} className="text-gray-400" />
+            </div>
+            <select value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="border border-gray-200 rounded-2xl px-4 py-2 text-sm outline-none bg-white text-gray-600"
+            >
+              <option>All roles</option>
+              <option>Manager</option>
+              <option>Staff</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-4 px-4 py-2 text-sm font-semibold uppercase text-gray-500 bg-gray-100/80 rounded-xl mb-1">
+          <span>Username</span>
+          <span>Role</span>
+          <span>Status</span>
+          <span>Last active</span>
+        </div>
+        <div className="max-h-96 overflow-y-auto pr-1 space-y-1">
+          {filtered.length === 0 ? (
+            <p className="text-center text-sm text-gray-400 py-8">No user found</p>
+          ) : (
+            filtered.map((user, i) => (
+              <div key={i}
+                className={`grid grid-cols-4 px-4 py-3 rounded-xl items-center text-sm ${i % 2 === 0 ? "bg-amber-50/60" : "bg-stone-100/40"}`}
+              >
+
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-full ${user.color} text-white flex items-center justify-center text-xs font-bold flex-shrink-0`}>
+                    {user.initials}
+                  </div>
+                  <span className="font-medium text-gray-800">{user.name}</span>
+                </div>
+
+                <span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    user.role === "Manager" ? "bg-purple-100 text-purple-600" : "bg-sky-100 text-sky-600"
+                  }`}
+                  >
+                    {user.role}
+                  </span>
+                </span>
+              
+                <span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    user.status === "Active" ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"
+                  }`}
+                  >
+                    {user.status}
+                  </span>
+                </span>
+                <span className="text-xs text-gray-500 bg-amber-50 px-3 py-1 rounded-full w-fit">
+                  Last seen {user.time}
+                </span>
+
+              </div>
+            ))
+          )}
+        </div>
+      
+      </div>
+
+    </div>
+  )
+};
 
 const UserRegistrationSection = () => {
   const [formData, setFormData] = useState({
@@ -54,7 +227,7 @@ const UserRegistrationSection = () => {
   );
 
   return (
-    <div className="flex flex-col gap-4 pt-4 max-w-4xl">
+    <div className="flex flex-col gap-4 pt-4 px-2 max-w-4xl">
 
       <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4">
         <h1 className="text-xl font-bold text-gray-800">User Registration</h1>
@@ -159,7 +332,7 @@ const UsersSection = () => {
     return matchSearch && matchRole;
   });
   return(
-    <div className="flex flex-col gap-4 pt-2 px-2">
+    <div className="flex flex-col gap-4 pt-4 px-2">
       
       <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4 flex items-start justify-between">
         <div>
@@ -437,8 +610,90 @@ const ActivityLogSection = () => {
               <option>Nimal_Shantha</option>
               <option>Amali_Jayawardhana</option>
             </select>
+            <select value={actionFilter} onChange={(e) => {setActionFilter(e.target.value); setCurrentPage(1);}}
+              className="border border-gray-200 rounded-xl px-3 py-1.5 text-xs outline-none bg-white text-gray-600"  
+            >
+              <option>All actions</option>
+              <option>Added manager</option>
+              <option>Approve loan</option>
+              <option>Added savings</option>
+              <option>Changed permission</option>
+              <option>Added staff</option>
+              <option>Added loan payment</option>
+              <option>Delete staff</option>
+            </select>
+            <select value={timeFilter} onChange={(e) => {setTimeFilter(e.target.value)}}
+              className="border border-gray-200 rounded-xl px-3 py-1.5 text-xs outline-none bg-white text-gray-600"  
+            >
+              <option>All time</option>
+              <option>Today</option>
+              <option>This week</option>
+              <option>This month</option>
+            </select>
           </div>
         </div>
+
+        <div className="space-y-1">
+          {paginated.map((logs, i) => (
+            <div key={i} className={`grid grid-cols-4 px-4 py-3 rounded-xl items-center text-sm ${i % 2 == 0 ? "bg-amber-50/60" : "bg-stone-100/40}"}`}>
+              <span className="text-xs text-gray-500">{logs.date}</span>
+              <div className="flex items-center gap-2">
+                <div className={`flex items-center justify-center w-7 h-7 rounded-full ${logs.color} text-white text-xs font-bold flex-shrink-0`}>
+                  {logs.initials}
+                </div>
+                <span className="text-xs font-medium text-gray-700">{logs.user}</span>
+              </div>
+              <span className={`text-xs font-semibold ${logs.actionColor}`}>{logs.action}</span>
+              <span className="tex-xs text-gray-500">{logs.ref}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between pt-1 flex-wrap gap-2">
+          <p className="text-xs text-gray-500">
+            Showing {Math.min((currentPage - 1) * rowsPerPage + 1, filtered.length)}–{Math.min(currentPage * rowsPerPage, filtered.length)} of {filtered.length} entries
+          </p>
+          <div className="flex items-center gap-1">
+            <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="flex items-center justify-center w-7 h-7 rounded-lg border border-gray-200 text-xs disabled:opacity-40 hover:bg-gray-50"  
+            >
+              <ChevronLeft />
+            </button>
+            {Array.from({length: totalPages}, (_, i) => (
+              <button key={i} onChange={() => setCurrentPage(i + 1)}
+                className={`flex items-center justify-center w-7 h-7 rounded-lg border text-xs transition ${
+                  currentPage === i + 1 ? "bg-[#0d1f1a] text-white border-[#0d1f1a]" : "border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}  
+              className="flex items-center justify-center w-7 h-7 rounded-lg border border-gray-200 text-xs disabled:opacity-40 hover:bg-gray-50"
+            >
+              <ChevronRight />
+            </button>
+            <button className="flex items-center gap-1 ml-2 border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-600 hover:text-gray-50 hover:bg-black transition">
+              <Download /> CSV
+            </button>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between bg-red-50 border border-red-200 rounded-2xl px-5 py-3 mt-1">
+          <div className="flex items-center gap-2">
+            <TriangleAlert size="14" className="text-red-500" />
+            <div>
+              <p className="text-xs font-semibold text-red-600">Danger zone</p>
+              <p className="text-xs text-red-400">Clear all logs - cannot be undone</p>
+            </div>
+          </div>
+          <button className="flex items-center gap-1 text-xs text-red-500 border border-red-300 px-3 py-1.5 rounded-xl hover:bg-red-100 transition">
+            <Trash2 /> Clear all logs
+          </button>
+        </div>
+
       </div>
 
     </div>
@@ -449,96 +704,11 @@ const ActivityLogSection = () => {
 const Admin = () => {
   const [activeSection, setActiveSection] = useState("home");
 
-const HomeSection = () => (
-  <div className="flex flex-col gap-5 pt-10 px-5">
-    <div className="flex gap-5">
-      <div className="bg-white w-full rounded-2xl space-y-5 p-4">
-        <div className="flex items-center justify-center gap-3 font-bold text-xl">
-          <Users /> <h1>Total Users</h1>
-        </div>
-        <div className="flex items-center justify-center font-bold text-3xl">
-          <h1>100</h1>
-        </div>
-        <div className="flex items-center justify-center gap-2 text-green-500 font-semibold">
-          <MoveUp size={16} /> <p>1 this month</p>
-        </div>
-      </div>
-
-      <div className="bg-white w-full rounded-2xl space-y-5 p-4">
-        <div className="flex items-center justify-center gap-3 font-bold text-xl">
-          <User /> <h1>Users</h1>
-        </div>
-        <div className="flex items-center justify-center font-bold text-3xl">
-          <h1>03</h1>
-        </div>
-        <div className="flex items-center justify-center gap-2 text-green-500 font-semibold">
-          <MoveUp size={16} /> <p>2 this month</p>
-        </div>
-      </div>
-
-      <div className="bg-white w-full rounded-2xl space-y-5 p-4">
-        <div className="flex items-center justify-center gap-3 font-bold text-xl">
-          <CircleCheckBig /> <h1>Active</h1>
-        </div>
-        <div className="flex items-center justify-center font-bold text-3xl">
-          <h1>102</h1>
-        </div>
-        <div className="flex items-center justify-center font-semibold text-gray-500">
-          <p>of 3 users</p>
-        </div>
-      </div>
-
-      <div className="bg-white w-full rounded-2xl space-y-5 p-4">
-        <div className="flex items-center justify-center gap-3 font-bold text-xl">
-          <CircleSlash2 /> <h1>Inactive</h1>
-        </div>
-        <div className="flex items-center justify-center font-bold text-3xl">
-          <h1>01</h1>
-        </div>
-        <div className="flex items-center justify-center font-semibold">
-          <p className="text-red-500">needs review</p>
-        </div>
-      </div>
-    </div>
-
-    <div className="bg-white/90 rounded-2xl p-4">
-
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3 font-bold text-lg">
-          <Users />
-          <h1>Staff &amp; Managers</h1>
-        </div>
-        <div className="flex items-center gap-2 bg-emerald-100/80 px-3 py-2 rounded-2xl">
-          <input
-            type="search"
-            placeholder="Search here"
-            className="bg-transparent outline-none text-sm"
-          />
-          <Search size={16} />
-        </div>
-        <select className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none">
-          <option>Select role</option>
-          <option>Manager</option>
-          <option>Staff</option>
-        </select>
-      </div>
-
-      <div className="grid grid-cols-4 rounded-xl px-5 py-2 font-semibold text-white bg-[#0d1f1a] mb-2">
-        <span>USERNAME</span>
-        <span>ROLE</span>
-        <span>STATUS</span>
-        <span>LAST ACTIVE</span>
-      </div>
-    </div>
-
-  </div>
-);
-
   return (
     <>
-      <section className="w-full min-h-screen bg-[#0d1f1a] p-10">
-        <div className="flex items-start">
-          <div className="w-1/3 text-[#10b981]">
+      <section className="w-full h-screen bg-[#0d1f1a] p-10 overflow-hidden">
+        <div className="flex h-full gap-6">
+          <div className="flex flex-col w-1/3 text-[#10b981]">
             <h1
               className="text-4xl font-bold"
               style={{ fontFamily: '"Antonio", serif' }}
@@ -585,31 +755,13 @@ const HomeSection = () => (
               </div>
             </div>
           </div>
-          <div className="w-2/3 h-full rounded-2xl bg-emerald-900 p-5">
-          {activeSection === 'home' && (
-            <>
-              <div className="bg-white/90 border border-emerald-100 p-2 rounded-2xl flex items-center justify-between">
-                <h1>Welcome to Hela-COOP</h1>
-                <div className="flex items-center justify-center bg-emerald-100/80 p-2 rounded-2xl gap-2">
-                  <input
-                    type="search"
-                    placeholder="Search here"
-                    className="rounded-xl"
-                  />
-                  <Search />
-                </div>
-                <div className="flex gap-5">
-                  <Bell />
-                  <RotateCcw />
-                </div>
-              </div>
-              <HomeSection />
-            </>
-          )}
+          <div className="w-2/3 h-full rounded-2xl bg-emerald-900 p-5 overflow-y-auto">
+    
           {activeSection === "userRegistration" && <UserRegistrationSection />}
           {activeSection === "users" && <UsersSection />}
           {activeSection === "setting" && <SettingSection />}
           {activeSection === "activity" && <ActivityLogSection />}
+          {activeSection === "home" && <HomeSection />}
           </div>
         </div>
       </section>
