@@ -2,7 +2,7 @@ import {
   Bell, RotateCcw, Search, Users, MoveUp, User,
   CircleCheckBig, CircleSlash2,
   CreditCard, Calendar, AtSign, Shield, KeyRound, CheckCircle, X,
-  Settings
+  Settings, TriangleAlert
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -56,15 +56,11 @@ const UserRegistrationSection = () => {
   return (
     <div className="flex flex-col gap-4 pt-4 max-w-4xl">
 
-      {/* Page header */}
       <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4">
         <h1 className="text-xl font-bold text-gray-800">User Registration</h1>
         <p className="text-sm text-gray-500 mt-0.5">Create a new Staff or Manager account</p>
       </div>
-
-      {/* ── Personal Information ── */}
       <div className="bg-white rounded-2xl border border-indigo-100 overflow-hidden">
-        {/* Section header */}
         <div className="flex items-center gap-3 px-6 py-4 border-b border-indigo-100 bg-indigo-50/40">
           <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
             <User size={16} className="text-indigo-500" />
@@ -74,8 +70,6 @@ const UserRegistrationSection = () => {
             <p className="text-xs text-indigo-400">Basic identity details for the user account</p>
           </div>
         </div>
-
-        {/* Fields */}
         <div className="grid grid-cols-2 gap-5 px-6 py-5">
           <Field icon={User}     label="First name"  name="firstName" placeholder="Ex: Kamal" />
           <Field icon={User}     label="Last name"   name="lastName"  placeholder="Ex: Perera" />
@@ -84,9 +78,7 @@ const UserRegistrationSection = () => {
         </div>
       </div>
 
-      {/* ── Account Credentials ── */}
       <div className="bg-white rounded-2xl border border-purple-100 overflow-hidden">
-        {/* Section header */}
         <div className="flex items-center gap-3 px-6 py-4 border-b border-purple-100 bg-purple-50/40">
           <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
             <KeyRound size={16} className="text-purple-500" />
@@ -96,12 +88,8 @@ const UserRegistrationSection = () => {
             <p className="text-xs text-purple-400">Login username and password</p>
           </div>
         </div>
-
-        {/* Fields */}
         <div className="grid grid-cols-2 gap-5 px-6 py-5">
           <Field icon={AtSign}    label="User Name"        name="username"        placeholder="kamal_p" />
-
-          {/* Role dropdown — custom to match design */}
           <div className="flex flex-col gap-1">
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
               <Shield size={15} className="text-indigo-500" />
@@ -118,13 +106,11 @@ const UserRegistrationSection = () => {
               <option value="Staff">Staff</option>
             </select>
           </div>
-
           <Field icon={KeyRound}     label="Password"         name="password"        type="password" placeholder="Ex: ************" />
           <Field icon={CheckCircle}  label="Confirm Password" name="confirmPassword"  type="password" placeholder="Ex: ************" />
         </div>
       </div>
 
-      {/* ── Action buttons ── */}
       <div className="flex justify-end gap-3 pb-4">
         <button
           onClick={() => handleReset()}
@@ -175,7 +161,6 @@ const UsersSection = () => {
   return(
     <div className="flex flex-col gap-4 pt-2 px-2">
       
-      {/* Page header */}
       <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4 flex items-start justify-between">
         <div>
           <h1 className="text-xl font-bold text-gray-800">User Registration</h1>
@@ -187,7 +172,6 @@ const UsersSection = () => {
         </div>
       </div>
 
-      {/* Table header */}
       <div className="bg-white/90 rounded-2xl p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3 font-bold text-lg text-gray-700">
@@ -290,7 +274,7 @@ const SettingSection = () => {
   const SettingField = ({label, name, placeholder, type = "text"}) => (
     <div className="flex flex-col gap-1">
       <label className="text-xs text-gray-500 font-medium"> {label} </label>
-      <input type={text} 
+      <input type={type} 
         name={name}
         value={settings[name]}
         onChange={handleChange}
@@ -300,7 +284,7 @@ const SettingSection = () => {
     </div>
   );
 
-  const SelectSetting =({ label, name, option }) => (
+  const SettingSelect =({ label, name, options }) => (
     <div className="flex flex-col gap-1">
       <label className="text-xs text-gray-500 font-medium"> {label} </label>
       <select name={name}
@@ -308,7 +292,7 @@ const SettingSection = () => {
         onChange={handleChange}
         className="border-2 border-green-400 rounded-2xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-green-100 text-gray-400 bg-white transition"
       >
-        {option.map((o) => <option key={o}>{o}</option>)}
+        {options.map((o) => <option key={o}>{o}</option>)}
       </select>
     </div>
   );
@@ -316,7 +300,6 @@ const SettingSection = () => {
   return(
     <div className="flex flex-col gap-4 pt-4 px-2">
       
-      {/* Page header */}
       <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4 flex items-start justify-between">
         <div>
           <h1 className="text-xl font-bold text-gray-800">Hela-COOP Setting</h1>
@@ -339,11 +322,57 @@ const SettingSection = () => {
           <div className="grid grid-cols-2 gap-5 px-6 py-5">
             <SettingField label="Cooperative Name" name="cooperativeName" placeholder="Ex: Hela-COOP Kandy branch" />
             <SettingField label="Cooperative Code" name="cooperativeCode" placeholder="Ex: HCK001" />
-            <SettingField label="Fiscal Year Start" name="fiscalYearStart" 
+            <SettingSelect label="Fiscal Year Start" name="fiscalYearStart" 
               options = {["January","February","March","April","May","June","July","August","September","October","November","December"]}
             />
             <SettingField label="Default Currency" name="defaultCurrency" placeholder="LKR - Sri Lankan Rupee" />
           </div>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="flex items-center gap-3 px-6 py-3 border-b border-gray-100 bg-blue-50/40">
+            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-blue-100">
+              <AtSign size={14} className="text-blue-500" />
+            </div>
+            <p className="text-sm font-semibold text-gray-800">Contact Information</p>
+          </div>
+          <div className="grid grid-cols-2 gap-5 px-6 py-5">
+            <SettingField label="Contact Email" name="contactEmail" placeholder="admin01@gmail.com" type="email" />
+            <SettingField label="Contact Phone" name="contactPhone" placeholder="+94 xx xxx xxxx" />
+            <div className="col-span-2 flex flex-col gap-1">
+              <label className="text-xs text-gray-500 font-medium">Address</label>
+              <input name="address"
+                value={settings.address}
+                onChange={handleChange}
+                placeholder="Ex: lane 01, Kandy"
+                className="border-2 border-green-400 rounded-2xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-green-100 placeholder:text-gray-300 transition bg-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="flex items-center gap-3 px-6 py-3 border-b border-gray-100 bg-blue-50/40">
+            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-blue-100">
+              <Settings size={14} className="text-blue-500" />
+            </div>
+            <p className="text-sm font-semibold text-gray-800">System Preferences</p>
+          </div>
+          <div className="grid grid-cols-2 gap-5 px-6 py-5">
+            <SettingSelect label="Date Format" name="dateFormat" options={["mm/dd/yyyy", "dd/mm/yyyy", "yyyy/mm/dd"]} />
+            <SettingSelect label="Default Language" name="defaultLanguage" options={["English", "Sinhala", "Tamil"]} />
+            <SettingSelect label="Items Per Page" name="itemsPerPage" options={["10", "25" ,"50", "100"]} />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 bg-amber-50 boder border-amber-200 rounded-2xl px-5 py-3">
+          <TriangleAlert size="14" className="text-amber-500" />
+          <p className="text-xs text-amber-700">Bank details and payment gateways are not included - HelaCOOP does not support bank transfers.</p>
+        </div>
+        <div className="flex justify-end pb-4">
+          <button className="px-6 py-2.5 rounded-2xl bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#245a41] transition">
+            Save Setting
+          </button>
         </div>
       </div>
 
@@ -351,9 +380,71 @@ const SettingSection = () => {
   )
 };
 
-const activityLogSection = () => (
-  <div></div>
-);
+const ActivityLogSection = () => {
+  
+  const[search, setSearch] = useState("");
+  const[userFilter, setUserFilter] = useState("All users");
+  const[actionFilter, setActionFilter] = useState("All actions");
+  const[timeFilter, setTimeFilter] = useState("All time");
+  const[currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 7;
+
+  const logs = [
+    { date: "2024-05-13 10:30", initials: "KA", color: "bg-emerald-700", user: "admin_kamal", action: "Added manager", actionColor: "text-emerald-600", ref: "nimal_s"  },
+    { date: "2024-05-13 09:15", initials: "NS", color: "bg-violet-700", user: "Nimal_Shantha", action: "Approve loan", actionColor: "text-blue-600", ref: "L - 001"  },
+    { date: "2024-05-13 08:45", initials: "AJ", color: "bg-amber-600", user: "Amali_Jayawardhana", action: "Added savings", actionColor: "text-emerald-600", ref: "M - 001"  },
+    { date: "2024-05-12 16:30", initials: "KA", color: "bg-emerald-700", user: "admin_kamal", action: "Changed Permission", actionColor: "text-orange-500", ref: "amali_j"  },
+    { date: "2024-05-12 14:20", initials: "KA", color: "bg-emerald-700", user: "admin_kamal", action: "Added staff", actionColor: "text-emerald-600", ref: "S - 001"  },
+    { date: "2024-05-12 11:05", initials: "AJ", color: "bg-amber-600", user: "Amali_Jayawardhana", action: "Added loan payment", actionColor: "text-blue-600", ref: "nimal_s"  },
+    { date: "2024-05-11 09:00", initials: "KA", color: "bg-emerald-700", user: "admin_kamal", action: "Delete staff", actionColor: "text-red-500", ref: "sarath_k" },
+  ];
+
+  const filtered = logs.filter((l) => {
+    const matchSearch = l.user.toLowerCase().includes(search.toLowerCase()) || l.action.toLowerCase().includes(search.toLowerCase());
+    const matchUser = userFilter === "All users" || l.user === userFilter;
+    const matchAction = actionFilter === "All actions" || l.action === actionFilter;
+    return matchSearch && matchUser && matchAction;
+  });
+
+  const totalPages = Math.ceil(filtered.length / rowsPerPage);
+  const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+  return (
+    <div className="flex flex-col gap-4 pt-4 px-2">
+
+      <div className="bg-[#f5f0e8] flex items-start justify-between rounded-2xl px-6 py-4">
+        <div>
+          <h1 className="text-xl font-bold text-gray-800">Activity Log</h1>
+          <p className="text-sm text-gray-500 mt-0.5">Full System Activity History</p>
+        </div>
+        <div className="flex items-center gap-3 text-gray-500 pt-1">
+          <Search size={14} className="cursor-pointer hover:text-gray-700 transition" />
+          <Settings size={14} className="cursor-pointer hover:text-gray-700 transition" />
+        </div>
+      </div>
+
+      <div className="bg-white/90 rounded-2xl p-5 flex flex-col gap-3">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-2 font-bold text-gray-800">
+            <span>🗒</span> System activity log
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <select value={userFilter} onChange={(e) => {userFilter(e.target.value); setCurrentPage(1);}}
+              className="border border-gray-200 rounded-xl px-3 py-1.5 text-xs outline-none bg-white text-gray-600"  
+            >
+              <option>All users</option>
+              <option>admin_kamal</option>
+              <option>Nimal_Shantha</option>
+              <option>Amali_Jayawardhana</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  );
+
+};
 
 const Admin = () => {
   const [activeSection, setActiveSection] = useState("home");
@@ -518,6 +609,7 @@ const HomeSection = () => (
           {activeSection === "userRegistration" && <UserRegistrationSection />}
           {activeSection === "users" && <UsersSection />}
           {activeSection === "setting" && <SettingSection />}
+          {activeSection === "activity" && <ActivityLogSection />}
           </div>
         </div>
       </section>
