@@ -166,18 +166,19 @@ exports.loanDistribution=async(loanNumber,user)=>{
                loanExist.disbursedDate = new Date(); 
                loanExist.status="active";
                const shedule=calculateAmortizationShedule(loanExist.principalAmount,loanExist.interestRate,loanExist.durationMonths,loanExist.disbursedDate,loanExist.monthlyInstallment);
-               console.log(shedule); 
-               console.log(Array.isArray(shedule));
-               console.log(shedule.length);
+              // console.log(shedule); 
+              // console.log(Array.isArray(shedule));
+              // console.log(shedule.length);
                loanExist.installments=shedule;
-               console.log(loanExist.installments.length);
+              // console.log(loanExist.installments.length);
+               loanExist.nextDueDate=shedule[0].dueDate;
                await loanExist.save();
-             const checkLoan = await Loan.findOne({
+        /*     const checkLoan = await Loan.findOne({
       loanNumber: loanExist.loanNumber
       });      
                console.log(checkLoan.toObject());
                console.log(checkLoan);
-               console.log(checkLoan.installments); 
+               console.log(checkLoan.installments); */
                return(loanExist);
 
 };
