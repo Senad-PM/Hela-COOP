@@ -2,7 +2,11 @@ import {
   Bell, RotateCcw, Search, Users, MoveUp, User,
   CircleCheckBig, CircleSlash2,
   CreditCard, Calendar, AtSign, Shield, KeyRound, CheckCircle, X,
-  Settings, TriangleAlert, ChevronRight, ChevronLeft, Download, Trash2
+  Settings, TriangleAlert, ChevronRight, ChevronLeft, Download, Trash2,
+  Home,
+  UserPlus,
+  UserRound,
+  ClipboardList
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -244,10 +248,10 @@ const UserRegistrationSection = () => {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-5 px-6 py-5">
-          <Field icon={User}     label="First name"  name="firstName" placeholder="Ex: Kamal" />
-          <Field icon={User}     label="Last name"   name="lastName"  placeholder="Ex: Perera" />
-          <Field icon={CreditCard} label="NIC number" name="nic"      placeholder="Ex: 123456789V" />
-          <Field icon={Calendar} label="Date of birth" name="dob"     type="date" placeholder="mm/dd/yyyy" />
+          <Field icon={User} label="First name" name="firstName" placeholder="Ex: Kamal" />
+          <Field icon={User} label="Last name" name="lastName"  placeholder="Ex: Perera" />
+          <Field icon={CreditCard} label="NIC number" name="nic" placeholder="Ex: 123456789V" />
+          <Field icon={Calendar} label="Date of birth" name="dob" type="date" placeholder="mm/dd/yyyy" />
         </div>
       </div>
 
@@ -279,8 +283,8 @@ const UserRegistrationSection = () => {
               <option value="Staff">Staff</option>
             </select>
           </div>
-          <Field icon={KeyRound}     label="Password"         name="password"        type="password" placeholder="Ex: ************" />
-          <Field icon={CheckCircle}  label="Confirm Password" name="confirmPassword"  type="password" placeholder="Ex: ************" />
+          <Field icon={KeyRound} abel="Password" name="password" type="password" placeholder="Ex: ************" />
+          <Field icon={CheckCircle} label="Confirm Password" name="confirmPassword" type="password" placeholder="Ex: ************" />
         </div>
       </div>
 
@@ -314,16 +318,16 @@ const UsersSection = () => {
   const [roleFilter, setRoleFilter] = useState("All roles");
 
   const users = [
-    { initials: "CK", name: "Chamod Janith",    role: "Manager", status: "Active",   time: "Today at 12:04", color: "bg-emerald-700" },
-    { initials: "BD", name: "Buddhika Dilini",  role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-violet-700"  },
-    { initials: "JK", name: "Janith Kushara",   role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-emerald-800" },
-    { initials: "BC", name: "Buddhika Chatura", role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-blue-700"    },
-    { initials: "CK", name: "Chatura Kumara",   role: "Manager", status: "Active",   time: "Today at 12:04", color: "bg-emerald-700" },
-    { initials: "PN", name: "Piumi Nikeshala",  role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-pink-700"    },
-    { initials: "CD", name: "Chatumi Dilhara",  role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-cyan-700"    },
-    { initials: "WA", name: "Wenu Adhikari",    role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-green-700"   },
-    { initials: "TK", name: "Tharushi Kaushika",role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-teal-700"    },
-    { initials: "PM", name: "Praveen Manahara", role: "Staff",   status: "Inactive", time: "Today at 12:04", color: "bg-gray-600"    },
+    { initials: "CK", name: "Chamod Janith", role: "Manager", status: "Active", time: "Today at 12:04", color: "bg-emerald-700" },
+    { initials: "BD", name: "Buddhika Dilini", role: "Staff",status: "Active", time: "Today at 12:04", color: "bg-violet-700" },
+    { initials: "JK", name: "Janith Kushara", role: "Staff", status: "Active", time: "Today at 12:04", color: "bg-emerald-800" },
+    { initials: "BC", name: "Buddhika Chatura", role: "Staff", status: "Active", time: "Today at 12:04", color: "bg-blue-700" },
+    { initials: "CK", name: "Chatura Kumara", role: "Manager", status: "Active", time: "Today at 12:04", color: "bg-emerald-700" },
+    { initials: "PN", name: "Piumi Nikeshala", role: "Staff", status: "Active", time: "Today at 12:04", color: "bg-pink-700" },
+    { initials: "CD", name: "Chatumi Dilhara", role: "Staff", status: "Active", time: "Today at 12:04", color: "bg-cyan-700" },
+    { initials: "WA", name: "Wenu Adhikari", role: "Staff", status: "Active", time: "Today at 12:04", color: "bg-green-700" },
+    { initials: "TK", name: "Tharushi Kaushika", role: "Staff", status: "Active", time: "Today at 12:04", color: "bg-teal-700" },
+    { initials: "PM", name: "Praveen Manahara", role: "Staff", status: "Inactive", time: "Today at 12:04", color: "bg-gray-600" },
   ];
 
   const filtered = users.filter((u) => {
@@ -602,7 +606,7 @@ const ActivityLogSection = () => {
             <span>🗒</span> System activity log
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <select value={userFilter} onChange={(e) => {userFilter(e.target.value); setCurrentPage(1);}}
+            <select value={userFilter} onChange={(e) => {setUserFilter(e.target.value); setCurrentPage(1);}}
               className="border border-gray-200 rounded-xl px-3 py-1.5 text-xs outline-none bg-white text-gray-600"  
             >
               <option>All users</option>
@@ -704,6 +708,19 @@ const ActivityLogSection = () => {
 const Admin = () => {
   const [activeSection, setActiveSection] = useState("home");
 
+  const NavItem = ({label, section, activeSection, onClick}) => {
+    const isActive = activeSection === section;
+    return (
+      <div onClick={() => onClick(section)}
+        className={`cursor-pointer rounded-2xl w-2/3 p-3 transition-all duration-300 ${
+          isActive ? "bg-emerald-100 text-black scale-105" : "hover:bg-emerald-100 hover:text-black hover:scale-105"
+        }`}
+      >
+        <h1>{label}</h1>
+      </div>
+    )
+  }
+
   return (
     <>
       <section className="w-full h-screen bg-[#0d1f1a] p-10 overflow-hidden">
@@ -718,41 +735,11 @@ const Admin = () => {
             <h2 className="text-lg font-semibold">#Admin</h2>
             <hr className="mr-10 mt-5 w-2/3 border-t-2 text-gray-400" />
             <div className="mt-20 text-2xl font-semibold space-y-5">
-              <div
-                onClick={() => setActiveSection("home")}
-                className="cursor-pointer rounded-2xl w-2/3 hover:bg-emerald-100 hover:text-black hover:scale-105 transition-all duration-400 p-3"
-              >
-                <div></div>
-                <h1>Home</h1>
-              </div>
-              <div
-                onClick={() => setActiveSection("userRegistration")}
-                className="cursor-pointer rounded-2xl w-2/3 hover:bg-emerald-100 hover:text-black hover:scale-105 transition-all duration-400 p-3"
-              >
-                <div></div>
-                <h1>User Registration</h1>
-              </div>
-              <div
-                onClick={() => setActiveSection("users")}
-                className="cursor-pointer rounded-2xl w-2/3 hover:bg-emerald-100 hover:text-black hover:scale-105 transition-all duration-400 p-3"
-              >
-                <div></div>
-                <h1>Users</h1>
-              </div>
-              <div
-                onClick={() => setActiveSection("setting")}
-                className="cursor-pointer rounded-2xl w-2/3 hover:bg-emerald-100 hover:text-black hover:scale-105 transition-all duration-400 p-3"
-              >
-                <div></div>
-                <h1>Setting</h1>
-              </div>
-              <div
-                onClick={() => setActiveSection("activity")}
-                className="cursor-pointer rounded-2xl w-2/3 hover:bg-emerald-100 hover:text-black hover:scale-105 transition-all duration-400 p-3"
-              >
-                <div></div>
-                <h1>Activity Log</h1>
-              </div>
+              <NavItem label="Home" icon={Home} section="home" activeSection={activeSection} onClick={setActiveSection} />
+              <NavItem label="User Registration" icon={UserPlus} section="userRegistration" activeSection={activeSection} onClick={setActiveSection} />
+              <NavItem label="Users" icon={UserRound} section="users" activeSection={activeSection} onClick={setActiveSection} />
+              <NavItem label="Setting" icon={Settings} section="setting" activeSection={activeSection} onClick={setActiveSection} />
+              <NavItem label="Activity Log" icon={ClipboardList} section="activity" activeSection={activeSection} onClick={setActiveSection} />
             </div>
           </div>
           <div className="w-2/3 h-full rounded-2xl bg-emerald-900 p-5 overflow-y-auto">
