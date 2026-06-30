@@ -1,7 +1,8 @@
 import {
   Bell, RotateCcw, Search, Users, MoveUp, User,
   CircleCheckBig, CircleSlash2,
-  CreditCard, Calendar, AtSign, Shield, KeyRound, CheckCircle, X
+  CreditCard, Calendar, AtSign, Shield, KeyRound, CheckCircle, X,
+  Settings
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -268,9 +269,87 @@ const UsersSection = () => {
   )
 };
 
-const SettingSection = () => (
-  <div></div>
-);
+const SettingSection = () => {
+  const [settings, setSettings] = useState({
+    cooperativeName: "",
+    cooperativeCode: "",
+    fiscalYearStart: "January",
+    defaultCurrency: "LKR - Sri Lankan Rupee",
+    contactEmail: "",
+    contactPhone: "",
+    address: "",
+    dateFormat: "mm/dd/yyyy",
+    defaultLanguage: "English",
+    itemsPerPage: "10"
+  });
+
+  const handleChange = (e) => {
+    setSettings({ ...settings, [e.target.name]: e.target.value });
+  };
+
+  const SettingField = ({label, name, placeholder, type = "text"}) => (
+    <div className="flex flex-col gap-1">
+      <label className="text-xs text-gray-500 font-medium"> {label} </label>
+      <input type={text} 
+        name={name}
+        value={settings[name]}
+        onChange={handleChange}
+        placeholder={placeholder}
+        className="border-2 border-green-400 rounded-2xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-green-100 placeholder:text-gray-400 bg-white transition"
+      />
+    </div>
+  );
+
+  const SelectSetting =({ label, name, option }) => (
+    <div className="flex flex-col gap-1">
+      <label className="text-xs text-gray-500 font-medium"> {label} </label>
+      <select name={name}
+        value={settings[name]}
+        onChange={handleChange}
+        className="border-2 border-green-400 rounded-2xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-green-100 text-gray-400 bg-white transition"
+      >
+        {option.map((o) => <option key={o}>{o}</option>)}
+      </select>
+    </div>
+  );
+
+  return(
+    <div className="flex flex-col gap-4 pt-4 px-2">
+      
+      {/* Page header */}
+      <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4 flex items-start justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-gray-800">Hela-COOP Setting</h1>
+          <p className="text-sm text-gray-500 mt-0.5">General, contact system preferences</p>
+        </div>
+        <div className="flex items-center gap-3 text-gray-500 pt-1">
+          <Search size={18} className="cursor-pointer hover:text-gray-700 transition"/>
+          <Settings size={18} className="cursor-pointer hover:text-gray-700 transition" />
+        </div>
+      </div>
+
+      <div className="max-h-[calc(100vh-220px)] overflow-y-auto space-y-4 pr-1">
+        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="flex items-center gap-3 px-6 py-3 border-b border-gray-100 bg-orange-50/40">
+            <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center">
+              <Settings size={14} className="text-orange-500" />
+            </div>
+            <p className="text-sm font-semibold text-gray-800">General setting</p>
+          </div>
+          <div className="grid grid-cols-2 gap-5 px-6 py-5">
+            <SettingField label="Cooperative Name" name="cooperativeName" placeholder="Ex: Hela-COOP Kandy branch" />
+            <SettingField label="Cooperative Code" name="cooperativeCode" placeholder="Ex: HCK001" />
+            <SettingField label="Fiscal Year Start" name="fiscalYearStart" 
+              options = {["January","February","March","April","May","June","July","August","September","October","November","December"]}
+            />
+            <SettingField label="Default Currency" name="defaultCurrency" placeholder="LKR - Sri Lankan Rupee" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  )
+};
 
 const activityLogSection = () => (
   <div></div>
@@ -438,6 +517,7 @@ const HomeSection = () => (
           )}
           {activeSection === "userRegistration" && <UserRegistrationSection />}
           {activeSection === "users" && <UsersSection />}
+          {activeSection === "setting" && <SettingSection />}
           </div>
         </div>
       </section>
