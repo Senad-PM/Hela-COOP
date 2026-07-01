@@ -170,6 +170,8 @@ exports.loanDistribution=async(loanNumber,user)=>{
               // console.log(Array.isArray(shedule));
               // console.log(shedule.length);
                loanExist.installments=shedule;
+               console.log(shedule[0]);
+               console.log(shedule[0].dueDate);
               // console.log(loanExist.installments.length);
                loanExist.nextDueDate=shedule[0].dueDate;
                await loanExist.save();
@@ -183,19 +185,68 @@ exports.loanDistribution=async(loanNumber,user)=>{
 
 };
 exports.repayLoan=async(loanNumber)=>{
+    console.log("welcome");
     const loanExist=await Loan.findOne({loanNumber});
+    if(!loanExist){
+        throw new Error("loan not found");
+    }
     if(loanExist.status!=="active"){
         throw new Error("loan acount is not a active account");
     }
+    const pendingInstallment = loanExist.installments.find(
+            installment => installment.status === "pending"
+    );
+    if(!pendingInstallment){
+        return{skipped:true}
+    };
     const savingExist=await savings.findById(loanExist.savingAccount);
     if(!savingExist){
         throw new Error("saving account not found");
     }
-    if(savingExist.isActive=false){
+    if(savingExist.isActive===false){
         throw new Error("account is not a active account");
     }
-    const balance=savingExist.balance;
-    if(balanc<=loanExist.monthlyInstallment){
+    let balance=savingExist.balance;
+    if(balance>=loanExist.monthlyInstallment){
+       balance=balance-loanExist.monthlyInstallment;
+       savingExist.balance=balance;
+       pendingInstallment.status="paid";
+       loanExist.remainingInstallments--;
+       pendingInstallment.paidDate=new Date();
+       loanExist.outstandingBalance=pendingInstallment.remainingBalance;
+       if(loanExist.remainingInstallments===0){
+       const nextPending = loanExist.installments.find(
+            installment => installment.status === "pending"
+        );
+        loanExist.nextDueDate=nextPending.dueDate;
+       }
+         let transactionNumber
+             const transactionsCount=await Transaction.countDocuments();
+             const nextCount=transactionsCount+1;
+             const transNumber=nextCount.toString().padStart(4,"0");
+             transactionNumber=`TRAN-${transNumber}`;
+             const newTransaction=await Transaction.create({
+                        transactionNumber,
+                        savingsAccount:savingExist._id,
+                        accountType:savingExist.accountType,
+                        accountNumber:savingExist.accountNumber,
+                        transactionType:"loanRepayment",
+                        amount:loanExist.monthlyInstallment,
+                        balanceAfter:balance,
+                        performedBy:null,
+                        description:"loan monthly installment"
+               });
+               if(loanExist.remainingInstallments===0 || loanExist.outstandingBalance===0){
+                      loanExist.status="closed";
+               }    
+               await savingExist.save();
+               await loanExist.save(); 
+               return {
+                    success: true,
+                    message: "Loan repayment successful"
+                };
+    }
+    if(balance<=loanExist.monthlyInstallment){
         loanExist.isOverdue=true;
         loanExist.overdueCount += 1;
         await loanExist.save();
@@ -203,7 +254,6 @@ exports.repayLoan=async(loanNumber)=>{
              skippped:true,
              reason:"insufficient balance"
         };
-    }
-    
+     }
 
-}
+};

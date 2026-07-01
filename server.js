@@ -15,6 +15,9 @@ const {errorhandler}=require("./Middlewares/errorHandler");
 require("./Cron/interestCron");
 require("./Cron/addIntersetCron");
 require("./Cron/fixedMaturatyCron");
+console.log("Loading loanRepayCron...");
+require("./Cron/loanRepayCron");
+console.log("loanRepayCron loaded successfully");
 
 const authRoutes=require("./Routes/authRoutes");
 const userRoutes=require("./Routes/userRoutes");
