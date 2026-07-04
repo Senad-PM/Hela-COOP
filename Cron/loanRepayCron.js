@@ -12,11 +12,12 @@ cron.schedule("* * * * *",async()=>{
                  const today=new Date();
                  const dueDate=loan.nextDueDate;
                  
-                // if(today.getTime()>=dueDate.getTime()){
+               if(today.getTime()>=dueDate.getTime()){
                     //console.log("its runnig");
                     console.log("its runnig");
                  await repayLoan(loan.loanNumber);
-                //}
+               }
+               console.log(loan.loanNumber);
                 
             }catch(error){
                 console.error(error);

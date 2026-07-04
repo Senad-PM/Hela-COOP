@@ -81,6 +81,10 @@ const loanSchema=new mongoose.Schema({
         },
         paidDate:{
             type:Date
+        },
+         overDueDays:{
+           type:Number,
+          default:0
         }
      }
    ],

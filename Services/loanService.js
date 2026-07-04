@@ -6,6 +6,7 @@ const Savings=require("../Models/savings");
 const debitLoanMoney=require("../Utils/depositLoan");
 const savings = require("../Models/savings");
 const  calculateAmortizationShedule=require("../Utils/calculateAmortizationShedule");
+const overDueEmail=require("../Utils/loanOverDueMail")
 
 exports.createLoan=async(loanData,user)=>{
 
@@ -194,7 +195,7 @@ exports.repayLoan=async(loanNumber)=>{
         throw new Error("loan acount is not a active account");
     }
     const pendingInstallment = loanExist.installments.find(
-            installment => installment.status === "pending"
+            installment => installment.status !== "paid"
     );
     if(!pendingInstallment){
         return{skipped:true}
@@ -211,6 +212,7 @@ exports.repayLoan=async(loanNumber)=>{
        balance=balance-loanExist.monthlyInstallment;
        savingExist.balance=balance;
        pendingInstallment.status="paid";
+       loanExist.isOverdue = false;
        loanExist.remainingInstallments--;
        pendingInstallment.paidDate=new Date();
        loanExist.outstandingBalance=pendingInstallment.remainingBalance;
@@ -247,13 +249,36 @@ exports.repayLoan=async(loanNumber)=>{
                 };
     }
     if(balance<=loanExist.monthlyInstallment){
-        loanExist.isOverdue=true;
-        loanExist.overdueCount += 1;
-        await loanExist.save();
-        return {
-             skippped:true,
-             reason:"insufficient balance"
-        };
+      if(pendingInstallment.status==="pending"){
+         const customerExist=await Customer.findById(loanExist.customer);
+         if(!customerExist){
+            throw new Error("customer not found");
+         }
+         loanExist.isOverdue=true;
+         loanExist.overdueCount += 1;
+         pendingInstallment.status = "overdue";
+         pendingInstallment.overDueDays=1;
+         await loanExist.save();
+         await overDueEmail(
+             customerExist.email,
+             customerExist.firstName,
+             loanExist.loanNumber,
+             pendingInstallment.emi,
+             pendingInstallment.dueDate);
+
+           return {
+               skippped:true,
+               reason:"insufficient balance"
+            };
+        }
+        else if (pendingInstallment.status === "overdue"){
+            pendingInstallment.overDueDays+=1;
+            await loanExist.save();
+              return {
+               skippped:true,
+               reason:"insufficient balance"
+             };
+        }
      }
 
 };
