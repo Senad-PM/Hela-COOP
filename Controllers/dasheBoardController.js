@@ -1,4 +1,4 @@
-const {adminDashboard}=require("../Services/dashboardServices");
+const {adminDashboard,staffDashboard}=require("../Services/dashboardServices");
 
 
 exports.AdminDashboard=async(req,res,next)=>{
@@ -8,4 +8,12 @@ exports.AdminDashboard=async(req,res,next)=>{
     }catch(error){
         next(error);
     }
+};
+exports.StaffDashboard=async(req,res,next)=>{
+     try{
+           const result=await staffDashboard();
+           res.status(200).json(result);
+     }catch(error){
+        next(error);
+     }
 };
