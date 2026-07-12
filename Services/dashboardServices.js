@@ -47,6 +47,8 @@ exports.staffDashboard=async()=>{
     today.setHours(0,0,0,0);
     const tomorrow=new Date(today);
     tomorrow.setDate(tomorrow.getDate()+1);
+    const maturityperiod=new Date(today);
+    maturityperiod.setDate(maturityperiod.getDate()+3);
     const newCutomersToday=await Customer.countDocuments({
         createdAt:{
             $gte:today,
@@ -86,9 +88,20 @@ exports.staffDashboard=async()=>{
     const recentTransaction=await Transaction.find()
          .sort({ createdAt:-1})
          .limit(20)
-         .populate({path:"savingsAccount",populate:{path:"customer",select:"customerNumber firstName lastName"}}).populate("performedBy","userName");
+         .populate({path:"savingsAccount",select:"accountNumber customer",populate:{path:"customer",select:"customerNumber firstName lastName"}}).populate("performedBy","userName");
 
+    //to do task
+    const pendingLoans=await Loan.find({status:"pending"}).sort({createdAt:-1}).limit(5)
+          .select("loanNumber principalAmount createdAt customer")
+          .populate("customer","firstName lastName");
 
+    const overDueLoans=await Loan.find({isOverdue:true}).sort({createdAt:-1}).limit(5)
+          .select("loanNumber principalAmount nextDueDate customer")
+          .populate("customer","firstName lastName");
+    const maturingFixedDeposits=await Savings.find({accountType:"fixed",maturityDate:{
+        $gte:today,
+        $lt:maturityperiod
+    },isActive:true}).limit(5).select("accountNumber balance maturityDate customer").populate("customer","firstName lastName");
 
     return{
         overview:{
@@ -107,6 +120,11 @@ exports.staffDashboard=async()=>{
         },
         recentTransaction:{
             recentTransaction
+        },
+        toDoTasks:{
+            pendingLoan:pendingLoans,
+            overDueLoan:overDueLoans,
+            maturingFdDeposits:maturingFixedDeposits
         }
 
     }
