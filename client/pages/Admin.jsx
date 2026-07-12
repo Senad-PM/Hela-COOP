@@ -1,3 +1,4 @@
+import { div } from "framer-motion/client";
 import {
   Bell, RotateCcw, Search, Users, MoveUp, User,
   CircleCheckBig, CircleSlash2,
@@ -6,38 +7,91 @@ import {
   Home,
   UserPlus,
   UserRound,
-  ClipboardList
+  ClipboardList,
+  Loader2
 } from "lucide-react";
 import React, { useState } from "react";
 
-const HomeSection = () => {
+const userTable = ({users, loading, error}) => (
+  <>
+    <div className="grid grid-cols-4 px-4 py-2 text-sm font-semibold uppercase text-gray-500 bg-gray-100/80 rounded-xl mb-1">
+      <span>Username</span>
+      <span>Role</span>
+      <span>Status</span>
+      <span>Last active</span>
+    </div>
+    <div className="max-h-96 overflow-y-auto pr-1 space-y-1">
+      {loading ? (
+        <p className="flex items-center justify-center gap-2 text-sm text-gray-400 py-8">
+          <Loader2 size={14} className="animate-spin"/> Loading users...
+        </p>
+      ) : error ? (
+        <p className="text-center text-sm text-red-400 px-8"> {error} </p>
+      ) : users.length === 0 ? (
+        <p className="text-center text-sm text-gray-400 px-8"> No user found</p>
+      ) : (
+        users.map((user, i) => {
+          const role = (user.role || "").toLowerCase();
+          return(
+            <div key={user._id || i} className={`grid grid-cols-4 px-4 py-3 rounded-xl items-center text-sm ${i % 2 === 0 ? "bg-amber-50/60" : "bg-stone-100/40"}`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-full ${getAvatarColor(user.userName)} text-white flex items-center justify-center text-xs font-bold flex-shrink-0`}>
+                  {getInitails(user.userName)}
+                </div>
+                  <span className="font-medium text-gray-800"> {user.userName} </span>
+              </div>
+
+              <span>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium w-fit ${role === "manager" ? "bg-purple-100 text-purple-600"
+                  : role === "admin" ? "bg-amber-100 text-amber-700"
+                  : "bg-sky-100 text-sky-600"
+                }`}>
+                  {user.role}
+                </span>
+              </span>
+
+              <span>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${user.isActive ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"}`}>
+                  {user.isActive ? "Active" : "Inactive"}
+                </span>
+              </span>
+
+              <span className="text-xs text-gray-500 bg-amber-50 px-3 py-1 rounded-full w-fit">
+                Last seen {formatLastActive(user.updatedAt || user.createdAt)}
+              </span>
+
+            </div>
+          );
+        })
+      )}
+    </div>
+  </>
+);
+
+const useFilteredUsers = (users, search, roleFilter) => {
+  return users.filter((u) => {
+    const matchSearch = (u.userName || "").toLowerCase().includes(search.toLowerCase());
+    const matchRole = roleFilter === "All roles" || (u.role || "").toLowerCase() === roleFilter.toLowerCase();
+    return matchSearch && matchRole;
+  });
+};
+
+const HomeSection = ({ users = [], loading, error }) => {
 
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All roles");
 
-  const users = [
-    { initials: "CK", name: "Chamod Janith",    role: "Manager", status: "Active",   time: "Today at 12:04", color: "bg-emerald-700" },
-    { initials: "BD", name: "Buddhika Dilini",  role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-violet-700"  },
-    { initials: "JK", name: "Janith Kushara",   role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-emerald-800" },
-    { initials: "BC", name: "Buddhika Chatura", role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-blue-700"    },
-    { initials: "CK", name: "Chatura Kumara",   role: "Manager", status: "Active",   time: "Today at 12:04", color: "bg-emerald-700" },
-    { initials: "PN", name: "Piumi Nikeshala",  role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-pink-700"    },
-    { initials: "CD", name: "Chatumi Dilhara",  role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-cyan-700"    },
-    { initials: "WA", name: "Wenu Adhikari",    role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-green-700"   },
-    { initials: "TK", name: "Tharushi Kaushika",role: "Staff",   status: "Active",   time: "Today at 12:04", color: "bg-teal-700"    },
-    { initials: "PM", name: "Praveen Manahara", role: "Staff",   status: "Inactive", time: "Today at 12:04", color: "bg-gray-600"    },
-  ];
+  const filtered = useFilteredUsers(users, search, roleFilter)
 
-  const filtered = users.filter((u) => {
-    const matchSearch = u.name.toLowerCase().includes(search.toLocaleLowerCase());
-    const matchRole = roleFilter === "All roles" || u.role.roleFilter;
-    return matchSearch && matchRole;
-  });
+  const total = users.length;
+  const managers = users.filter((u) => (u.role || "").toLowerCase() === "manager").length;
+  const active = users.filter((u) => u.isActive).length;
+  const inactive = total - active
 
   return (
-    <div className="flex flex-col gap-5 pt-4 px-2">
+    <div className="flex flex-col gap-5 pt-4 px-2 h-full">
 
-      <div className="bg-white/90 border border-emerald-100 p-2 rounded-2xl flex items-center justify-between">
+      <div className="bg-white/90 border border-emerald-100 p-2 rounded-2xl flex items-center justify-between shrink-0">
         <h1>Welcome to Hela-COOP</h1>
         <div className="flex items-center justify-center bg-emerald-100/80 p-2 rounded-2xl gap-2">
           <input
@@ -53,13 +107,13 @@ const HomeSection = () => {
         </div>
       </div>
 
-      <div className="flex gap-5">
+      <div className="flex gap-5 shrink-0">
         <div className="bg-white w-full rounded-2xl space-y-5 p-4">
           <div className="flex items-center justify-center gap-3 font-bold text-xl">
             <Users /> <h1>Total Users</h1>
           </div>
           <div className="flex items-center justify-center font-bold text-3xl">
-            <h1>100</h1>
+            <h1> {total} </h1>
           </div>
           <div className="flex items-center justify-center gap-2 text-green-500 font-semibold">
             <MoveUp size={16} /> <p>1 this month</p>
@@ -68,10 +122,10 @@ const HomeSection = () => {
 
         <div className="bg-white w-full rounded-2xl space-y-5 p-4">
           <div className="flex items-center justify-center gap-3 font-bold text-xl">
-            <User /> <h1>Users</h1>
+            <User /> <h1>Managers</h1>
           </div>
           <div className="flex items-center justify-center font-bold text-3xl">
-            <h1>03</h1>
+            <h1> {managers} </h1>
           </div>
           <div className="flex items-center justify-center gap-2 text-green-500 font-semibold">
             <MoveUp size={16} /> <p>2 this month</p>
@@ -83,10 +137,10 @@ const HomeSection = () => {
             <CircleCheckBig /> <h1>Active</h1>
           </div>
           <div className="flex items-center justify-center font-bold text-3xl">
-            <h1>102</h1>
+            <h1> {active} </h1>
           </div>
           <div className="flex items-center justify-center font-semibold text-gray-500">
-            <p>of 3 users</p>
+            <p>of {total} users</p>
           </div>
         </div>
 
@@ -95,16 +149,18 @@ const HomeSection = () => {
             <CircleSlash2 /> <h1>Inactive</h1>
           </div>
           <div className="flex items-center justify-center font-bold text-3xl">
-            <h1>01</h1>
+            <h1> {inactive} </h1>
           </div>
-          <div className="flex items-center justify-center font-semibold">
-            <p className="text-red-500">needs review</p>
-          </div>
+          {inactive > 0 && (
+            <div className="flex items-center justify-center font-semibold">
+              <p className="text-red-500">needs review</p>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="bg-white/90 rounded-2xl p-5">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white/90 rounded-2xl p-5 flex flex-col flex-1 min-h-0">
+        <div className="flex items-center justify-between mb-4 shrink-0">
           <div className="flex items-center gap-3 font-bold text-lg text-gray-700">
             <User size={22} />
             <h1>Managers & Staff</h1>
@@ -129,52 +185,8 @@ const HomeSection = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-4 px-4 py-2 text-sm font-semibold uppercase text-gray-500 bg-gray-100/80 rounded-xl mb-1">
-          <span>Username</span>
-          <span>Role</span>
-          <span>Status</span>
-          <span>Last active</span>
-        </div>
-        <div className="max-h-96 overflow-y-auto pr-1 space-y-1">
-          {filtered.length === 0 ? (
-            <p className="text-center text-sm text-gray-400 py-8">No user found</p>
-          ) : (
-            filtered.map((user, i) => (
-              <div key={i}
-                className={`grid grid-cols-4 px-4 py-3 rounded-xl items-center text-sm ${i % 2 === 0 ? "bg-amber-50/60" : "bg-stone-100/40"}`}
-              >
-
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full ${user.color} text-white flex items-center justify-center text-xs font-bold flex-shrink-0`}>
-                    {user.initials}
-                  </div>
-                  <span className="font-medium text-gray-800">{user.name}</span>
-                </div>
-
-                <span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    user.role === "Manager" ? "bg-purple-100 text-purple-600" : "bg-sky-100 text-sky-600"
-                  }`}
-                  >
-                    {user.role}
-                  </span>
-                </span>
-              
-                <span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    user.status === "Active" ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"
-                  }`}
-                  >
-                    {user.status}
-                  </span>
-                </span>
-                <span className="text-xs text-gray-500 bg-amber-50 px-3 py-1 rounded-full w-fit">
-                  Last seen {user.time}
-                </span>
-
-              </div>
-            ))
-          )}
+        <div className="flex-1 min-h-0 overflow-y-auto pr-1">
+          <userTable users = {filtered} loading = {loading} error = {error} />
         </div>
       
       </div>
@@ -187,9 +199,11 @@ const UserRegistrationSection = () => {
   const [formData, setFormData] = useState({
     firstName: "", lastName: "",
     nic: "", dob: "",
-    username: "", role: "",
-    password: "", confirmPassword: "",
+    username: "", email: "", role: "",
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFromSuccess] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -199,18 +213,36 @@ const UserRegistrationSection = () => {
     setFormData({
       firstName: "", lastName: "",
       nic: "", dob: "",
-      username: "", role: "",
-      password: "", confirmPassword: "",
+      username: "", email: "", role: "",
     });
+    setFormError("");
+    setFromSuccess("");
   };
+      
 
-  const handleSubmit = () => {
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+  const handleSubmit = async () => {
+    setFormError("");
+    setFromSuccess("");
+
+    if (!formData.username || !formData.email || !formData.role){
+      setFormError("Username, email and role required.");
       return;
     }
-    console.log("Registering user:", formData);
-    // TODO: call your API here
+    setSubmitting(true);
+    try{
+      const result = await registerUser({
+        userName: formData.username,
+        email: formData.email,
+        role: formData.role,
+      });
+      setFromSuccess(`${result.userName} was created. A setup emailwas sent to ${result.email}.`);
+      handleReset();
+      onRegistered?.();
+    }catch (err) {
+      setFormError(err.response?.data?.message || "Registration failed. Please try again.");
+    }finally{
+      setSubmitting(false);
+    }
   };
 
   const Field = ({ icon: Icon, label, name, type = "text", placeholder }) => (
@@ -237,6 +269,9 @@ const UserRegistrationSection = () => {
         <h1 className="text-xl font-bold text-gray-800">User Registration</h1>
         <p className="text-sm text-gray-500 mt-0.5">Create a new Staff or Manager account</p>
       </div>
+      {formError && (
+        <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm rounded-2xl px-5 py-3"></div>
+      )}
       <div className="bg-white rounded-2xl border border-indigo-100 overflow-hidden">
         <div className="flex items-center gap-3 px-6 py-4 border-b border-indigo-100 bg-indigo-50/40">
           <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
@@ -748,7 +783,7 @@ const Admin = () => {
           {activeSection === "users" && <UsersSection />}
           {activeSection === "setting" && <SettingSection />}
           {activeSection === "activity" && <ActivityLogSection />}
-          {activeSection === "home" && <HomeSection />}
+          {activeSection === "home" && <HomeSection users={users} loading={usersLoading} error={usersError} />}
           </div>
         </div>
       </section>

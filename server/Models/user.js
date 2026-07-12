@@ -55,9 +55,7 @@ const userSchema=new mongoose.Schema({
 );
 userSchema.index({ email: 1 }, { unique: true });
 userSchema.pre("save", async function () {
-    if (!this.isModified("password")) {
-        return;
-    }
+    if (!this.isModified("password")) return;
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });
@@ -67,7 +65,7 @@ userSchema.methods.comparePassword=async function (enteredPassword) {
 userSchema.methods.isAccountActive=function(){
     return this.isActive;
 };
-userSchema.methods.generateResetPasswordToken= function(){
+userSchema.methods.genarateResetPasswordToken= function(){
        const resetToken=crypto.randomBytes(20).toString("hex");
        this.resetPasswordToken=crypto.createHash("sha256").update(resetToken).digest("hex");
        this.resetPasswordExpire=Date.now()+15*60*1000;

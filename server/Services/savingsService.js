@@ -7,6 +7,7 @@ const savings = require("../Models/savings");
 const buildPagination=require("../Utils/buildPaginations");
 const buildSort=require("../Utils/buildSort");
 const calculateInterest=require("../Utils/calculateInterest");
+const calculateFixedInterest=require("../Utils/calculateFixedInterest");
 
 exports.createsavings=async(savingsData,user)=>{
         const{customerNumber,accountType,balance,durationMonths,initialDeposit}=savingsData;
@@ -50,20 +51,26 @@ exports.createsavings=async(savingsData,user)=>{
                 accountNumber=`REG-${fomatNumber}`;
 
         }
+        let maturityDate=new Date();
         if(accountType==="fixed"){
                 const fixedCount=await Savings.countDocuments({accountType:"fixed"});
                 const nextAcount=fixedCount+1;
                 const fomatNumber=nextAcount.toString().padStart(4,"0");
-                accountNumber=`FIX-${fomatNumber}`;
+                accountNumber=`FIX-${fomatNumber}`;      
+                maturityDate.setMonth(
+                        maturityDate.getMonth()+durationMonths
+                );
         }
+
         const newAcount= await Savings.create({
                 accountNumber,
                 customer:customerExist._id,
-                customerNumber:customerExist.customerNumber,
+               // customerNumber:customerExist.customerNumber,
                 accountType,
                 balance:initialDeposit || 0,
                 interestRate,
                 durationMonths,
+                maturityDate:maturityDate,
                 createdBy:user
         });
         let transactionNumber
@@ -238,7 +245,7 @@ exports.activate=async(accountNumber)=>{
         await savingsExist.save();
         return("acount is activated");
 };
-exports.applyInterest=async(accountNumber)=>{
+exports.applyDailyInterest=async(accountNumber)=>{
         const saving=await Savings.findOne({accountNumber});
         if(!saving){
                 throw new Error("account not found");
@@ -253,42 +260,125 @@ exports.applyInterest=async(accountNumber)=>{
         const lastDate =
           saving.lastInterestApplied;
 
-        const sameMonth =
-           lastDate.getMonth() ===
-           today.getMonth();
+        const sameDate =
+           lastDate.toDateString() ===
+           today.toDateString();
 
-        const sameYear =
-           lastDate.getFullYear() ===
-           today.getFullYear();
-
-        if(sameMonth && sameYear){
+        if(sameDate){
                return { skipped: true };
          }
-      }
-      
+      } 
         const interest=calculateInterest(saving.balance,saving.interestRate);
-        const balance=saving.balance+interest;
+      //  console.log(interest);
+        const accuredBalance=saving.accuredInterest+interest;
+      //  console.log(accuredBalance);
+        saving.accuredInterest=accuredBalance;
+        saving.lastInterestApplied=new Date();
+        await saving.save();
+       return{
+        accountNumber,
+        interestAdded:interest,
+       };
+};
+exports.applyMonthlyInterest=async(accountNumber)=>{
+        const saving=await Savings.findOne({accountNumber});
+        if(!saving){
+                throw new Error("account is not found");
+        }
+        if(saving.isActive===false){
+                throw new Error("account is deactivated");
+        }
+        const today = new Date();
+
+        if(saving.lastInterestApplied){
+
+        const lastDate =
+          saving.lastInterestApplied;
+
+        const sameDate =
+           lastDate.getDate() ===
+           today.getDate();
+        
+        const sameMonth=
+            lastDate.getMonth()===
+            today.getMonth();
+        if(sameDate && sameMonth){
+               return { skipped: true };
+         }
+      } 
+        const accountBalance=saving.balance+saving.accuredInterest;
+        saving.balance=accountBalance;
+        const interestAmount=saving.accuredInterest;
+        if(interestAmount<=0){
+                return{skipped:true};
+        }
+        saving.accuredInterest = 0;
+        await saving.save();
         let transactionNumber
         const transactionsCount=await Transaction.countDocuments();
         const nextCount=transactionsCount+1;
         const transNumber=nextCount.toString().padStart(4,"0");
         transactionNumber=`TRAN-${transNumber}`;
-        saving.balance=balance;
-        saving.lastInterestApplied=new Date();
-        await saving.save();
       const newTransaction=await Transaction.create({
                  transactionNumber,
                  savingsAccount:saving._id,
                  accountType:saving.accountType,
                  accountNumber,
                  transactionType:"interest",
-                 amount:interest,
-                 balanceAfter:balance,
+                 amount:interestAmount,
+                 balanceAfter:accountBalance,
                  description:"monthly interest"
         });
-       return{
-        accountNumber,
-        interestAdded:interest,
-        newBalance:balance
-       };
+        return {
+          accountNumber,
+          interestCredited: interestAmount,
+          newBalance: saving.balance
+        };
+
 };
+exports.fixedAccountMaturety=async(accountNumber)=>{
+        const fixedSaving=await Savings.findOne({accountNumber});
+        if(!fixedSaving){
+                throw new Error("account not found");
+        }
+        if(fixedSaving.isActive===false){
+                throw new Error("account is deactivated");
+        }
+        if(fixedSaving.isMatured===true){
+                throw new Error("account is already matured");
+        }
+        const today = new Date();
+        if(today < fixedSaving.maturityDate){
+               throw new Error("fixed deposit has not matured yet");
+        }  
+        const interest=calculateFixedInterest(fixedSaving.balance,fixedSaving.interestRate,fixedSaving.durationMonths);
+        console.log("Balance:", fixedSaving.balance);
+        console.log("Rate:", fixedSaving.interestRate);
+        console.log("Duration:", fixedSaving.durationMonths);
+        console.log("Interest:", interest);
+        fixedSaving.balance+=interest;
+        fixedSaving.isMatured=true;
+        await fixedSaving.save();
+         let transactionNumber
+        const transactionsCount=await Transaction.countDocuments();
+        const nextCount=transactionsCount+1;
+        const transNumber=nextCount.toString().padStart(4,"0");
+        transactionNumber=`TRAN-${transNumber}`;
+        const newTransaction=await Transaction.create({
+                 transactionNumber,
+                 savingsAccount:fixedSaving._id,
+                 accountType:fixedSaving.accountType,
+                 accountNumber,
+                 transactionType:"interest",
+                 amount:interest,
+                 balanceAfter:fixedSaving.balance,
+                 description:"maturety interested debited"
+        });
+        return {
+          accountNumber,
+          interestCredited: interest,
+          newBalance: fixedSaving.balance,
+          matured:true
+        };
+
+}

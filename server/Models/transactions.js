@@ -11,7 +11,10 @@ const transactionSchema=new mongoose.Schema({
         savingsAccount:{
             type:mongoose.Schema.Types.ObjectId,
             ref:"Savings",
-            required:true
+        },
+        loanAccount:{
+             type:mongoose.Schema.Types.ObjectId,
+             ref:"Loan",
         },
         accountType:{
             type:String,
@@ -24,7 +27,7 @@ const transactionSchema=new mongoose.Schema({
         transactionType:{
              type:String,
              required:true,
-             enum:["deposit","withdraw","interest"]
+             enum:["deposit","withdraw","interest","loanDistribute","loanAccountOpening","loanRepayment"]
         },
         amount:{
             type:Number,
