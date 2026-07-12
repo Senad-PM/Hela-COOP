@@ -1,4 +1,4 @@
-const {createLoan,loanApproved,loanReject,loanDistribution,getloans}=require("../Services/loanService");
+const {createLoan,loanApproved,loanReject,loanDistribution,getloans,getLoansByNumber,loanStatics}=require("../Services/loanService");
 
 exports.loanCreation=async(req,res,next)=>{
      try{
@@ -48,3 +48,20 @@ exports.getAllLoans=async(req,res,next)=>{
             next(error);
       }
 };
+exports.getLoansByLoanNumber=async(req,res,next)=>{
+      try{
+            const {loanNumber}=req.params;
+            const result=await getLoansByNumber(loanNumber);
+            res.status(200).json(result);
+      }catch(error){
+            next(error);
+      }
+};
+exports.getLoanStatics=async(req,res,next)=>{
+      try{
+          const result=await loanStatics();
+          res.status(200).json(result);
+      }catch(error){
+            next(error)
+      }
+}

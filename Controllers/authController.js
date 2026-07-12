@@ -1,6 +1,6 @@
 const user=require("../Models/user");
 const bcrypt=require("bcrypt");
-constjwt=require("jsonwebtoken");
+const jwt=require("jsonwebtoken");
 const{ login,forgotPassword,resetPassword,refreshTokenGenarate,logOut}=require("../Services/authService");
 
 exports.signin=async(req,res,next)=>{

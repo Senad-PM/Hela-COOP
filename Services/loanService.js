@@ -330,3 +330,49 @@ exports.getloans=async(query)=>{
                    "data":loans
                });
 };
+exports.getLoansByNumber=async(loanNumber)=>{
+       if(!loanNumber){
+          throw new Error("loanNumber is undefined");
+       }
+       const loanExist=await Loan.findOne({loanNumber}).populate("customer","firstName lastName");
+       if(!loanExist){
+          throw new Error("loan not found");
+       }
+       return(loanExist);
+};
+exports.loanStatics=async()=>{
+    const activeLoans=await Loan.countDocuments({status:"active"});
+    const pendingLoans=await Loan.countDocuments({status:"pending"});
+    const closedLoans=await Loan.countDocuments({status:"closed"});
+    const overdueLoans=await Loan.countDocuments({isOverdue:true});
+    const totalLoanPortfolio=await Loan.aggregate([{
+        $group:{
+            _id:null,
+            totalbalance:{
+                $sum:"$principalAmount"
+            }
+        }
+    }]);
+    const totalbalance=totalLoanPortfolio.length>0 ? totalLoanPortfolio[0].totalbalance : 0;
+    const totalPortfolio=Number(totalbalance.toFixed(2));
+
+    const totalLoanOutstanding=await Loan.aggregate([{
+        $group:{
+            _id:null,
+            totalbalance:{
+                $sum:"$outstandingBalance"
+            }
+        }
+    }]);
+    const totalOutstandingbalance=totalLoanOutstanding.length>0 ? totalLoanOutstanding[0].totalbalance : 0;
+    const totalOutsdandingAmount=Number(totalOutstandingbalance.toFixed(2));
+    
+    return{
+        activeLoansCount:activeLoans,
+        pendingLoansCount:pendingLoans,
+        closedLoansCount:closedLoans,
+        overdueLoansCount:overdueLoans,
+        totalLoanPortfolio:totalPortfolio,
+        totalLoanOutstandingBalance:totalOutsdandingAmount
+    }
+};
