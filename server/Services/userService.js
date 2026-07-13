@@ -16,7 +16,7 @@ exports.createUser=async(userName,email,password,role)=>{
            if(userExist){
             throw new Error("user already exists");
            }
-           const temporaryPassword=`Temp@${Math.floor(Math.random() * 100000)}`;
+          const temporaryPassword=`Temp@${Math.floor(Math.random() * 100000)}`;
           const newUser=await User.create({
             userName,
             email,
@@ -25,7 +25,8 @@ exports.createUser=async(userName,email,password,role)=>{
             
           })
           const resetToken=newUser.genarateResetPasswordToken();
-          const resetUrl=`http://localhost:5000/api/auth/reset-password/${resetToken}`;
+          const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+          const resetUrl=`${clientUrl}/set-password/${resetToken}`;
           try {
           await sendEmail({
             email: newUser.email,

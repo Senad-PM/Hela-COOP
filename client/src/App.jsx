@@ -11,7 +11,7 @@ const App = () => {
 
   return (
     <div>
-      {location.pathname !== '/admin' && <Navbar />}
+      {location.pathname !== '/admin' && location.pathname !== '/set-password' && !location.pathname.startsWith('/set-password/') && <Navbar />}
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/admin' element={
@@ -19,6 +19,7 @@ const App = () => {
             <Admin />
           </ProtectedRoute>
         } />
+        <Route path='/set-password/:token' element={<SetPassword />} />
       </Routes>
     </div>
   )

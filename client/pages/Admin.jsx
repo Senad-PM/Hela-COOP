@@ -1,4 +1,3 @@
-import { div } from "framer-motion/client";
 import {
   Bell, RotateCcw, Search, Users, MoveUp, User,
   CircleCheckBig, CircleSlash2,
@@ -40,7 +39,7 @@ const UserTable = ({users=[], loading, error}) => (
             <div key={user._id || i} className={`grid grid-cols-4 px-4 py-3 rounded-xl items-center text-sm ${i % 2 === 0 ? "bg-amber-50/60" : "bg-stone-100/40"}`}>
               <div className="flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-full ${getAvatarColor(user.userName)} text-white flex items-center justify-center text-xs font-bold flex-shrink-0`}>
-                  {getInitails(user.userName)}
+                  {getInitials(user.userName)}
                 </div>
                   <span className="font-medium text-gray-800"> {user.userName} </span>
               </div>
@@ -190,7 +189,7 @@ const HomeSection = ({ users = [], loading, error }) => {
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto pr-1">
-          <userTable users = {filtered} loading = {loading} error = {error} />
+          <UserTable users = {filtered} loading = {loading} error = {error} />
         </div>
       
       </div>
@@ -339,14 +338,14 @@ const UserRegistrationSection = ({ onRegistered }) => {
         <button
           onClick={handleReset}
           disabled={submitting}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl border-2 border-gray-300 text-gray-600 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 transition"
+          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl border-2 border-gray-300 text-green-400 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 transition"
         >
           <RotateCcw size={15} /> Reset
         </button>
         <button
           onClick={handleSubmit}
           disabled={submitting}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl border-2 border-gray-300 text-gray-600 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 transition"
+          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl border-2 border-gray-300 text-green-400 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 transition"
         >
           {submitting ? <Loader2 size={15} className="animate-spin" /> : null}
           {submitting ? "Registering..." : "Register"}
