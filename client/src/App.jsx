@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar'
 import Home from '../pages/Home'
 import Admin from '../pages/Admin'
 import ProtectedRoute from '../pages/ProtectedRoute'
+import SetPassword from '../pages/SetPassword'
 
 const App = () => {
 

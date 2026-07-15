@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { Eye, EyeOff, KeyRound, Loader2, TriangleAlert } from 'lucide-react'
+import { CheckCircle, Eye, EyeOff, KeyRound, Loader2, TriangleAlert } from 'lucide-react'
+import { useParams, useNavigate } from "react-router-dom";
+import { setPassword } from "../src/api/passwordApi";
 
 
 const PASSWORD_RULE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
@@ -9,6 +11,55 @@ const SetPassword = () => {
   const navigate = useNavigate();
 
   const [password, SetPasswordValue] = useState("");
+  const [confirmPassword, SetConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [succuss, setSuccess] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!PASSWORD_RULE.test(password)){
+        setError("Password needs at least 8 characters, including uppercase, lowercase, a number, and a special character (@$!%*?&).");
+        return;
+    }
+    if(password !== confirmPassword){
+        setError("Password don't match");
+        return;
+    }
+
+    setSubmitting(true);
+    try{
+        await setPassword(token, password);
+        setSuccess(true);
+    } catch (err){
+        setError(err.response?.data?.message || "This link is invalid or has expired. Ask an admin to resend your invite.")
+    } finally{
+        setSubmitting(false);
+    }
+  };
+
+  if(succuss){
+    return(
+        <section className='w-full min-h-screen flex items-center justify-center p-6 bg-[#0d1f1a]'>
+            <div className='flex flex-col items-center bg-white rounded-2xl p-8 gap-4 max-w-md w-full text-center '>
+                <div className='flex items-center justify-center w-14 h-14 rounded-full bg-emerald-100'>
+                    <CheckCircle size={28} className='text-emerald-600' />
+                </div>
+                <h1 className='text-xl font-bold text-gray-800'>Password set</h1>
+                <p className='text-sm text-gray-500'>Your account is ready. Sign in with your new password to continue</p>
+                <button
+                    onClick={() => navigate("/")}
+                    className='w-full mt-2 px-6 py-2.5 rounded-2xl bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#245a41] transition'
+                >
+                    Go to login
+                </button>
+            </div>
+        </section>
+    )
+  }
 
 
   return(
@@ -51,7 +102,7 @@ const SetPassword = () => {
                     </label>
                     <input type={showPassword ? "text" : "password"}
                         value={confirmPassword}
-                        onChange={(e) => SetConfirmPasswordValue(e.target.value)}
+                        onChange={(e) => SetConfirmPassword(e.target.value)}
                         placeholder='Ex: **********'
                         className='w-full border-2 border-green-400 rounded-2xl px-4 py-2.5 pr-10 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 placeholder:text-gray-300 transition'
                     />
