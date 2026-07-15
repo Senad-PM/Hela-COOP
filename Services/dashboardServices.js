@@ -49,6 +49,9 @@ exports.staffDashboard=async()=>{
     tomorrow.setDate(tomorrow.getDate()+1);
     const maturityperiod=new Date(today);
     maturityperiod.setDate(maturityperiod.getDate()+3);
+    const sevenDays=new Date(today);
+    sevenDays.setDate(sevenDays.getDate()-6);
+    
     const newCutomersToday=await Customer.countDocuments({
         createdAt:{
             $gte:today,
@@ -102,6 +105,32 @@ exports.staffDashboard=async()=>{
         $gte:today,
         $lt:maturityperiod
     },isActive:true}).limit(5).select("accountNumber balance maturityDate customer").populate("customer","firstName lastName");
+    //daily Transaction volumes
+
+    const dailyTransaction=await Transaction.aggregate([{
+        $match:{
+            createdAt:{
+                 $gte:sevenDays,
+                 $lt:today
+            }
+        }
+       },{
+        $group:{
+           _id:{
+            $dateToString: {
+                 format: "%Y-%m-%d",
+                 date: "$createdAt"
+        }
+           },
+           totalVolume:{
+              $sum:"$amount"
+           }
+        }
+    },{
+            $sort:{
+            _id:1
+        }
+   }]);
 
     return{
         overview:{
@@ -125,7 +154,8 @@ exports.staffDashboard=async()=>{
             pendingLoan:pendingLoans,
             overDueLoan:overDueLoans,
             maturingFdDeposits:maturingFixedDeposits
-        }
+        },
+        dailyTransactionVolume:dailyTransaction
 
     }
 };
