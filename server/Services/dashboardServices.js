@@ -1,4 +1,8 @@
 const User=require("../Models/user");
+const Customer=require("../Models/customer");
+const Savings=require("../Models/savings");
+const Transaction=require("../Models/transactions");
+const Loan=require("../Models/loan");
 
 exports.adminDashboard=async()=>{
     const totalUsers=await User.countDocuments();
@@ -21,4 +25,137 @@ exports.adminDashboard=async()=>{
         NewUsers:newUsers
   })
 };
+exports.staffDashboard=async()=>{
+    //main cards
+    const customerCount=await Customer.countDocuments();
+    const totalSavings=await Savings.countDocuments();
+    const pendingApprovels=await Loan.countDocuments({status:"pending"});
+    const overdueLoans=await Loan.countDocuments({isOverdue:true});
+    const totalSavingBalance=await Savings.aggregate([{
+        $group:{
+            _id:null,
+            totalbalance:{
+                $sum:"$balance"
+            }
+        }
+    }]);
+    const totalbalance=totalSavingBalance.length>0 ? totalSavingBalance[0].totalbalance : 0;
+    const total=Number(totalbalance.toFixed(2));
 
+    //todays summery
+    const today=new Date();
+    today.setHours(0,0,0,0);
+    const tomorrow=new Date(today);
+    tomorrow.setDate(tomorrow.getDate()+1);
+    const maturityperiod=new Date(today);
+    maturityperiod.setDate(maturityperiod.getDate()+3);
+    const sevenDays=new Date(today);
+    sevenDays.setDate(sevenDays.getDate()-6);
+    
+    const newCutomersToday=await Customer.countDocuments({
+        createdAt:{
+            $gte:today,
+            $lt:tomorrow
+        }
+    });
+    const todaysDeposits=await Transaction.countDocuments({
+        createdAt:{
+            $gte:today,
+            $lt:tomorrow
+        },
+        transactionType:"deposit"
+    });
+    const todaysWithdrawls=await Transaction.countDocuments({
+        createdAt:{
+            $gte:today,
+            $lt:tomorrow
+        },
+        transactionType:"withdraw"
+    });
+    const todaysLoanRepayment=await Transaction.countDocuments({
+        createdAt:{
+            $gte:today,
+            $lt:tomorrow
+        },
+        transactionType:"loanRepayment"
+    });
+    const todaysLoanDisbursement=await Transaction.countDocuments({
+        createdAt:{
+            $gte:today,
+            $lt:tomorrow
+        },
+        transactionType:"loanDistribute"
+    });
+
+    //recent
+    const recentTransaction=await Transaction.find()
+         .sort({ createdAt:-1})
+         .limit(20)
+         .populate({path:"savingsAccount",select:"accountNumber customer",populate:{path:"customer",select:"customerNumber firstName lastName"}}).populate("performedBy","userName");
+
+    //to do task
+    const pendingLoans=await Loan.find({status:"pending"}).sort({createdAt:-1}).limit(5)
+          .select("loanNumber principalAmount createdAt customer")
+          .populate("customer","firstName lastName");
+
+    const overDueLoans=await Loan.find({isOverdue:true}).sort({createdAt:-1}).limit(5)
+          .select("loanNumber principalAmount nextDueDate customer")
+          .populate("customer","firstName lastName");
+    const maturingFixedDeposits=await Savings.find({accountType:"fixed",maturityDate:{
+        $gte:today,
+        $lt:maturityperiod
+    },isActive:true}).limit(5).select("accountNumber balance maturityDate customer").populate("customer","firstName lastName");
+    //daily Transaction volumes
+
+    const dailyTransaction=await Transaction.aggregate([{
+        $match:{
+            createdAt:{
+                 $gte:sevenDays,
+                 $lt:today
+            }
+        }
+       },{
+        $group:{
+           _id:{
+            $dateToString: {
+                 format: "%Y-%m-%d",
+                 date: "$createdAt"
+        }
+           },
+           totalVolume:{
+              $sum:"$amount"
+           }
+        }
+    },{
+            $sort:{
+            _id:1
+        }
+   }]);
+
+    return{
+        overview:{
+        customerCount:customerCount,
+        totalsavingsacounts:totalSavings,
+        pendingLoansCount:pendingApprovels,
+        overDueLoanCount:overdueLoans,
+        totalSavingBalance:total,
+        },
+        todaySummary:{
+        newCustomersCount:newCutomersToday,
+        todaysDepositCount:todaysDeposits,
+        todaysWithdrawlsCount:todaysWithdrawls,
+        todaysLoanRepaymentCount:todaysLoanRepayment,
+        todaysLoanDisbursementCount:todaysLoanDisbursement
+        },
+        recentTransaction:{
+            recentTransaction
+        },
+        toDoTasks:{
+            pendingLoan:pendingLoans,
+            overDueLoan:overDueLoans,
+            maturingFdDeposits:maturingFixedDeposits
+        },
+        dailyTransactionVolume:dailyTransaction
+
+    }
+};

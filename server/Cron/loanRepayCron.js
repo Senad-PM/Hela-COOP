@@ -5,7 +5,7 @@ const{repayLoan}=require("../Services/loanService");
 
 
 console.log("Loan repayment cron loaded");
-cron.schedule("* * * * *",async()=>{
+cron.schedule("* 0 1 * *",async()=>{
         const loanExist=await Loan.find({status:"active"});
         for(const loan of loanExist){
             try{ 
@@ -17,7 +17,7 @@ cron.schedule("* * * * *",async()=>{
                     console.log("its runnig");
                  await repayLoan(loan.loanNumber);
                }
-               console.log(loan.loanNumber);
+              console.log(loan.loanNumber);
                 
             }catch(error){
                 console.error(error);

@@ -2,10 +2,10 @@ const {createUser,getUsers,getUsersById,update,deactivate,activate}=require("../
 
 exports.registerUser=async(req,res,next)=>{
     try{
-        const{userName,email,password,role}=req.body;
-        console.log(req.body);
-        const result= await createUser(userName,email,password,role);
-        res.status(201).json(result);
+    const{userName,email,password,role}=req.body;
+    console.log(req.body);
+    const result= await createUser(userName,email,password,role);
+    res.status(201).json(result);
     }catch(error){
         next(error);
     }
@@ -24,7 +24,7 @@ exports.getUserById=async(req,res,next)=>{
         const result=await getUsersById(req.params.id);
         res.status(200).json(result);
     }catch(error){
-        next(error);
+         next(error);
     }
 }
 exports.updateUser=async(req,res,next)=>{

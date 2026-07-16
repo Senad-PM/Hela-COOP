@@ -7,6 +7,8 @@ const debitLoanMoney=require("../Utils/depositLoan");
 const savings = require("../Models/savings");
 const  calculateAmortizationShedule=require("../Utils/calculateAmortizationShedule");
 const overDueEmail=require("../Utils/loanOverDueMail")
+const buildPagination=require("../Utils/buildPaginations");
+const buildSort=require("../Utils/buildSort");
 
 exports.createLoan=async(loanData,user)=>{
 
@@ -281,4 +283,96 @@ exports.repayLoan=async(loanNumber)=>{
         }
      }
 
+};
+const buildFilter=(query)=>{
+        const filter={};
+        if(query.status!==undefined){
+                filter.status=query.status;
+        }
+        if(query.loanType!==undefined){
+                filter.loanType=query.loanType;
+        }
+        if(query.search && query.search.trim() !==""){
+                filter.$or=[
+                        {
+                              loanNumber:{
+                                $regex:query.search,
+                                $options:"i"
+                              }  
+                        },
+                        {
+                            customerNumber:{
+                                $regex:query.search,
+                                $options:"i"
+                            }
+                        }
+                ];
+        }
+        return filter;
+    }
+exports.getloans=async(query)=>{
+       const filter=buildFilter(query);
+            const sortoption=buildSort(query);
+              const{limit,skip,page}=buildPagination(query);
+              const count=await Loan.countDocuments(filter);
+                        if(count > 0 && skip >= count){
+                           throw new Error("page not found");
+                        }
+              const loans=await  Loan.find(filter).select("loanNumber principalAmount nextDueDate outstandingBalance").populate(
+                              "customer",
+                              "customerNumber firstName lastName"
+                               ).sort(sortoption).skip(skip).limit(limit);
+               
+              return({
+                   "total":count,
+                   "page":page,
+                   "limit":limit,
+                   "data":loans
+               });
+};
+exports.getLoansByNumber=async(loanNumber)=>{
+       if(!loanNumber){
+          throw new Error("loanNumber is undefined");
+       }
+       const loanExist=await Loan.findOne({loanNumber}).populate("customer","firstName lastName");
+       if(!loanExist){
+          throw new Error("loan not found");
+       }
+       return(loanExist);
+};
+exports.loanStatics=async()=>{
+    const activeLoans=await Loan.countDocuments({status:"active"});
+    const pendingLoans=await Loan.countDocuments({status:"pending"});
+    const closedLoans=await Loan.countDocuments({status:"closed"});
+    const overdueLoans=await Loan.countDocuments({isOverdue:true});
+    const totalLoanPortfolio=await Loan.aggregate([{
+        $group:{
+            _id:null,
+            totalbalance:{
+                $sum:"$principalAmount"
+            }
+        }
+    }]);
+    const totalbalance=totalLoanPortfolio.length>0 ? totalLoanPortfolio[0].totalbalance : 0;
+    const totalPortfolio=Number(totalbalance.toFixed(2));
+
+    const totalLoanOutstanding=await Loan.aggregate([{
+        $group:{
+            _id:null,
+            totalbalance:{
+                $sum:"$outstandingBalance"
+            }
+        }
+    }]);
+    const totalOutstandingbalance=totalLoanOutstanding.length>0 ? totalLoanOutstanding[0].totalbalance : 0;
+    const totalOutsdandingAmount=Number(totalOutstandingbalance.toFixed(2));
+    
+    return{
+        activeLoansCount:activeLoans,
+        pendingLoansCount:pendingLoans,
+        closedLoansCount:closedLoans,
+        overdueLoansCount:overdueLoans,
+        totalLoanPortfolio:totalPortfolio,
+        totalLoanOutstandingBalance:totalOutsdandingAmount
+    }
 };

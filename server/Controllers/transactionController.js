@@ -3,9 +3,9 @@ const{getTransactionsBySaving,getTransactionByTransaction,getTransactions}=requi
 
 exports.getTransactionsBySavingNumber=async(req,res,next)=>{
     try{
-        const {accountNumber}=req.params;
-        const result=await getTransactionsBySaving(accountNumber,req.query);
-        res.status(200).json(result);
+    const {accountNumber}=req.params;
+    const result=await getTransactionsBySaving(accountNumber,req.query);
+    res.status(200).json(result);
     }catch(error){
         next(error);
     }
