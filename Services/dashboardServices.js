@@ -3,6 +3,7 @@ const Customer=require("../Models/customer");
 const Savings=require("../Models/savings");
 const Transaction=require("../Models/transactions");
 const Loan=require("../Models/loan");
+const{loanStatics}=require("../Services/loanService")
 
 exports.adminDashboard=async()=>{
     const totalUsers=await User.countDocuments();
@@ -131,6 +132,38 @@ exports.staffDashboard=async()=>{
             _id:1
         }
    }]);
+   const fillMissingDays =(dailyTransaction)=>{
+    const result=[];
+    //date
+    const today = new Date();
+    const sevenDays = new Date(today);
+    sevenDays.setHours(0,0,0,0);
+
+    for (let i=0; i<7; i++){
+        const day=new Date(sevenDays);
+        day.setDate(day.getDate() + i);
+        
+       
+        const DateData = dailyTransaction.find(
+              item => item._id === day
+        );
+        if(DateData){
+           result.push({
+             Date:day,
+             totalVolume:DateData.totalVolume
+           });
+        }else{
+           result.push({
+              DAte:day,
+              totalVolume:0
+           });
+        }
+        
+    }
+    return(result);
+    }
+    const completeDailyTransactions= fillMissingDays(dailyTransaction);
+
 
     return{
         overview:{
@@ -155,7 +188,136 @@ exports.staffDashboard=async()=>{
             overDueLoan:overDueLoans,
             maturingFdDeposits:maturingFixedDeposits
         },
-        dailyTransactionVolume:dailyTransaction
+        dailyTransactionVolume:completeDailyTransactions
 
     }
 };
+
+exports.managerDashedboard=async()=>{
+//KPI CARDS FOR MANGER DASHEDBOARD
+    const customerCount=await Customer.countDocuments();
+    const totalSavings=await Savings.countDocuments();
+    const pendingApprovels=await Loan.countDocuments({status:"pending"});
+    const overdueLoans=await Loan.countDocuments({isOverdue:true});
+    const totalSavingBalance=await Savings.aggregate([{
+        $group:{
+            _id:null,
+            totalbalance:{
+                $sum:"$balance"
+            }
+        }
+    }]);
+    const totalbalance=totalSavingBalance.length>0 ? totalSavingBalance[0].totalbalance : 0;
+    const total=Number(totalbalance.toFixed(2));
+     const totalLoanBalance=await Loan.aggregate([{
+        $match:{
+            status:"active"
+        }},{
+        $group:{
+            _id:null,
+            totalAmount:{
+                $sum:"$principalAmount"
+            }
+        }
+    }]);
+    const totalLbalance=totalLoanBalance.length>0 ? totalLoanBalance[0].totalAmount : 0;
+    const totalLoanAmount=Number(totalLbalance.toFixed(2));
+    
+    //monthly charts of manager dashedboard
+    let monthlytransaction
+    monthlytransaction=await getmonthlytransactionsummery("deposit");
+    const completeMonthlyDeposit= fillMissingMonths(monthlytransaction);
+    monthlytransaction=await getmonthlytransactionsummery("withdraw");
+    const completeMonthlyWithdraw= fillMissingMonths(monthlytransaction);
+    monthlytransaction=await getmonthlytransactionsummery("loanRepayment");
+    const completeMonthlyLoanRepayment=fillMissingMonths(monthlytransaction);
+    monthlytransaction=await getmonthlytransactionsummery("loanDistribute");
+    const completeMonthlyDisbursement=fillMissingMonths(monthlytransaction);
+    //loan Statistics
+    const completeLoanStatistics=await loanStatics();
+
+    return{
+     overview:{
+         customerCount:customerCount,
+         totalsavingsacounts:totalSavings,
+         pendingLoansCount:pendingApprovels,
+         overDueLoanCount:overdueLoans,
+         totalSavingBalance:total,
+         totalLoanPortfolio:totalLoanAmount
+        },
+     monthlyChart:{
+        monthlyDepositVolume:completeMonthlyDeposit,
+        monthlyWithdrawVolume:completeMonthlyWithdraw
+     },
+     loanStatics:{
+        completeLoanStatistics
+     }
+    }
+};
+const getmonthlytransactionsummery=async(transactionType)=>{
+ //Days
+         const today=new Date();
+         const lastTwelveMonths=new Date(today);
+         lastTwelveMonths.setMonth(lastTwelveMonths.getMonth()-11);
+         lastTwelveMonths.setDate(1);
+         lastTwelveMonths.setHours(0, 0, 0, 0);    
+     const monthlytransaction=await Transaction.aggregate([{
+        $match:{
+            createdAt:{
+                 $gte:lastTwelveMonths,
+                 $lt:today
+            },
+            transactionType:transactionType
+        }
+       },{
+        $group:{
+           _id:{
+            $dateToString: {
+                 format: "%Y-%m",
+                 date: "$createdAt"
+        }
+           },
+           totalVolume:{
+              $sum:"$amount"
+           }
+        }
+    },{
+            $sort:{
+            _id:1
+        }
+   }]);
+   return(monthlytransaction);
+};
+const fillMissingMonths =(monthlytransaction)=>{
+    const result=[];
+    //date
+    const today = new Date();
+    const lastTwelveMonths = new Date(today);
+    lastTwelveMonths.setMonth(lastTwelveMonths.getMonth() - 11);
+    lastTwelveMonths.setDate(1);
+    lastTwelveMonths.setHours(0,0,0,0);
+
+    for (let i=0; i<12; i++){
+        const month=new Date(lastTwelveMonths);
+        month.setMonth(month.getMonth() + i);
+        const year=month.getFullYear();
+        const formattedMonth = `${year}-${String(month.getMonth() + 1).padStart(2, "0")}`;
+       
+        const monthData = monthlytransaction.find(
+              item => item._id === formattedMonth
+        );
+        if(monthData){
+           result.push({
+             month:formattedMonth,
+             totalVolume:monthData.totalVolume
+           });
+        }else{
+           result.push({
+              month:formattedMonth,
+              totalVolume:0
+           });
+        }
+        
+    }
+    return(result);
+}
