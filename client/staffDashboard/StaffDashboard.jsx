@@ -9,11 +9,11 @@ import SettingsSection from "./sections/SettingsSection";
 
 const NAV_ITEMS = [
     { key: "overview", label: "Overview", icon: LayoutGrid, Component: OverviewSection },
-    {key: "accounts", label: "Accounts", icon: Users, Component: AccountsSection},
-    {key: "transactions", label: "Transactions", icon: ArrowLeftRight, Component: TransactionsSection},
-    {key: "loans", label: "Loans", icon: Landmark, Component: LoansSection},
-    {key: "reports", label: "Reports", icon: LineChart, Component: ReportsSection},
-    {key: "settings", label: "Settings", icon: SettingsIcon, Component: SettingsSection},
+    { key: "accounts", label: "Accounts", icon: Users, Component: AccountsSection },
+    { key: "transactions", label: "Transactions", icon: ArrowLeftRight, Component: TransactionsSection },
+    { key: "loans", label: "Loans", icon: Landmark, Component: LoansSection },
+    { key: "reports", label: "Reports", icon: LineChart, Component: ReportsSection },
+    { key: "settings", label: "Settings", icon: SettingsIcon, Component: SettingsSection },
 ];
 
 const NavItem = ({ icon: Icon, label, isActive, onClick }) => (
@@ -34,7 +34,7 @@ const StaffDashboard = () => {
     const [activeSection, setActiveSection] = useState("overview");
     const role = localStorage.getItem("role");
     const roleLable = role ? role.charAt(0).toUpperCase() + role.slice(1) : "staff";
-    const ActiveComponent = NAV_ITEMS.find((item) => item.key === activeSection)?.component ?? OverviewSection; 
+    const ActiveComponent = NAV_ITEMS.find((item) => item.key === activeSection)?.Component ?? OverviewSection; 
 
   return (
     <section className='w-full h-screen bg-[#0d1f1a] p-6 overflow-hidden'>

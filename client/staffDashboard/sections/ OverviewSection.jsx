@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {CategoryScale, Filler, LineElement, LinearScale, PointElement, Tooltip} from 'chart.js'
+import {Chart as ChartJs, CategoryScale, Filler, LineElement, LinearScale, PointElement, Tooltip} from 'chart.js'
 import { Line } from 'react-chartjs-2'
 import { fetchStaffDashboard } from '../../src/api/DashboardApi';
 import { AlertTriangle, Clock, FileClock, ListTodo, Loader2, PiggyBank, TrendingUp, User2, UserPlus, Volume } from 'lucide-react'
@@ -22,22 +22,22 @@ const timeAgo = (dateString) => {
 const buildTaskFeed = (toDoTasks) => {
   if (!toDoTasks) return [];
   const pending = (toDoTasks.pendingLoan || []).map((l) => ({
-    id: ``,
-    color: "",
-    title: ``,
-    subtitle: "",
+    id: `loan-pending-${l._id}`,
+    color: "bg-amber-500",
+    title: `Review Loan #${l.loanNumber}`,
+    subtitle: `${l.customer?.firstName || ""} ${l.customer?.lastName || ""} · ${currency(l.principalAmount)} · applied ${timeAgo(l.createdAt)}`,
   }));
   const overdue = (toDoTasks.overDueLoan || []).map((l) => ({
-    id: ``,
-    color: "",
-    title: ``,
-    subtitle: "",
+    id: `loan-overdue-${l._id}`,
+    color: "bg-red-500",
+    title: `Overdue Loan #${l.loanNumber}`,
+    subtitle: `${l.customer?.firstName || ""} ${l.customer?.lastName || ""} · ${currency(l.principalAmount)} · due ${new Date(l.nextDueDate).toLocaleDateString()}`,
   }));
   const maturing = (toDoTasks.maturingFdDeposits || []).map((s) => ({
-    id: "",
-    color: "",
-    title: ``,
-    subtitle: "",
+    id: `fd-${s._id}`,
+    color: `bg-emerald-500`,
+    title: `FD Maturing · #${s.accountNumber}`,
+    subtitle: `${s.customer?.firstName || ""} ${s.customer?.lastName || ""} · ${currency(s.balance)} · matures ${new Date(s.maturityDate).toLocaleDateString()}`,
   }));
   return [...overdue, ...pending, ...maturing];
 };
@@ -47,13 +47,14 @@ const VolumeChart = ({points}) => {
     labels: points.map((p) => dayLabel(p._id)),
     datasets: [
       {
-        label: "",
-        data: "",
-        borderColor: "",
-        fill: "",
-        tension: "",
-        pointRadius: "",
-        pointBackgroundColor: "",
+        label: "Transaction volume",
+        data: points.map((p) => p.totalVolume),
+        borderColor: "#2563eb",
+        backgroundColor: "rgba(37, 99, 235, 0.12)",
+        fill: true,
+        tension: 0.35,
+        pointRadius: 4,
+        pointBackgroundColor: "#2563eb",
       },
     ],
   };
@@ -107,7 +108,12 @@ const  OverviewSection = ({ onNavigate }) => {
     return <div className='text-center text-red-500 py-20'>{error}</div>
   }
 
-  const {overview, todaySummary, dailyTransactionVolume, toDoTasks} = dashboard;
+  const {
+    overview = {},
+    todaySummary = {},
+    dailyTransactionVolume = [],
+    toDoTasks = {},
+  } = dashboard || {};
 
   const stats = [
     {icon: User2, label: "Customers", value: overview.customerCount, bg: "bg-sky-50", iconBg: "bg-sky-100", iconColor: "text-sky-600"},
@@ -127,7 +133,7 @@ const  OverviewSection = ({ onNavigate }) => {
   const tasks = buildTaskFeed(toDoTasks);
 
   return (
-    <div className='lex flex-col gap-4'>
+    <div className='flex flex-col gap-4'>
       <div>
         <div>
           <h1 className='text-xl font-bold text-gray-800'>Welcome back to Hela-COOP</h1>
@@ -136,7 +142,7 @@ const  OverviewSection = ({ onNavigate }) => {
           </p>
         </div>
 
-        <div className='grid grid-cols-4 gap-4'>
+        <div className='grid grid-cols-4 gap-4 mt-5'>
           {stats.map((stat) => (
             <div key={stat.label} className={`flex flex-col ${stat.bg} rounded-2xl p-4 gap-2`}>
               <div className={`flex items-center justify-center w-9 h-9 rounded-full ${stat.iconBg}`}>
@@ -148,7 +154,7 @@ const  OverviewSection = ({ onNavigate }) => {
           ))}
         </div>
 
-        <div className='grid grid-cols-3 gap-4'>
+        <div className='grid grid-cols-3 gap-4 mt-5'>
           <div className='col-span-2 bg-blue-50 rounded-2xl p-5'>
             <div className='flex items-center gap-2 font-bold text-gray-800 mb-3'>
               <TrendingUp size={18} /> Daily transaction volume
@@ -182,7 +188,7 @@ const  OverviewSection = ({ onNavigate }) => {
           </div>
         </div>
 
-        <div className='grid grid-cols-3 gap-4'>
+        <div className='grid grid-cols-3 gap-4 mt-5'>
           <div className='col-span-2 bg-emerald-50 rounded-2xl p-5'>
             <div className='flex items-center gap-2 font-bold text-gray-800 mb-4'>
               <FileClock size={18} /> Today's summary
