@@ -42,7 +42,7 @@ const Navbar = () => {
             closeForm()
             
             localStorage.setItem('accessToken', response.data.accessToken)
-            localStorage.setItem('refreshToken', response,data.refreshToken)
+            localStorage.setItem('refreshToken', response.data.refreshToken)
             localStorage.setItem('role', response.data.role)
 
             if (response.data.role == 'admin'){

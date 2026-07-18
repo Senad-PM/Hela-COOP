@@ -3,7 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Home from '../pages/Home'
 import Admin from '../pages/Admin'
-import ProtectedRoute from '../pages/ProtectedRoute'
+import ProtectedRoute from '../routes/ProtectedRoute'
 import SetPassword from '../pages/SetPassword'
 import StaffDashboard from '../staffDashboard/StaffDashboard'
 

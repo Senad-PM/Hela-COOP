@@ -37,7 +37,8 @@ exports.forgotPassword=async(email)=>{
     }
     const resetToken=finduser.generateResetPasswordToken()
     await User.save();
-    const resetUrl=`http://localhost:5000/api/auth/reset-password/${resetToken}`;
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+    const resetUrl = `${clientUrl}/set-password/${resetToken}`;
     await sendEmail({
         email:finduser.email,
         subject:"password Reset",
