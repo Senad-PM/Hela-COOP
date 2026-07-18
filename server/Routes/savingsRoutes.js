@@ -8,7 +8,7 @@ router.post("/create",protect,authorize("staff"),addSavingsAcount);
 router.put("/deposit",protect,authorize("staff"),savingsDeposit);
 router.put("/withdraw",protect,authorize("staff"),savingsWithdraw);
 router.get("/:accountNumber",protect,authorize("staff"),getSavingsByAccountNumber);
-router.get("/",protect,authorize("staff"),getSavings);
+router.get("/",protect,authorize("staff","manager"),getSavings);
 router.patch("/deactivate/:accountNumber",protect,authorize("staff"),acountDeactivate);
 router.patch("/activate/:accountNumber",protect,authorize("staff"),accountActivate);
 router.post("/interest/:accountNumber",protect,authorize("admin"),interestApply);

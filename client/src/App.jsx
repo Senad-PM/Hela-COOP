@@ -5,6 +5,7 @@ import Home from '../pages/Home'
 import Admin from '../pages/Admin'
 import ProtectedRoute from '../pages/ProtectedRoute'
 import SetPassword from '../pages/SetPassword'
+import StaffDashboard from '../staffDashboard/StaffDashboard'
 
 const HIDDEN_NAVBAR_PATHS = ['/admin', '/staff', '/set-password']
 

@@ -1,14 +1,19 @@
-import { Component } from 'lucide-react';
 import React, { useState } from 'react'
+import { LayoutGrid, Users, ArrowLeftRight, Landmark, LineChart, Settings as SettingsIcon } from "lucide-react";
 import OverviewSection from './sections/ OverviewSection';
+import AccountsSection from "./sections/AccountsSection";
+import TransactionsSection from "./sections/TransactionsSection";
+import LoansSection from "./sections/LoansSection";
+import ReportsSection from "./sections/ReportsSection";
+import SettingsSection from "./sections/SettingsSection";
 
 const NAV_ITEMS = [
-    { key: "overview", lable: "Overview", icon: "LayoutGrid", Component: "OverviewSection" },
-    {key: "accounts", lable: "Accounts", icon: "Users", Component: "AccountsSection"},
-    {key: "transactions", lable: "Transactions", icon: "ArrorLeftRight", Component: "TransactionsSection"},
-    {key: "loans", lable: "Loans", icon: "Landmark", Component: "LoansSection"},
-    {key: "reports", lable: "Reports", icon: "LineChart", Component: "ReportsSection"},
-    {key: "settings", lable: "Settings", icon: "SettingsIcon", Component: "settingsSection"},
+    { key: "overview", label: "Overview", icon: LayoutGrid, Component: OverviewSection },
+    {key: "accounts", label: "Accounts", icon: Users, Component: AccountsSection},
+    {key: "transactions", label: "Transactions", icon: ArrowLeftRight, Component: TransactionsSection},
+    {key: "loans", label: "Loans", icon: Landmark, Component: LoansSection},
+    {key: "reports", label: "Reports", icon: LineChart, Component: ReportsSection},
+    {key: "settings", label: "Settings", icon: SettingsIcon, Component: SettingsSection},
 ];
 
 const NavItem = ({ icon: Icon, label, isActive, onClick }) => (
@@ -20,7 +25,7 @@ const NavItem = ({ icon: Icon, label, isActive, onClick }) => (
         }`}
     >
         <Icon size={18} />
-        <span className='font-medium'>{lable}</span>
+        <span className='font-medium'>{label}</span>
     </div>
 );
 
@@ -49,7 +54,7 @@ const StaffDashboard = () => {
                         <NavItem 
                             key={item.key}
                             icon={item.icon}
-                            label={item.lable}
+                            label={item.label}
                             isActive={activeSection === item.key}
                             onClick={() => setActiveSection(item.key)}
                         />
@@ -58,7 +63,7 @@ const StaffDashboard = () => {
             </div>
 
             <div className='flex-1 h-full rounded-2xl bg-[#f5f0e8] p-5 overflow-auto'>
-                <ActiveComponent />
+                <ActiveComponent onNavigate={setActiveSection} />
             </div>
 
         </div>

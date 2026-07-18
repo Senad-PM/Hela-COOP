@@ -6,6 +6,6 @@ const router=express.Router();
 
 router.get("/account/:accountNumber",protect,authorize("staff"),getTransactionsBySavingNumber);
 router.get("/:transactionNumber",protect,authorize("staff"),getTransactionByTransactionNumber);
-router.get("/",protect,authorize("staff"),getAllTransactions);
+router.get("/",protect,authorize("staff","manager"),getAllTransactions);
 
 module.exports=router;

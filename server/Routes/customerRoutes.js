@@ -5,7 +5,7 @@ const {protect,authorize}=require("../Middlewares/authMiddleware");
 const router=express.Router();
 
 router.post("/add",protect,authorize("staff"),addCustomer);
-router.get("/",protect,authorize("staff"),getCustomers);
+router.get("/",protect,authorize("staff","manager"),getCustomers);
 router.get("/:customerNumber",protect,authorize("staff"),getCustomerByCustomerNumber);
 router.get("/:id",protect,authorize("staff"),getCustomerById);
 router.put("/:customerNumber",protect,authorize("staff"),updateCustomer);
