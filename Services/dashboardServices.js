@@ -194,6 +194,11 @@ exports.staffDashboard=async()=>{
 };
 
 exports.managerDashedboard=async()=>{
+    //Days
+    const today=new Date();
+    today.setHours(0,0,0,0);
+    const maturityperiod=new Date(today);
+    maturityperiod.setDate(maturityperiod.getDate()+3);
 //KPI CARDS FOR MANGER DASHEDBOARD
     const customerCount=await Customer.countDocuments();
     const totalSavings=await Savings.countDocuments();
@@ -235,7 +240,27 @@ exports.managerDashedboard=async()=>{
     const completeMonthlyDisbursement=fillMissingMonths(monthlytransaction);
     //loan Statistics
     const completeLoanStatistics=await loanStatics();
-
+    //pending loan que
+    const pendingLoans=await Loan.find({status:"pending"}).select("loanNumber principalAmount createdAt")
+    .populate("customer","firstName lastName")
+    .limit(5)
+    .sort({createdAt:-1});
+   const overDueLoansQue=await Loan.find({isOverdue:true}).sort({createdAt:-1}).limit(5)
+          .select("loanNumber principalAmount nextDueDate customer")
+          .populate("customer","firstName lastName");
+    const maturingFixedDepositsQue=await Savings.find({accountType:"fixed",maturityDate:{
+        $gte:today,
+        $lt:maturityperiod
+    },isActive:true}).limit(5).select("accountNumber balance maturityDate customer").populate("customer","firstName lastName");   
+    //high value transactions
+    const highValueTransactions=await Transaction.find({
+        amount:{
+          $gte:100000
+       }
+     })
+    .select("transactionNumber accountNumber transactionType amount").
+    populate("performedBy","userName").limit(5)
+    .sort({createdAt:-1});
     return{
      overview:{
          customerCount:customerCount,
@@ -251,8 +276,16 @@ exports.managerDashedboard=async()=>{
      },
      loanStatics:{
         completeLoanStatistics
-     }
+     },
+     Ques:{
+       pendingLoanQue:pendingLoans,
+       overDueLoansQues:overDueLoansQue,
+       maturingFDQUe:maturingFixedDepositsQue
+    },
+    highValueTransaction:{
+        highValueTransactions
     }
+   };
 };
 const getmonthlytransactionsummery=async(transactionType)=>{
  //Days
