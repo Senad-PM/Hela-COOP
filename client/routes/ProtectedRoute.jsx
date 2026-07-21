@@ -1,7 +1,5 @@
 import { Navigate } from "react-router-dom";
 
-// allowedRoles is optional. Omit it to just require "logged in" (any role).
-// Pass e.g. ['admin'] or ['staff', 'manager'] to also restrict by role.
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const accessToken = localStorage.getItem('accessToken');
   const role = localStorage.getItem('role');

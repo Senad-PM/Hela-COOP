@@ -4,7 +4,6 @@ import { Line } from 'react-chartjs-2'
 import { fetchStaffDashboard } from '../../src/api/DashboardApi';
 import { AlertTriangle, Clock, FileClock, ListTodo, Loader2, PiggyBank, TrendingUp, User2, UserPlus, Volume } from 'lucide-react'
 
-
 ChartJs.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
 const currency = (n) => `Rs . ${Number(n || 0).toLocaleString()}`
 
@@ -58,13 +57,15 @@ const VolumeChart = ({points}) => {
       },
     ],
   };
-  const option = {
+  const options = {
     responsive: true,
-    maintainaspectRation: "false",
+    maintainaspectRation: false,
     plugins: {legend: {display: false}},
     scales: {
       x: {grid: {display: false}},
-      y: {grid: {color: "#e5e7eb"}, ticks: {callback: (v) => `${v / 1000}K`}},
+      y: {grid: {color: "#e5e7eb"}, ticks: {callback: (value) => {
+        return `Rs. ${Number(value).toLocaleString()}`
+      }}},
     },
   };
   return(
@@ -85,7 +86,10 @@ const  OverviewSection = ({ onNavigate }) => {
       setLoading(true);
       setError("");
       try{
-        const result = await fetchStaffDashboard;
+        const result = await fetchStaffDashboard();
+        alert("Dashboard loaded");
+        console.log("Dashboard Data:", result);
+        console.log("Daily Transaction Volume:", result.dailyTransactionVolume);
         if (!cancelled) setDashboard(result);
       } catch (err){
         if (!cancelled) setError(err.response?.data?.message || "Could not load dashboard data.");

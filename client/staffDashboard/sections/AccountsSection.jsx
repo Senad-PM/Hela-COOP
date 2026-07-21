@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { fetchSavingsAccounts } from '../../src/api/accountsApi';
-import { div } from 'framer-motion/client';
-import { Loader, Loader2, Search, User, UserCheck, UserX } from 'lucide-react';
+import { Loader2, Search, User, UserCheck, UserPlus, UserX } from 'lucide-react';
+import AddAccounts from './AddAccounts';
 
 
 const currency = (n) => `Rs. ${Number(n || 0).toLocaleString()}`;
@@ -15,22 +15,23 @@ const AccountsSection = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All status");
   const [typeFilter, setTypeFilter] = useState("All type");
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  const loadAccounts = async () => {
+    setLoading(true);
+    setError("");
+    try{
+      const result = fetchSavingsAccounts();
+      setAccounts(result.data || []);
+    } catch (err){
+      setError(err.response?.data?.message || "Could not load accounts.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    let cancelled = false;
-    (async() => {
-      setLoading(true);
-      setError("");
-      try{
-        const result = await fetchSavingsAccounts();
-        if (!cancelled) setAccounts(result.data || []);
-      } catch (err){
-        if (!cancelled) setError(err.response?.data?.message || "Could not load accounts.");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return() => { cancelled = true; };
+    loadAccounts();
   }, []);
 
   const total = accounts.length;
@@ -48,8 +49,15 @@ const AccountsSection = () => {
   return (
     <div className='flex flex-col gap-4'>
       <div>
-        <h1>Accounts</h1>
-        <p>Manage all members saving accounts</p>
+        <div className='flex items-center justify-between'>
+          <div>
+            <h1 className='text-xl font-bold text-gray-800'>Accounts</h1>
+            <p className='text-sm text-gray-500'>Manage all members savings accounts</p>
+          </div>
+          <button onClick={() => setShowAddModal(true)} className='flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#245a41] transition'>
+            <UserPlus size={15} />New Account
+          </button>
+        </div>
       </div>
 
       <div className='grid grid-cols-3 gap-4'>
@@ -88,6 +96,7 @@ const AccountsSection = () => {
           <div className='flex items-center gap-2 flex-wrap'>
             <div className='flex items-center gap-2 border border-green-500 px-3 py-1.5 rounded-xl bg-white'>
               <input type="search" placeholder='Search Name or Account ID'
+                value={search} onChange={(e) => setSearch(e.target.value)}
                 className='bg-transparent outline-none text-sm w-44 text-gray-700 placeholder:text-gray-400'
               />
               <Search size={14} className='text-gray-400' />
@@ -139,6 +148,12 @@ const AccountsSection = () => {
           )}
         </div>
       </div>
+
+      {showAddModal && (
+        <AddAccounts onClose={() => setShowAddModal(false)}
+          onCreated={loadAccounts}
+        />
+      )}
     </div>
   )
 }

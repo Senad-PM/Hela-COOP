@@ -1,7 +1,5 @@
 import axios from "axios";
 
-// Central axios instance so every request shares the same base URL
-// and automatically carries the logged-in admin's access token.
 const axiosClient = axios.create({
   baseURL: "http://localhost:8080/api",
 });

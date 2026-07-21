@@ -8,7 +8,7 @@ const{applyDailyInterest}=require("../Services/savingsService");
 
 
 cron.schedule("0 0 * * *",async () => {
-    const savingsExist=await Savings.find({isActive:"true",accountType:"regular"});
+    const savingsExist=await Savings.find({isActive:true,accountType:"regular"});
     for (const account of savingsExist){
         try{
             await applyDailyInterest(account.accountNumber);
