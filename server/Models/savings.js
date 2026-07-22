@@ -11,10 +11,10 @@ const savingsSchema= new mongoose.Schema({
            "Invalid account number format"
         ]
     },
-    customerNumber:{
+   /* customerNumber:{
         type:String,
         required:true
-    },
+    }, */
     customer:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Customer",
@@ -45,12 +45,24 @@ const savingsSchema= new mongoose.Schema({
          enum:[3,6,12],
          min:1
     },
+    maturityDate:{
+        type:Date,
+    },
+    isMatured:{
+        type:Boolean,
+        default:false
+    },
     isActive:{
           type:Boolean,
           default:true
     },
     lastInterestApplied:{
         type:Date
+    },
+    accuredInterest:{
+        type:Number,
+        default:0,
+        min:0
     },
     createdBy:{
         type:mongoose.Schema.Types.ObjectId,

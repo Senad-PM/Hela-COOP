@@ -39,15 +39,19 @@ const Navbar = () => {
                 password
             })
             console.log('Login success:', response.data)
-            closeForm() 
+            closeForm()
+            
+            localStorage.setItem('accessToken', response.data.accessToken)
+            localStorage.setItem('refreshToken', response.data.refreshToken)
+            localStorage.setItem('role', response.data.role)
 
             if (response.data.role == 'admin'){
                 localStorage.setItem('isAdmin', 'true')
                 navigate('/admin')
-                localStorage.setItem('accessToken', response.data.accessToken)
-                localStorage.setItem('refreshToken', response.data.refreshToken)
+            }else if (response.data.role === 'manager' || response.data.role === 'staff'){
+                navigate('/staff')
             }else{
-                alert('Login successful!')
+                setError('Unrecognized role for this account.')
             }
 
         } catch (err) {
