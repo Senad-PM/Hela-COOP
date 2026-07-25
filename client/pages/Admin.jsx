@@ -688,6 +688,8 @@ const Admin = () => {
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(true);
   const [usersError, setUsersError] = useState("");
+  const role = localStorage.getItem("role");
+  const roleLabel = role ? role.charAt(0).toUpperCase() + role.slice(1) : "Admin";
 
   const loadUsers = useCallback(async () => {
     setUsersLoading(true);
@@ -706,41 +708,54 @@ const Admin = () => {
     loadUsers();
   }, [loadUsers]);
 
-  const NavItem = ({label, section, activeSection, onClick}) => {
-    const isActive = activeSection === section;
-    return (
-      <div onClick={() => onClick(section)}
-        className={`cursor-pointer rounded-2xl w-2/3 p-3 transition-all duration-300 ${
-          isActive ? "bg-emerald-100 text-black scale-105" : "hover:bg-emerald-100 hover:text-black hover:scale-105"
-        }`}
-      >
-        <h1>{label}</h1>
+  const NAV_ITEMS = [
+    { key: "home", label: "Home", icon: Home },
+    { key: "userRegistration", label: "User Registration", icon: UserPlus },
+    { key: "users", label: "Users", icon: UserRound },
+    { key: "setting", label: "Setting", icon: Settings },
+    { key: "activity", label: "Activity Log", icon: ClipboardList },
+  ];
+
+  const NavItem = ({ icon: Icon, label, isActive, onClick }) => (
+    <div onClick={onClick}
+      className={`flex items-center gap-3 cursor-pointer rounded-xl px-3 py-2.5 transition-all duration-200 ${
+        isActive
+          ? "bg-emerald-800/60 text-emerald-300 border-l-4 border-emerald-400"
+          : "text-gray-300 border-l-4 border-transparent hover:bg-emerald-900/40 hover:text-emerald-200"
+      }`}
+    >
+      <Icon size={18} />
+      <span className='font-medium'>{label}</span>
       </div>
-    )
-  }
+  );
 
   return (
     <>
-      <section className="w-full h-screen bg-[#0d1f1a] p-10 overflow-hidden">
+      <section className="w-full h-screen bg-[#0d1f1a] p-6 overflow-hidden">
         <div className="flex h-full gap-6">
-          <div className="flex flex-col w-1/3 text-[#10b981]">
+          <div className="flex flex-col w-64 flex-shrink-0 text-white">
             <h1
-              className="text-4xl font-bold"
-              style={{ fontFamily: '"Antonio", serif' }}
+              className="text-3xl font-bold" style={{ fontFamily: '"Antonio", serif' }}
             >
-              Hela-COOP
+              Hela <span className="text-emerald-400">COOP</span>
             </h1>
-            <h2 className="text-lg font-semibold">#Admin</h2>
-            <hr className="mr-10 mt-5 w-2/3 border-t-2 text-gray-400" />
-            <div className="mt-20 text-2xl font-semibold space-y-5">
-              <NavItem label="Home" icon={Home} section="home" activeSection={activeSection} onClick={setActiveSection} />
-              <NavItem label="User Registration" icon={UserPlus} section="userRegistration" activeSection={activeSection} onClick={setActiveSection} />
-              <NavItem label="Users" icon={UserRound} section="users" activeSection={activeSection} onClick={setActiveSection} />
-              <NavItem label="Setting" icon={Settings} section="setting" activeSection={activeSection} onClick={setActiveSection} />
-              <NavItem label="Activity Log" icon={ClipboardList} section="activity" activeSection={activeSection} onClick={setActiveSection} />
-            </div>
+            <span className="mt-2 w-fit text-xs font-semibold bg-emerald-800/70 text-emerald-300 px-3 py-1 rounded-full">
+              {roleLabel}
+            </span>
+            <hr className="mt-5 border-t border-gray-700" />
+            <nav className="flex flex-col mt-6 gap-1">
+              {NAV_ITEMS.map((item) => (
+                <NavItem
+                  key={item.key}
+                  icon={item.icon}
+                  label={item.label}
+                  isActive={activeSection === item.key}
+                  onClick={() => setActiveSection(item.key)}
+                />
+              ))}
+            </nav>
           </div>
-          <div className="w-2/3 h-full rounded-2xl bg-emerald-900 p-5 overflow-y-auto">
+          <div className="flex-1 h-full rounded-2xl bg-[#f5f0e8] p-5 overflow-auto">
 
           {activeSection === "userRegistration" && (
             <UserRegistrationSection onRegistered={() => {

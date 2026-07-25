@@ -87,7 +87,7 @@ const  OverviewSection = ({ onNavigate }) => {
       setError("");
       try{
         const result = await fetchStaffDashboard();
-        alert("Dashboard loaded");
+        //alert("Dashboard loaded");
         console.log("Dashboard Data:", result);
         console.log("Daily Transaction Volume:", result.dailyTransactionVolume);
         if (!cancelled) setDashboard(result);

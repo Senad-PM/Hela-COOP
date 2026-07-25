@@ -165,7 +165,7 @@ const Home = () => {
                         <div className='p-10'>
                             <div className='flex items-center justify-center'>
                                 <div>
-                                   <img src="/Images/Landing Page/2..png" alt="logo" className='w-37.5 h-33'/>
+                                   <img src="/Images/Landing Page/2..png" alt="logo" className='w-37.5 h-33 object-cover'/>
                                 </div>
                             </div>
                             <div className='items-center justify-center text-center mt-5'>

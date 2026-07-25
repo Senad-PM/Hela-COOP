@@ -13,15 +13,15 @@ const AccountsSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All status");
-  const [typeFilter, setTypeFilter] = useState("All type");
+  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [typeFilter, setTypeFilter] = useState("All Types");
   const [showAddModal, setShowAddModal] = useState(false);
 
   const loadAccounts = async () => {
     setLoading(true);
     setError("");
     try{
-      const result = fetchSavingsAccounts();
+      const result = await fetchSavingsAccounts();
       setAccounts(result.data || []);
     } catch (err){
       setError(err.response?.data?.message || "Could not load accounts.");
@@ -41,8 +41,8 @@ const AccountsSection = () => {
   const filtered = accounts.filter((a) => {
     const name = `${a.customer?.firstName || ""} ${a.customer?.lastName || ""}`.toLowerCase();
     const matchSearch = a.accountNumber.toLowerCase().includes(search.toLowerCase()) || name.includes(search.toLowerCase());
-    const matchStatus = statusFilter === "All statuses" || (statusFilter === "Active" ? a.isActive : !a.isActive);
-    const matchType = typeFilter === "All types" || a.accountType === typeFilter.toLowerCase();
+    const matchStatus = statusFilter === "All Status" || (statusFilter === "Active" ? a.isActive : !a.isActive);
+    const matchType = typeFilter === "All Types" || a.accountType === typeFilter.toLowerCase();
     return matchSearch && matchStatus && matchType;
   });
 
