@@ -12,6 +12,7 @@ import {
   CheckCircleIcon
 } from "lucide-react";
 import React, { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { fetchUsers, registerUser } from "../src/api/userApi";
 import { getInitials, getAvatarColor, formatLastActive } from "../src/utils/userDisplay";
 
@@ -36,7 +37,7 @@ const UserTable = ({users=[], loading, error}) => (
         users.map((user, i) => {
           const role = (user.role || "").toLowerCase();
           return(
-            <div key={user._id || i} className={`grid grid-cols-4 px-4 py-3 rounded-xl items-center text-sm ${i % 2 === 0 ? "bg-amber-50/60" : "bg-stone-100/40"}`}>
+            <div key={user._id || i} className={`grid grid-cols-4 px-4 py-3 rounded-xl items-center text-sm transition-colors duration-200 hover:bg-emerald-50 ${i % 2 === 0 ? "bg-amber-50/60" : "bg-stone-100/40"}`}>
               <div className="flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-full ${getAvatarColor(user.userName)} text-white flex items-center justify-center text-xs font-bold flex-shrink-0`}>
                   {getInitials(user.userName)}
@@ -111,7 +112,7 @@ const HomeSection = ({ users = [], loading, error }) => {
       </div>
 
       <div className="flex gap-5 shrink-0">
-        <div className="bg-white w-full rounded-2xl space-y-5 p-4">
+        <div className="bg-white w-full rounded-2xl space-y-5 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg animate-[fadeInUp_0.4s_ease-out]" style={{ animationDelay: '0ms'}}>
           <div className="flex items-center justify-center gap-3 font-bold text-xl">
             <Users /> <h1>Total Users</h1>
           </div>
@@ -123,7 +124,7 @@ const HomeSection = ({ users = [], loading, error }) => {
           </div>
         </div>
 
-        <div className="bg-white w-full rounded-2xl space-y-5 p-4">
+        <div className="bg-white w-full rounded-2xl space-y-5 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg animate-[fadeInUp_0.4s_ease-out]" style={{ animationDelay: '0ms'}}>
           <div className="flex items-center justify-center gap-3 font-bold text-xl">
             <User /> <h1>Managers</h1>
           </div>
@@ -135,7 +136,7 @@ const HomeSection = ({ users = [], loading, error }) => {
           </div>
         </div>
 
-        <div className="bg-white w-full rounded-2xl space-y-5 p-4">
+        <div className="bg-white w-full rounded-2xl space-y-5 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg animate-[fadeInUp_0.4s_ease-out]" style={{ animationDelay: '0ms'}}>
           <div className="flex items-center justify-center gap-3 font-bold text-xl">
             <CircleCheckBig /> <h1>Active</h1>
           </div>
@@ -147,7 +148,7 @@ const HomeSection = ({ users = [], loading, error }) => {
           </div>
         </div>
 
-        <div className="bg-white w-full rounded-2xl space-y-5 p-4">
+        <div className="bg-white w-full rounded-2xl space-y-5 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg animate-[fadeInUp_0.4s_ease-out]" style={{ animationDelay: '0ms'}}>
           <div className="flex items-center justify-center gap-3 font-bold text-xl">
             <CircleSlash2 /> <h1>Inactive</h1>
           </div>
@@ -266,7 +267,7 @@ const UserRegistrationSection = ({ onRegistered }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4 pt-4 px-2 max-w-4xl">
+    <div className="flex flex-col gap-5 pt-4 px-2">
 
       <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4">
         <h1 className="text-xl font-bold text-gray-800">User Registration</h1>
@@ -274,12 +275,12 @@ const UserRegistrationSection = ({ onRegistered }) => {
       </div>
       
       {formError && (
-        <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm rounded-2xl px-5 py-3">
+        <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm rounded-2xl px-5 py-3 animate-[fadeInUp_0.3s_ease-out]">
           <TriangleAlertIcon size={15} /> {formError}
         </div>
       )}
       {formSuccess && (
-        <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-2xl px-5 py-3">
+        <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-2xl px-5 py-3 animate-[fadeInUp_0.3s_ease-out]">
           <CheckCircleIcon size={15} /> {formSuccess}
         </div>
       )}
@@ -338,14 +339,14 @@ const UserRegistrationSection = ({ onRegistered }) => {
         <button
           onClick={handleReset}
           disabled={submitting}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl border-2 border-gray-300 text-green-400 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 transition"
+          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl border-2 border-gray-300 text-green-400 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 transition-all duration-150 hover:scale-105 active:scale-95"
         >
           <RotateCcw size={15} /> Reset
         </button>
         <button
           onClick={handleSubmit}
           disabled={submitting}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl border-2 border-gray-300 text-green-400 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 transition"
+          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl border-2 border-gray-300 text-green-400 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 transition-all duration-150 hover:scale-105 active:scale-95"
         >
           {submitting ? <Loader2 size={15} className="animate-spin" /> : null}
           {submitting ? "Registering..." : "Register"}
@@ -363,7 +364,7 @@ const UsersSection = ({users = [], loading, error}) => {
   const filtered = useFilteredUsers(users, search, roleFilter)
 
   return(
-    <div className="flex flex-col gap-4 pt-4 px-2">
+    <div className="flex flex-col gap-5 pt-4 px-2">
       
       <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4 flex items-start justify-between">
         <div>
@@ -453,7 +454,7 @@ const SettingSection = () => {
   );
 
   return(
-    <div className="flex flex-col gap-4 pt-4 px-2">
+    <div className="flex flex-col gap-5 pt-4 px-2">
       
       <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4 flex items-start justify-between">
         <div>
@@ -565,7 +566,7 @@ const ActivityLogSection = () => {
   const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   return (
-    <div className="flex flex-col gap-4 pt-4 px-2">
+    <div className="flex flex-col gap-5 pt-4 px-2">
 
       <div className="bg-[#f5f0e8] flex items-start justify-between rounded-2xl px-6 py-4">
         <div>
@@ -617,7 +618,7 @@ const ActivityLogSection = () => {
 
         <div className="space-y-1">
           {paginated.map((logs, i) => (
-            <div key={i} className={`grid grid-cols-4 px-4 py-3 rounded-xl items-center text-sm ${i % 2 == 0 ? "bg-amber-50/60" : "bg-stone-100/40}"}`}>
+            <div key={i} className={`grid grid-cols-4 px-4 py-3 rounded-xl items-center text-sm transition-colors duration-200 hover:bg-emerald-50 ${i % 2 == 0 ? "bg-amber-50/60" : "bg-stone-100/40}"}`}>
               <span className="text-xs text-gray-500">{logs.date}</span>
               <div className="flex items-center gap-2">
                 <div className={`flex items-center justify-center w-7 h-7 rounded-full ${logs.color} text-white text-xs font-bold flex-shrink-0`}>
@@ -688,6 +689,8 @@ const Admin = () => {
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(true);
   const [usersError, setUsersError] = useState("");
+  const role = localStorage.getItem("role");
+  const roleLabel = role ? role.charAt(0).toUpperCase() + role.slice(1) : "Admin";
 
   const loadUsers = useCallback(async () => {
     setUsersLoading(true);
@@ -706,53 +709,83 @@ const Admin = () => {
     loadUsers();
   }, [loadUsers]);
 
-  const NavItem = ({label, section, activeSection, onClick}) => {
-    const isActive = activeSection === section;
-    return (
-      <div onClick={() => onClick(section)}
-        className={`cursor-pointer rounded-2xl w-2/3 p-3 transition-all duration-300 ${
-          isActive ? "bg-emerald-100 text-black scale-105" : "hover:bg-emerald-100 hover:text-black hover:scale-105"
-        }`}
-      >
-        <h1>{label}</h1>
+  const NAV_ITEMS = [
+    { key: "home", label: "Home", icon: Home },
+    { key: "userRegistration", label: "User Registration", icon: UserPlus },
+    { key: "users", label: "Users", icon: UserRound },
+    { key: "setting", label: "Setting", icon: Settings },
+    { key: "activity", label: "Activity Log", icon: ClipboardList },
+  ];
+
+  const NavItem = ({ icon: Icon, label, isActive, onClick }) => (
+    <div onClick={onClick}
+      className={`relative group flex items-center gap-3 cursor-pointer rounded-xl px-3 py-2.5 transition-colors duration-200 ease-out hover:translate-x-1 ${
+        isActive
+          ? "text-emerald-300" : "text-gray-300 hover:text-emerald-200"
+      }`}
+    >
+      {isActive && (
+        <motion.div
+          //layoutId="activeNavPill"
+          className="absolute inset-0 bg-emerald-800/60 border-l-4 border-emerald-400 rounded-xl shadow-[0_0_14px_rgba(16,185,129,0.18)]"
+          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+        />
+      )}
+      <div className="relative flex items-center gap-3">
+        <Icon size={18} className="transition-transform duration-300 group-hover:scale-110" />
+        <span className='font-medium'>{label}</span>
       </div>
-    )
-  }
+    </div>
+  );
 
   return (
     <>
-      <section className="w-full h-screen bg-[#0d1f1a] p-10 overflow-hidden">
+      <section className="w-full h-screen bg-[#0d1f1a] p-6 overflow-hidden">
         <div className="flex h-full gap-6">
-          <div className="flex flex-col w-1/3 text-[#10b981]">
+          <div className="flex flex-col w-64 flex-shrink-0 text-white animate-[fadeIn_0.5s_ease-out]">
             <h1
-              className="text-4xl font-bold"
-              style={{ fontFamily: '"Antonio", serif' }}
+              className="text-3xl font-bold w-fit transition-transform duration-300 hover:scale-105" style={{ fontFamily: '"Antonio", serif' }}
             >
-              Hela-COOP
+              Hela <span className="text-emerald-400">COOP</span>
             </h1>
-            <h2 className="text-lg font-semibold">#Admin</h2>
-            <hr className="mr-10 mt-5 w-2/3 border-t-2 text-gray-400" />
-            <div className="mt-20 text-2xl font-semibold space-y-5">
-              <NavItem label="Home" icon={Home} section="home" activeSection={activeSection} onClick={setActiveSection} />
-              <NavItem label="User Registration" icon={UserPlus} section="userRegistration" activeSection={activeSection} onClick={setActiveSection} />
-              <NavItem label="Users" icon={UserRound} section="users" activeSection={activeSection} onClick={setActiveSection} />
-              <NavItem label="Setting" icon={Settings} section="setting" activeSection={activeSection} onClick={setActiveSection} />
-              <NavItem label="Activity Log" icon={ClipboardList} section="activity" activeSection={activeSection} onClick={setActiveSection} />
-            </div>
+            <span className="mt-2 w-fit text-xs font-semibold bg-emerald-800/70 text-emerald-300 px-3 py-1 rounded-full">
+              {roleLabel}
+            </span>
+            <hr className="mt-5 border-t border-gray-700" />
+            <nav className="flex flex-col mt-6 gap-1">
+              {NAV_ITEMS.map((item) => (
+                <NavItem
+                  key={item.key}
+                  icon={item.icon}
+                  label={item.label}
+                  isActive={activeSection === item.key}
+                  onClick={() => setActiveSection(item.key)}
+                />
+              ))}
+            </nav>
           </div>
-          <div className="w-2/3 h-full rounded-2xl bg-emerald-900 p-5 overflow-y-auto">
-
-          {activeSection === "userRegistration" && (
-            <UserRegistrationSection onRegistered={() => {
-              loadUsers(),
-              setActiveSection("users");
-              }}
-            />
-          )}
-          {activeSection === "users" && <UsersSection users={users} loading={usersLoading} error={usersError} />}
-          {activeSection === "setting" && <SettingSection />}
-          {activeSection === "activity" && <ActivityLogSection />}
-          {activeSection === "home" && <HomeSection users={users} loading={usersLoading} error={usersError} />}
+          <div className="flex-1 h-full rounded-2xl bg-[#f5f0e8] p-5 overflow-auto">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeSection}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+              >
+                {activeSection === "userRegistration" && (
+                  <UserRegistrationSection onRegistered={() => {
+                    loadUsers,
+                    setActiveSection("users");
+                  }}
+                  />
+                )}
+                {activeSection === "users" && <UsersSection users={users} loading={usersLoading} error={usersError} />}
+                {activeSection === "setting" && <SettingSection />}
+                {activeSection === "activity" && <ActivityLogSection />}
+                {activeSection === "home" && <HomeSection users={users} loading={usersLoading} error={usersError} />}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </section>

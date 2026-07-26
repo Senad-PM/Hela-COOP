@@ -64,7 +64,7 @@ const SetPassword = () => {
 
   return(
     <section className='flex items-center justify-center w-full min-h-screen p-6 bg-[#0d1f1a]'>
-        <div className='bg-white rounded-2xl overflow-hiddenmax-w-md w-full'>
+        <div className='bg-white rounded-2xl overflow-hidden max-w-md w-full'>
             <div className='bg-[#f5f0e8] px-8 py-4'>
                 <h1 className='text-4xl font-bold text-[#0d1f1a]' style={{ fontFamily: '"Antonio", serif' }}>
                     Hela-COOP

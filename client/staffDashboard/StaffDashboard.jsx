@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { LayoutGrid, Users, ArrowLeftRight, Landmark, LineChart, Settings as SettingsIcon } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import OverviewSection from './sections/ OverviewSection';
 import AccountsSection from "./sections/AccountsSection";
 import TransactionsSection from "./sections/TransactionsSection";
@@ -18,14 +19,21 @@ const NAV_ITEMS = [
 
 const NavItem = ({ icon: Icon, label, isActive, onClick }) => (
     <div onClick={onClick}
-        className={`flex items-center gap-3 cursor-pointer rounded-xl px-3 py-2.5 transition-all duration-200 ${
-            isActive 
-            ? "bg-emerald-800/60 text-emerald-300 border-l-4 border-emerald-400"
-            : "text-gray-300 border-l-4 border-transparent hover:bg-emerald-900/40 hover:text-emerald-200"
+        className={`relative group flex items-center gap-3 cursor-pointer rounded-xl px-3 py-2.5 transition-colors duration-200 hover:translate-x-1 ${
+            isActive ? "bg-emerald-300" : "text-gray-300 hover:text-emerald-200"
         }`}
     >
-        <Icon size={18} />
-        <span className='font-medium'>{label}</span>
+        {isActive && (
+            <motion.div 
+                layoutId='staffActiveNavPill'
+                className='absolute inset-0 bg-emerald-800/60 border-l-4 border-emerald-400 rounded-xl'
+                transition={{ type: "spring", stiffness: 380, damping: 32 }}
+            />
+        )}
+        <div className='relative flex items-center gap-3'>
+            <Icon size={18} className="transition-transform duration-300 group-hover:scale-110" />
+            <span className='font-medium'>{label}</span>
+        </div>
     </div>
 );
 
@@ -63,7 +71,17 @@ const StaffDashboard = () => {
             </div>
 
             <div className='flex-1 h-full rounded-2xl bg-[#f5f0e8] p-5 overflow-auto'>
-                <ActiveComponent onNavigate={setActiveSection} />
+                <AnimatePresence mode='wait'>
+                    <motion.div
+                        key={activeSection}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -12 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                    >
+                        <ActiveComponent onNavigate={setActiveSection} />
+                    </motion.div>
+                </AnimatePresence>
             </div>
 
         </div>
