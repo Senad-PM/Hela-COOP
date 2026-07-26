@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { fetchLoanStats, fetchLoans } from '../../src/api/loansApi';
 import { AlertTriangle, Clock, DollarSign, Landmark, Search, Loader2 } from 'lucide-react';
+import { motion } from 'motion/react';
 
 
 const currency = (n) => `Rs. ${Number(n || 0).toLocaleString()}`;
@@ -47,7 +48,13 @@ const LoansSection = () => {
       </div>
 
       <div className='grid grid-cols-4 gap-4'>
-        <div className='flex items-center bg-emerald-50 rounded-2xl p-4 gap-3'>
+        <motion.div 
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0 }}
+          whileHover={{ y: -4 }}
+          className='flex items-center bg-emerald-50 rounded-2xl p-4 gap-3 shadow-sm hover:shadow-md transition-shadow'
+        >
           <div className='flex items-center justify-center w-10 h-10 rounded-full bg-emerald-100'>
             <Landmark size={16} className='text-emerald-600' />
           </div>
@@ -55,7 +62,7 @@ const LoansSection = () => {
             <p className='text-2xl font-bold text-gray-800'>{stats?.activeLoansCount ?? "—"}</p>
             <p className='text-xs text-gray-600'>Active Loan</p>
           </div>
-        </div>
+        </motion.div>
         <div className='flex items-center bg-sky-50 rounded-2xl p-4 gap-3'>
           <div className='flex items-center justify-center w-10 h-10 rounded-full bg-sky-100'>
             <DollarSign size={16} className='text-sky-600' />

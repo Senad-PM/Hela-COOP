@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { fetchSavingsAccounts } from '../../src/api/accountsApi';
 import { Loader2, Search, User, UserCheck, UserPlus, UserX } from 'lucide-react';
+import { motion } from 'motion/react';
 import AddAccounts from './AddAccounts';
 
 
@@ -61,7 +62,13 @@ const AccountsSection = () => {
       </div>
 
       <div className='grid grid-cols-3 gap-4'>
-        <div className='flex items-center bg-emerald-50 rounded-2xl p-4 gap-3'>
+        <motion.div 
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0 }}
+          whileHover={{ y: -4 }}
+          className='flex items-center bg-emerald-50 rounded-2xl p-4 gap-3'
+        >
           <div className='w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center'>
             <User size={18} className='text-emerald-600' />
           </div>
@@ -69,8 +76,14 @@ const AccountsSection = () => {
             <p className='text-2xl font-bold text-gray-800'>{total}</p>
             <p className='text-xs text-gray-600'>Total Accounts</p>
           </div>
-        </div>
-        <div className='flex items-center bg-sky-50 rounded-2xl p-5 gap-3'>
+        </motion.div>
+        <motion.div 
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0 }}
+          whileHover={{ y: -4 }}
+          className='flex items-center bg-sky-50 rounded-2xl p-5 gap-3'
+        >
           <div className='w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center'>
             <UserCheck size={18} className='text-sky-600' />
           </div>
@@ -78,8 +91,14 @@ const AccountsSection = () => {
             <p className='text-2xl font-bold text-gray-800'>{active}</p>
             <p className='text-xs text-gray-600'>Active</p>
           </div>
-        </div>
-        <div className='flex items-center bg-red-50 rounded-2xl p-5 gap-3'>
+        </motion.div>
+        <motion.div 
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0 }}
+          whileHover={{ y: -4 }}
+          className='flex items-center bg-red-50 rounded-2xl p-5 gap-3'
+        >
           <div className='w-10 h-10 rounded-full bg-red-100 flex items-center justify-center'>
             <UserX size={18} className='text-red-600' />
           </div>
@@ -87,7 +106,7 @@ const AccountsSection = () => {
             <p className='text-2xl font-bold text-gray-800'>{inactive}</p>
             <p className='text-xs text-gray-600'>Inactive</p>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       <div className='bg-emerald-50 rounded-2xl p-5'>
@@ -135,7 +154,11 @@ const AccountsSection = () => {
             <p className='text-center text-sm text-gray-400 py-8'>No accounts found</p>
           ) : (
             filtered.map((a, i) => (
-              <div key={a._id} className={`grid grid-cols-6 px-4 py-3 rounded-xl items-center text-sm ${i % 2 === 0 ? "bg-white/70" : "bg-white/40"}`}>
+              <motion.div key={a._id} 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              className={`grid grid-cols-6 px-4 py-3 rounded-xl items-center text-sm transition-colors hover-bg-emerald-50 ${i % 2 === 0 ? "bg-white/70" : "bg-white/40"}`}>
                 <span className='font-medium text-gray-800'>{a.accountNumber}</span>
                 <span className='col-span-2 text-gray-700'>{a.customer?.firstName} {a.customer?.lastName}</span>
                 <span className='capitalize text-gray-600'>{a.accountType}</span>
@@ -143,7 +166,7 @@ const AccountsSection = () => {
                 <span className={`px-3 py-1.5 rounded-full text-xs font-medium w-fit ${a.isActive ? "bg-emerald-100 text-emerald-600" : "bg-gray-200 text-gray-500"}`}>
                   {a.isActive ? "Active" : "Inactive"}
                 </span>
-              </div>
+              </motion.div>
             ))
           )}
         </div>

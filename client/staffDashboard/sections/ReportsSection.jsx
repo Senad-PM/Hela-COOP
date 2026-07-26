@@ -1,5 +1,6 @@
 import { ArrowLeftRight, FileBarChart2, Info, Landmark, PieChart, ShieldCheck, User, User2, Users } from 'lucide-react';
 import React, { useState } from 'react'
+import { motion } from 'motion/react';
 
 
 const REPORT_TYPES = [
@@ -29,16 +30,22 @@ const ReportsSection = () => {
       )}
 
       <div className='grid grid-cols-3 gap-4'>
-        {REPORT_TYPES.map((r) => (
-          <button key={r.title} onClick={() => setNotice(`"${r.title}" isn't connected to a backend yet — no report-generation endpoint exists.`)}
-            className='bg-emerald-50 rounded-2xl p-4 flex flex-col gap-2 text-left hover:bg-emerald-100/70 transition'
+        {REPORT_TYPES.map((r, i) => (
+          <motion.button key={r.title} 
+            onClick={() => setNotice(`"${r.title}" isn't connected to a backend yet — no report-generation endpoint exists.`)}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0 }}
+            whileHover={{ y: -3 }}
+            whileTap={{ scale: 0.97 }}
+            className='bg-emerald-50 rounded-2xl p-4 flex flex-col gap-2 text-left hover:bg-emerald-100/70 transition-colors shadow-sm hover:shadow-md'
           >
             <div className='flex items-center justify-center w-9 h-9 rounded-lg bg-white'>
               <r.icon size={18} className='text-emerald-600' />
             </div>
             <p className='font-semibold text-gray-800 text-sm'>{r.title}</p>
             <p className='text-xs text-gray-500'>{r.desc}</p>
-          </button>
+          </motion.button>
         ))}
       </div>
 

@@ -1,12 +1,15 @@
 import { Bell, Info, Lock, LogOut, SlidersHorizontal, User } from 'lucide-react';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'motion/react';
 
 const Toggle = ({ checked, onchange }) => (
   <button onClick={() => onchange(!checked)}
     className={`w-11 h-6 rounded-full transition-colors flex-shrink-0 ${checked ? "bg-emerald-500" : "bg-gray-300"}`}
   >
-    <span className={`block w-5 h-5 bg-white rounded-full shadow transition-transform ${checked ? "transale-x-5" : "translate-x-0.5"}`}/>
+    <motion.span 
+      layout transition={{ type: "spring", stiffness: 500, damping: 30 }}
+      className={`block w-5 h-5 bg-white rounded-full shadow ${checked ? "translate-x-5" : "translate-x-0.5"}`}/>
   </button>
 );
 
@@ -69,7 +72,7 @@ const SettingsSection = () => {
           {[
             ["emailAlerts", "Email Alters", "Recieve alterts via email"],
             ["smsNotificatios", "SMS Notifications", "Transaction and approval SMS"],
-            ["pendingApprovalAlerts, Pending Approval Alerts", "Alerts when items need action"],
+            ["pendingApprovalAlerts", "Pending Approval Alerts", "Alerts when items need action"],
             ["dailyReportSummary", "Daily Report Summary", "Get EOD Summary email"],
           ].map(([key, label, desc]) => (
             <div key={key} className='flex items-center justify-between gap-3'>
@@ -96,7 +99,7 @@ const SettingsSection = () => {
                 <p className='text-sm font-medium text-gray-800'>{label}</p>
                 <p className='text-xs text-gray-500'>{desc}</p>
               </div>
-              <Toggle checked={preferences[key]} onchange={(v) => setPreferences({...notifications, [key]: v})} />
+              <Toggle checked={preferences[key]} onchange={(v) => setPreferences({...preferences, [key]: v})} />
             </div>
           ))}
         </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {Chart as ChartJs, CategoryScale, Filler, LineElement, LinearScale, PointElement, Tooltip} from 'chart.js'
 import { Line } from 'react-chartjs-2'
+import { motion } from "motion/react";
 import { fetchStaffDashboard } from '../../src/api/DashboardApi';
 import { AlertTriangle, Clock, FileClock, ListTodo, Loader2, PiggyBank, TrendingUp, User2, UserPlus, Volume } from 'lucide-react'
 
@@ -14,7 +15,7 @@ const timeAgo = (dateString) => {
   if (!dateString) return "";
   const diffDays = Math.floor((Date.now() - new Date(dateString)) / 86400000);
   if (diffDays <= 0) return "Today";
-  if (diffDays === 1) return "i day ago";
+  if (diffDays === 1) return "1 day ago";
   return `${diffDays} days ago`; 
 };
 
@@ -59,7 +60,8 @@ const VolumeChart = ({points}) => {
   };
   const options = {
     responsive: true,
-    maintainaspectRation: false,
+    maintainAspectRatio: false,
+    animation: { duration: 800, easing: "easeOutQuart" },
     plugins: {legend: {display: false}},
     scales: {
       x: {grid: {display: false}},
@@ -147,14 +149,20 @@ const  OverviewSection = ({ onNavigate }) => {
         </div>
 
         <div className='grid grid-cols-4 gap-4 mt-5'>
-          {stats.map((stat) => (
-            <div key={stat.label} className={`flex flex-col ${stat.bg} rounded-2xl p-4 gap-2`}>
+          {stats.map((stat, i) => (
+            <motion.div key={stat.label} 
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: i * 0.08 }}
+              whileHover={{ y: -4 }}
+              className={`flex flex-col ${stat.bg} rounded-2xl p-4 gap-2 shadow-sm hover:shadow-md transition-shadow`}
+            >
               <div className={`flex items-center justify-center w-9 h-9 rounded-full ${stat.iconBg}`}>
                 <stat.icon size={18} className={stat.iconColor} />
               </div>
               <p className='text-2xl font-bold text-gray-800'>{stat.value}</p>
               <p className='text-xs text-gray-600'>{stat.label}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -178,14 +186,19 @@ const  OverviewSection = ({ onNavigate }) => {
               {tasks.length === 0 ? (
                 <p className='text-sm text-gray-400 py-4 text-center'>Nothing pending - you're all caugth up.</p>
               ) : (
-                tasks.map((task) => (
-                  <div key={task.id} className='flex items-start bg-white rounded-xl px-4 py-3 gap-3'>
-                    <span className={`w-2 h-2 rounded-full mt-1.5 lex-shrink-0 ${task.color}`} />
+                tasks.map((task, i) => (
+                  <motion.div key={task.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                    className='flex items-start bg-white rounded-xl px-4 py-3 gap-3 hover:bg-gray-50 transition-colors'
+                  >
+                    <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${task.color}`} />
                     <div>
                       <p className='text-sm font-semibold text-gray-800'>{task.title}</p>
                       <p className='text-xs text-gray-500'>{task.subtitle}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))
               )}
             </div>
@@ -210,12 +223,12 @@ const  OverviewSection = ({ onNavigate }) => {
           <div className='flex flex-col bg-amber-50 rounded-2xl p-5 gap-3'>
             <p className='font-bold text-gray-800'>Quick Links</p>
             <button onClick={() => onNavigate?.("accounts")}
-              className='flex items-center gap-2 bg-white rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition'
+              className='flex items-center gap-2 bg-white rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-150 hover:scale-105 active:scale-95'
             >
               <UserPlus size={16} className='text-amber-600' /> New Account
             </button>
             <button onClick={() => onNavigate?.("reports")}
-              className='flex items-center gap-2 bg-white rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition'
+              className='flex items-center gap-2 bg-white rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-150 hover:scale-105 active:scale-95'
             >
               <FileClock size={16} className='text-amber-600' /> System Logs
             </button>

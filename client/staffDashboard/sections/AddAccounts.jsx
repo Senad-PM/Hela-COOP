@@ -2,6 +2,7 @@ import { CheckCircle, Loader2, TriangleAlert, UserPlus, X } from 'lucide-react';
 import React, { useState } from 'react'
 import { addCustomer, findCustomerByNIC } from '../../../client/src/api/customerApi';
 import { createSavingsAccount } from '../../src/api/accountsApi';
+import { motion } from 'motion/react';
 
 const emptyForm = {
     NIC: "",
@@ -92,8 +93,16 @@ const AddAccounts = ({ onClose, onCreated }) => {
         };
 
   return (
-    <div className='fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-xl'>
-        <div className='bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto'>
+    <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className='fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-xl'>
+        <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut"}}
+            className='bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto'>
             {success ? (
                 <div className='p-10 flex flex-col items-center text-center'>
                     <CheckCircle size={70} className='text-emerald-600 mb-4' />
@@ -189,8 +198,8 @@ const AddAccounts = ({ onClose, onCreated }) => {
                 </>
             )}
             
-        </div>
-    </div>
+        </motion.div>
+    </motion.div>
   )
 };
 export default AddAccounts
