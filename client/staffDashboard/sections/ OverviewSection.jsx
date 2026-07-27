@@ -228,7 +228,7 @@ const  OverviewSection = ({ onNavigate }) => {
               <UserPlus size={16} className='text-amber-600' /> New Account
             </button>
             <button onClick={() => onNavigate?.("reports")}
-              className='flex items-center gap-2 bg-white rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-150 hover:scale-105 active:scale-95'
+              className='flex items-center gap-2 bg-white rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50'
             >
               <FileClock size={16} className='text-amber-600' /> System Logs
             </button>
