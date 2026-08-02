@@ -5,6 +5,10 @@ const { update } = require("./userService");
 const buildPagination=require("../Utils/buildPaginations");
 const buildSort=require("../Utils/buildSort");
 const customer = require("../Models/customer");
+const mongoose = require("mongoose");
+const sendEmail= require ("../Utils/sendEmail");
+const crypto=require("crypto");
+const bcrypt=require("bcrypt");
 
 exports.createCustomer=async(customerData,user)=>{
     const{NIC,firstName,lastName,email,phoneNumber,occupation,city,address,postalCode,dateOfBirth}=customerData;
@@ -19,6 +23,7 @@ exports.createCustomer=async(customerData,user)=>{
     const nextCustomer=customerCount+1;
     const fomatNumber=nextCustomer.toString().padStart(4,"0");
     const customerNumber=`CUS-${fomatNumber}`;
+    const temporaryPassword=`Temp@${Math.floor(Math.random() * 100000)}`;
     const newCustomer=await Customer.create({
         customerNumber:customerNumber,
         NIC,
@@ -31,8 +36,31 @@ exports.createCustomer=async(customerData,user)=>{
         address,
         postalCode,
         dateOfBirth,
+        password:temporaryPassword,
         createdBy:user
     });
+    const resetToken=newCustomer.genarateResetPasswordToken();
+          const resetUrl=`http://localhost:5000/api/auth/reset-password/${resetToken}`;
+          try {
+          await sendEmail({
+            email: newCustomer.email,
+            subject: "Set Your Password",
+            message:
+              `Welcome to Hela COOP.\n\n` +
+              `Set your password using this link:\n\n${resetUrl}`
+          });
+        }catch(error){
+          console.log(error);
+          throw new Error("email sending failed")
+        }
+     await newCustomer.save();
+           return({
+             id:newCustomer._id,
+             userName:newCustomer.firstName,
+             email:newCustomer.email,
+             isActive:newCustomer.isActive,
+             message: "customer created and setup email sent"
+           });
     return({
         customerNumber:newCustomer.customerNumber,
         NIC:newCustomer.NIC,
@@ -128,20 +156,29 @@ exports.getCustomerByCN=async(customerNumber)=>{
     return findCustomer;
 };
 exports.getCustomerBYId=async(id)=>{
+
+   // console.log("recieved id :",id);
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        throw new Error("Invalid customer ID");
+    }
     const findCustomer=await Customer.findById(id);
+  //  console.log(findCustomer);
     if(!findCustomer){
         throw new Error("Customer not found");
     }
     return findCustomer;
 }
 exports.update=async(customerNumber,updatebody)=>{
-   const {firstName,lastName,phoneNumber,city,address,postalCode}=updatebody;
+   const {firstName,lastName,email,phoneNumber,city,address,postalCode,}=updatebody;
    const updateData={};
    if(firstName!==undefined){
        updateData.firstName=firstName;
    }
    if(lastName !== undefined){
       updateData.lastName=lastName;
+   }
+   if(email !==undefined ){
+     updateData.email=email;
    }
    if(phoneNumber!==undefined){
       updateData.phoneNumber=phoneNumber;

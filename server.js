@@ -3,6 +3,7 @@ const dotenv=require("dotenv");
 const connectDb=require("./Config/DB");
 const cors=require("cors");
 const morgan=require("morgan");
+const {seedAdmin}=require("./seed/adminSeeder")
 
 dotenv.config({path:".env"});
 connectDb();
@@ -18,6 +19,8 @@ require("./Cron/fixedMaturatyCron");
 //console.log("Loading loanRepayCron...");
 require("./Cron/loanRepayCron");
 //console.log("loanRepayCron loaded successfully");
+seedAdmin();
+
 
 const authRoutes=require("./Routes/authRoutes");
 const userRoutes=require("./Routes/userRoutes");

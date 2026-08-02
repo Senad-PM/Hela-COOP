@@ -7,8 +7,8 @@ const User=require("../Models/user");
 
 const seedAdmin=async()=>{
  try{
-    await mongoose.connect(process.env.MONGO_URI);
-    const adminexist=await User.findOne({email:"admin@gmail.com"});
+  /*  await mongoose.connect(process.env.MONGO_URI);  */
+    const adminexist=await User.findOne({email:"admin@gmail.com"});   
     if(adminexist){
         throw new Error("Admin already exist");
     }
@@ -23,11 +23,8 @@ const seedAdmin=async()=>{
 
         console.log(error.message);
 
-    } finally {
-
-        mongoose.connection.close();
-
-    }
+    } 
    
 };
- seedAdmin();
+module.exports={seedAdmin};
+ //seedAdmin();

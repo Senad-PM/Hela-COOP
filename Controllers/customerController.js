@@ -30,6 +30,7 @@ exports.getCustomerByCustomerNumber=async(req,res,next)=>{
     }
 };
 exports.getCustomerById=async(req,res,next)=>{
+    console.log("controller reached");
     try{
         const result=await getCustomerBYId(req.params.id);
         res.status(200).json(result);

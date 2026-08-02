@@ -4,8 +4,8 @@ const Savings=require("../Models/savings");
 const{repayLoan}=require("../Services/loanService");
 
 
-console.log("Loan repayment cron loaded");
-cron.schedule("* 0 1 * *",async()=>{
+//console.log("Loan repayment cron loaded");
+cron.schedule("0 0 * * *",async()=>{
         const loanExist=await Loan.find({status:"active"});
         for(const loan of loanExist){
             try{ 
@@ -14,10 +14,10 @@ cron.schedule("* 0 1 * *",async()=>{
                  
                if(today.getTime()>=dueDate.getTime()){
                     //console.log("its runnig");
-                    console.log("its runnig");
+                    //console.log("its runnig");
                  await repayLoan(loan.loanNumber);
                }
-              console.log(loan.loanNumber);
+             // console.log(loan.loanNumber);
                 
             }catch(error){
                 console.error(error);

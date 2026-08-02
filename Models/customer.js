@@ -1,5 +1,7 @@
 const mongoose=require("mongoose");
 const { validate } = require("./user");
+const bcrypt=require("bcrypt");
+const crypto=require("crypto");
 
 const customerSchema=new mongoose.Schema({
       
@@ -77,6 +79,27 @@ const customerSchema=new mongoose.Schema({
             message:"Customer must be at least 18 years old"
         }
     },
+    password:{
+        type: String,
+        required: true,
+        minlength: 8,
+        select:false,
+        match: [
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/,
+        "Password must contain uppercase, lowercase, number and special character"
+        ]
+    },
+    refreshToken:{
+        type:String,
+        default:null
+    },
+    resetPasswordToken: {
+        type: String
+    },
+
+   resetPasswordExpire: {
+        type: Date
+   },
     isActive:{
         type:Boolean,
         default:true
@@ -86,10 +109,31 @@ const customerSchema=new mongoose.Schema({
         ref:"User",
         required:true
     }
-
+     
 },{
     timestamps:true
         
 });
+customerSchema.index({ email: 1 }, { unique: true });
+customerSchema.pre("save",async function (next) {
+    if(!this.isModified("password")){
+        return ;
+    }
+    const salt=await bcrypt.genSalt(10);
+    this.password=await bcrypt.hash(this.password,salt);
+    
+});
+customerSchema.methods.comparePassword=async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword,this.password);
+};
+customerSchema.methods.isAccountActive=function(){
+    return this.isActive;
+};
+customerSchema.methods.genarateResetPasswordToken= function(){
+       const resetToken=crypto.randomBytes(20).toString("hex");
+       this.resetPasswordToken=crypto.createHash("sha256").update(resetToken).digest("hex");
+       this.resetPasswordExpire=Date.now()+15*60*1000;
+       return resetToken;
+};
 
 module.exports=mongoose.model("Customer",customerSchema);
