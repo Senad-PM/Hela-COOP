@@ -1,4 +1,4 @@
-const {adminDashboard,staffDashboard,managerDashedboard}=require("../Services/dashboardServices");
+const {adminDashboard,staffDashboard,managerDashedboard,customerDashedboard}=require("../Services/dashboardServices");
 
 
 exports.AdminDashboard=async(req,res,next)=>{
@@ -25,3 +25,12 @@ exports.managerDashedboard=async(req,res,next)=>{
         next(error);
       }
 };
+exports.customerDashedBoard=async(req,res,next)=>{
+    try{
+       const customer=req.params.id;
+       const result=await customerDashedboard(customer);
+       res.status(200).json(result);
+    }catch(error){
+        next(error);
+    }
+}

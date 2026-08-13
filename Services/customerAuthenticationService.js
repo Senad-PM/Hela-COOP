@@ -35,7 +35,7 @@ exports.forgotPassword=async(email)=>{
     }
     const resetToken=findCustomer.genarateResetPasswordToken()
     await findCustomer.save();
-    const resetUrl=`http://localhost:5000/api/auth/reset-password/${resetToken}`;
+    const resetUrl=`http://localhost:5000/api/customerAuth/reset-password/${resetToken}`;
     await sendEmail({
         email:findCustomer.email,
         subject:"password Reset",
@@ -51,10 +51,16 @@ exports.resetPassword=async(token,password)=>{
               throw new Error("password is required");
            }
            const hashedToken=crypto.createHash("sha256").update(token).digest("hex");
+          // console.log("Hashed token:", hashedToken);
+         //   const customerByToken = await Customer.findOne({
+         //      resetPasswordToken: hashedToken
+           // });
+          //  console.log("Customer by token:", customerByToken);
            const findCustomer = await Customer.findOne({
                        resetPasswordToken: hashedToken,
                        resetPasswordExpire: { $gt: Date.now() }
                  });
+         //   console.log("customerfind : ",findCustomer);
             if(!findCustomer){
                 throw new Error("invalid or expired token");
             }
@@ -75,7 +81,7 @@ exports.refreshTokenGenarate=async(refreshToken)=>{
     if(!findCustomer || findCustomer.refreshToken !==refreshToken){
         throw new Error("invalid refresh token");
     }
-    const newAccessToken=generateToken(finduser._id);
+    const newAccessToken=generateToken(findCustomer._id);
    return ({
         accessToken:newAccessToken
     });
@@ -90,5 +96,5 @@ exports.logOut=async(refreshToken)=>{
     }
     findCustomer.refreshToken=null;
     await findCustomer.save();
-    return("user logOut successfully");
+    return("Customer logOut successfully");
 };

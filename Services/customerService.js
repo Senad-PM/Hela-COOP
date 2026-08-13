@@ -40,7 +40,7 @@ exports.createCustomer=async(customerData,user)=>{
         createdBy:user
     });
     const resetToken=newCustomer.genarateResetPasswordToken();
-          const resetUrl=`http://localhost:5000/api/auth/reset-password/${resetToken}`;
+          const resetUrl=`http://localhost:5000/api/customerAuth/reset-password/${resetToken}`;
           try {
           await sendEmail({
             email: newCustomer.email,

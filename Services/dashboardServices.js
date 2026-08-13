@@ -3,7 +3,9 @@ const Customer=require("../Models/customer");
 const Savings=require("../Models/savings");
 const Transaction=require("../Models/transactions");
 const Loan=require("../Models/loan");
-const{loanStatics}=require("../Services/loanService")
+const{loanStatics}=require("../Services/loanService");
+const savings = require("../Models/savings");
+const loan = require("../Models/loan");
 
 exports.adminDashboard=async()=>{
     const totalUsers=await User.countDocuments();
@@ -353,4 +355,38 @@ const fillMissingMonths =(monthlytransaction)=>{
         
     }
     return(result);
+}
+exports.customerDashedboard=async(customer)=>{
+       const customerSavingBalance=await savings.aggregate([
+          {
+            $match:
+            {
+                Customer:customer,
+                isActive:true
+            }
+          },
+          {
+            $group:{
+                _id:null,
+                totalLbalance:{
+                    $sum:"$balance"
+                }
+            }
+          }
+       ]);
+       const customerregularsavingsbalnce=await savings.findOne
+       ({Customer:customer,accountType:"regular"})
+       .select("balance");
+
+       const customerFixedSavingBalance=await savings.findOne({Customer:customer,accountType:"fixed"}).select("balance");
+       const customerActiveLoancount= await loan.countDocuments({Customer:customer,status:"active"});
+
+       return({
+        topcards:{
+            customerTotalSavings:customerSavingBalance,
+            regularSavingBalance:customerregularsavingsbalnce,
+            fixedSavingsBalance:customerFixedSavingBalance,
+            ActiveLoanCount:customerActiveLoancount
+        }
+       });
 }

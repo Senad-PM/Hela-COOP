@@ -17,7 +17,7 @@ exports.createUser=async(userName,email,password,role)=>{
             throw new Error("user already exists");
            }
            const temporaryPassword=`Temp@${Math.floor(Math.random() * 100000)}`;
-          const newUser=await User.create({
+           const newUser=await User.create({
             userName,
             email,
             password:temporaryPassword,
