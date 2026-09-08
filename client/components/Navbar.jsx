@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { X, Menu, XIcon, UserRound, ShieldCheck, Mail, Lock} from 'lucide-react'
+import { X, Menu, XIcon, UserRound, ShieldCheck, Mail, Lock, EyeOff, Eye, ArrowRight, Loader2} from 'lucide-react'
 import axios from 'axios'
 import { AnimatePresence, animate, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom' 
@@ -28,6 +28,8 @@ const Navbar = () => {
         setError('')
         setEmail('')
         setPassword('')
+        setShowPassword(false)
+        setPortal('staff')
     }
 
     // Login handler
@@ -38,19 +40,24 @@ const Navbar = () => {
         try {
             const response = await axios.post('http://localhost:8080/api/auth/login', {
                 email,
-                password
+                password,
+                portal
             })
             console.log('Login success:', response.data)
+            const role = response.data.role
+            const isStaffRole = role === 'manager' || role === 'staff'
             closeForm()
             
             localStorage.setItem('accessToken', response.data.accessToken)
             localStorage.setItem('refreshToken', response.data.refreshToken)
-            localStorage.setItem('role', response.data.role)
+            localStorage.setItem('role', role)
 
-            if (response.data.role == 'admin'){
+            if (role === 'admin'){
                 localStorage.setItem('isAdmin', 'true')
+                closeForm()
                 navigate('/admin')
-            }else if (response.data.role === 'manager' || response.data.role === 'staff'){
+            }else if (isStaffRole){
+                closeForm()
                 navigate('/staff')
             }else{
                 setError('Unrecognized role for this account.')
@@ -96,12 +103,13 @@ const Navbar = () => {
                 </ul>
             </div>
         )}
+        <AnimatePresence>
         {formISOpen && (
             <motion.div
                 initial={{opacity: 0}}
                 animate={{opacity: 1}}
                 exit={{opacity: 0}}
-                className='flex items-center justify-center p-4 fixed top-0 left-0 w-scree h-screen bg-black/80 backdrop-blur-md z-50'
+                className='flex items-center justify-center p-4 fixed top-0 left-0 w-screen h-screen bg-black/80 backdrop-blur-md z-50'
             >
                 <motion.div
                     initial={{opacity: 0, y: 24, scale: 0.97}}
@@ -164,7 +172,7 @@ const Navbar = () => {
                                 <label htmlFor="email" className='text-sm font-medium text-white/70 block mb-2'>Email</label>
                                 <div className='relative'>
                                     <Mail className='absolute left-4 top-1/3 -transale-y-1/2 w-4.5 h-4.5 text-white/40 pointer-events-none' />
-                                    <input type='email' id='email' value={email }
+                                    <input type="email" id='email' value={email }
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
                                         placeholder='you@gmail.com'
@@ -176,6 +184,36 @@ const Navbar = () => {
                                 <label htmlFor="password" className='text-sm font-medium text-white/70 block mb-2'>Password</label>
                                 <div className='relative'>
                                     <Lock className='absolute left-4 top-1/3 -transale-y-1/2 w-4.5 h-4.5 text-white/40 pointer-events-none' />
+                                    <input
+                                        id='password'
+                                        type={showPassword ? "text" : "password"}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        placeholder='Enter you password here..'
+                                        className='w-full text-white placeholder-white/30 bg-white/5 border border-white/10 pl-11 pr-11 py-3 rounded-xl outline-none focus:border-lime-400/60 focus:bg-white/10 focus:ring-2 focus:ring-lime-400/20 transition-all duration-200'
+                                    />
+                                    <button 
+                                        type='button'
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className='absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors duration-200 cursor-pointer'
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                    >
+                                        {showPassword ? <Eye className='w-4.5 h-4.5' /> : <EyeOff className='w-4.5 h-4.5' />}
+                                    </button>
+                                </div>
+                                <div className='mt-6'>
+                                   <button
+                                    type='submit'
+                                    disabled={loading}
+                                    className='group w-full flex items-center justify-center gap-2 rounded-xl bg-white p-3 font-semibold text-base cursor-pointer hover:bg-lime-400 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed'
+                                   >
+                                        {loading ? (
+                                            <><Loader2 className='w-4.5 h-4.5 animate-spin' /> Signing in...</>
+                                        ) : (
+                                            <>Log in to {portal === 'admin' ? 'Admin' : 'Staff'} portal <ArrowRight className='w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200' /></>
+                                        )}
+                                   </button>
                                 </div>
                             </div>
                         </form>
@@ -185,6 +223,7 @@ const Navbar = () => {
                 </motion.div>
             </motion.div>
         )}
+        </AnimatePresence>
     </header>
   )
 }
