@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { X, Menu, XIcon} from 'lucide-react'
+import { X, Menu, XIcon, UserRound, ShieldCheck, Mail, Lock} from 'lucide-react'
 import axios from 'axios'
-import { motion } from 'framer-motion'
+import { AnimatePresence, animate, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom' 
 
 const Navbar = () => {
@@ -12,8 +12,10 @@ const Navbar = () => {
     const [formISOpen, SetFormIsOpen] = useState(false)
     const [isRegister, SetIsRegister] = useState(false)
 
+    const [portal, setPortal] = useState('staff')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
 
@@ -95,62 +97,93 @@ const Navbar = () => {
             </div>
         )}
         {formISOpen && (
-            <div className='fixed top-0 left-0 w-screen h-screen bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4'>
+            <motion.div
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}}
+                className='flex items-center justify-center p-4 fixed top-0 left-0 w-scree h-screen bg-black/80 backdrop-blur-md z-50'
+            >
                 <motion.div
-                    initial={{opacity: 0, y: -100}}
-                    animate={{opacity: 1, y: 0}}
-                    transition={{
-                        type:'spring',
-                        stiffness:100,
-                        damping:25,
-                        delay:0.3,
-                        duration:1.2,
-                    }}
-                className='bg-white/80 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl w-full max-w-md p-8'>
-                    <div className='flex justify-between items-center'>
-                        <h1 className='font-bold text-xl'>Log in</h1>
-                        <XIcon className='font-bold cursor-pointer' onClick={closeForm} />
-                    </div>
-                    {/* Show error message */}
-                    {error && (
-                        <p className='mt-3 text-red-500 text-sm font-medium'>{error}</p>
-                    )}
-                    <form onSubmit={handleLogin}>
-                        <div className='mt-5'>
-                            <label htmlFor="email" className='text-base font-semibold block'>Email</label>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                placeholder='Enter your email here'
-                                className='w-full text-black bg-gray-200 border-2 border-lime-500 px-6 py-2 rounded-lg mt-3'
-                            />
-                        </div>
-                        <div className='mt-5'>
-                            <label htmlFor="Password" className='text-base font-semibold block'>Password</label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                placeholder='Enter the password'
-                                className='w-full text-black bg-gray-200 border-2 border-lime-500 px-6 py-2 rounded-lg mt-3'
-                            />
-                            <h4 className='mt-2 text-base text-blue-800 cursor-pointer'>Forgot password?</h4>
-                        </div>
-                        <div className='mt-5'>
+                    initial={{opacity: 0, y: 24, scale: 0.97}}
+                    animate={{opacity: 1, y: 0, scale: 1}}
+                    exit={{opacity: 0, y: 12, scale: 0.98}}
+                    transition={{type: "spring", stiffness: 220, damping: 26}}
+                    className='relative w-full max-w-md rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_8px_60px_rgba(0,0,0,0.6)] overflow-hidden'
+                >
+
+                    <div className={`pointer-events-none absolute -top-24 -right-24 w-64 h-64 rounded-full blur-3xl opacity-30 transition-colors duration-500 ${portal === 'admin' ? 'bg-amber-400' : 'bg-lime-400'}`} />
+                    <div className='relative p-8'>
+                        
+                        <div className='flex justify-between items-start'>
+                            <div>
+                                <h1 className='font-serif font-semibold text-2xl text-white'>Welcome Back</h1>
+                                <p className='text-white/50 text-sm mt-1'>Sign in to your Hela-COOP portal</p>
+                            </div>
                             <button
-                                type="submit"
-                                disabled={loading}
-                                className='w-full rounded-lg bg-white p-2 font-semibold text-xl cursor-pointer hover:bg-emerald-400 hover:text-white transition-colors duration-300 disabled:opacity-50'
+                                onClick={closeForm}
+                                className='text-white/60 hover:text-white hover:bg-white/10 rounded-full p-1.5 transition-colors duration-200 cursor-pointer'
+                                aria-label='Close'
                             >
-                                {loading ? 'Logging in...' : 'Log in'}
+                                <XIcon className='w-5 h-5' />
                             </button>
                         </div>
-                    </form>
+
+                        <div className='relative mt-6 grid grid-cols-2 gap-1 p-1 rounded-full bg-white/5 border border-white/10'>
+                            <span className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-all duration-300 ease-out ${portal === 'admin' ? 'translate-x-[calc(100%+4px)] bg-amber-400' : 'translate-x-0 bg-lime-400'}`} />
+                            <button
+                                type='button'
+                                onClick={() => { setPortal('staff'); setError('') }}
+                                className={`relative z-10 flex items-center justify-center gap-1.5 py-2 rounded-full text-sm font-semibold transition-colors duration-300 cursor-pointer ${portal === 'staff' ? 'text-black' : 'text-white/60 hover:text-white'}`}
+                            >
+                                <UserRound className='w-4 h-4' /> Staff
+                            </button>
+                            <button
+                                type='button'
+                                onClick={() => { setPortal('admin'); setError('') }}
+                                className={`relative z-10 flex items-center justify-center gap-1.5 py-2 rounded-full text-sm font-semibold transition-colors duration-300 cursor-pointer ${portal === 'admin' ? 'text-black' : 'text-white/60 hover:text-white'}`}
+                            >
+                                <ShieldCheck className='w-4 h-4' /> Admin
+                            </button>
+                        </div>
+
+                        <AnimatePresence>
+                            {error && (
+                                <motion.p
+                                    initial={{opacity: 0, height: 0}}
+                                    animate={{opacity: 1, height:"auto"}}
+                                    exit={{opacity: 0, height: 0}}
+                                    className='mt-4 text-red-400 text-sm font-medium bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2'
+                                >
+                                    {error}
+                                </motion.p>
+                            )}
+                        </AnimatePresence>
+
+                        <form onSubmit={handleLogin}>
+                            <div className='mt-6'>
+                                <label htmlFor="email" className='text-sm font-medium text-white/70 block mb-2'>Email</label>
+                                <div className='relative'>
+                                    <Mail className='absolute left-4 top-1/3 -transale-y-1/2 w-4.5 h-4.5 text-white/40 pointer-events-none' />
+                                    <input type='email' id='email' value={email }
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                        placeholder='you@gmail.com'
+                                        className='w-full text-white placeholder-white/30 bg-white/5 border border-white/10 pl-11 pr-4 py-3 rounded-xl outline-none focus:border-lime-400/60 focus:bg-white/10 focus:ring-2 focus:ring-lime-400/20 transition-all duration-200'
+                                    />
+                                </div>
+                            </div>
+                            <div className='mt-4'>
+                                <label htmlFor="password" className='text-sm font-medium text-white/70 block mb-2'>Password</label>
+                                <div className='relative'>
+                                    <Lock className='absolute left-4 top-1/3 -transale-y-1/2 w-4.5 h-4.5 text-white/40 pointer-events-none' />
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+
                 </motion.div>
-            </div>
+            </motion.div>
         )}
     </header>
   )
