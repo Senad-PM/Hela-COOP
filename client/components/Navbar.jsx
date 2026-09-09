@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { X, Menu, XIcon, UserRound, ShieldCheck, Mail, Lock, EyeOff, Eye, ArrowRight, Loader2} from 'lucide-react'
 import axios from 'axios'
 import { AnimatePresence, animate, motion } from 'framer-motion'
@@ -20,6 +20,14 @@ const Navbar = () => {
     const [loading, setLoading] = useState(false)
 
     const navigate = useNavigate()
+
+    const [scrolled, setScrolled] = useState(false)
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 40)
+        onScroll()
+        window.addEventListener('scroll', onScroll, { passive: true })
+        return () => window.removeEventListener('scroll', onScroll)
+    }, [])
 
     const openForm = () => SetFormIsOpen(true)
     const closeForm = () => {
@@ -72,19 +80,23 @@ const Navbar = () => {
     }
 
   return (
-    <header className='w-full top-0 fixed z-50 backdrop-blur-sm bg-lime-500/20'>
+    <header className={`w-full top-0 fixed z-50 transition-all duration-300 ease-out ${
+        scrolled ? 
+        "bg-white/85 backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.08)]" :
+        "bg-lime-500/20 backdrop-blur-sm shadow-none"
+    }`}>
         <div className='flex items-center justify-between p-5 h-15'>
             <div>
                 <h1 className='font-serif font-semibold text-2xl'>Hela-COOP</h1>
             </div>
-            <ul className='gap-3 font-semibold md:flex hidden cursor-pointer rounded-2xl bg-white/30'>
+            <ul className='gap-3 font-semibold md:flex hidden cursor-pointer rounded-2xl bg-white/30 shadow-2xl'>
                 <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>Feature</li>
                 <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'> Benefits & Tools</li>
                 <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>About Us</li>
                 <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>Contact</li>
             </ul>
             <div onClick={openForm} className='gap-5 md:flex hidden'>
-                <button className='bg-white rounded-2xl pr-5 pl-5 p-2 font-semibold hover:bg-emerald-400 hover:text-white hover:scale-105 duration-300 ease-in-out transition-all'>Log in</button>
+                <button className='bg-white rounded-2xl pr-5 pl-5 p-2 font-semibold hover:bg-emerald-400 hover:text-white hover:scale-105 duration-300 ease-in-out transition-all shadow-2xl'>Log in</button>
             </div>
             <div className='md:hidden'>
                 <button onClick={ toggleMenu }>

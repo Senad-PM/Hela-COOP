@@ -2,7 +2,9 @@ import React, { useEffect, useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import { SplitText, gsap }from 'gsap/all'
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Star, UserPlus, ChevronRight, AtSign } from 'lucide-react'
+import { Star, UserPlus, ChevronRight, AtSign, Landmark, MapPin, Stars, Users } from 'lucide-react'
+import { motion } from 'framer-motion'
+import CountUp from '../components/CountUp'
 
 const Home = () => {
 
@@ -133,6 +135,36 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
+        <section className='relative bg-green-50 px-8 sm:px-20 z-20'>
+            <div className='grid grid-cols-2 md:grid-cols-4 gap-4 bg-white rounded-3xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] p-6 sm:p-10'>
+                {[
+                    {icon: Users, value: 10000, suffix: '+', label: "Active members"},
+                    {icon: Landmark, value: 450, suffix: 'M+', prefix: 'Rs.', label: "Loans Disbursed"},
+                    {icon: MapPin, value: 28, suffix: '+', label: "Branches Served"},
+                    {icon: Star, value: 15, suffix: '+', label: "Years of Trust"},
+                ].map((stat,i) => (
+                    <motion.div key={stat.label}
+                        initial={{opacity: 0, y: 24}}
+                        animate={{opacity:1, y: 0}}
+                        viewport={{once: true, margin: '-40px'}}
+                        transition={{duration: 0.45, delay: i * 0.1, ease: 'easeOut'}}
+                        className='flex flex-col items-center text-center gap-2 py-2'
+                    >
+                        <div className='flex items-center justify-center w-12 h-12 rounded-full bg-emerald-50'>
+                            <stat.icon size={22} className='text-emerald-600' />
+                        </div>
+                        <CountUp 
+                            value={stat.value}
+                            prefix={stat.prefix}
+                            suffix={stat.suffix}
+                            className='text-3xl sm-text-4xl font-bold text-gray-900'
+                            duration={2}
+                        />
+                        <p className='text-sm text-gray-500 font-medium'>{stat.label}</p>
+                    </motion.div>
+                ))}
             </div>
         </section>
         <section className='relative min-h-screen pt-1 bg-green-50'>
