@@ -4,6 +4,7 @@ import { Line } from 'react-chartjs-2'
 import { motion } from "motion/react";
 import { fetchStaffDashboard } from '../../src/api/DashboardApi';
 import { AlertTriangle, Clock, FileClock, ListTodo, Loader2, PiggyBank, TrendingUp, User2, UserPlus, Volume } from 'lucide-react'
+import { SkeletonStatGrid, SkeletonBlock } from '../../components/Skeleton';
 
 ChartJs.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
 const currency = (n) => `Rs . ${Number(n || 0).toLocaleString()}`
@@ -104,8 +105,24 @@ const  OverviewSection = ({ onNavigate }) => {
 
   if (loading){
     return(
-      <div className='flex items-center justify-center gap-2 text-gray-400 py-20'>
-        <Loader2 size={18} className='animate-spin' /> Loading overview...
+      <div className='flex flex-col gap-4'>
+        <div>
+          <SkeletonBlock className='h-6 w-64 rounded-md' />
+          <SkeletonBlock className='h-4 w-40 rounded-md mt-2' />
+        </div>
+        <SkeletonStatGrid count={4} cols={4} />
+        <div className='grid grid-cols-3 gap-4'>
+          <div className='col-span-2 bg-blue-50/60 rounded-2xl p-5'>
+            <SkeletonBlock className='h-5 w-48 rounded-md mb-4'/>
+            <SkeletonBlock className='h-40 w-full rounded-xl'/>
+          </div>
+          <div className='flex flex-col bg-emerald-50/60 rounded-2xl p-5 gap-3'>
+            <SkeletonBlock className='h-5 w-24 rounded-md mb-1'/>
+            {Array.from({length: 3}).map((_, i) => (
+              <SkeletonBlock key={i} className='h-14 w-full rounded-xl' />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

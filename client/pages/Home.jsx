@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import { SplitText, gsap }from 'gsap/all'
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Star, UserPlus, ChevronRight, AtSign, Landmark, MapPin, Stars, Users } from 'lucide-react'
+import { Star, UserPlus, ChevronRight, AtSign, Landmark, MapPin, Stars, Users, Sparkles, Clock, ShieldCheck, Lock, KeyRound, Radar, BellRing, CheckCircle2, Gift } from 'lucide-react'
 import { motion } from 'framer-motion'
 import CountUp from '../components/CountUp'
 
@@ -167,105 +167,108 @@ const Home = () => {
                 ))}
             </div>
         </section>
-        <section className='relative min-h-screen pt-1 bg-green-50'>
-            <div className='m-20 mb-0'>
-                <div className='flex justify-between'>
+        <section className='relative pt-1 pb-20 bg-green-50 overflow-hidden'>
+            <div className='absolute top-40 -left-20 w-72 h-72 bg-lime-300/30 rounded-full blur-3xl' /> 
+            <div className='absolute bottom-10 -right-10 w-80 h-80 bg-emerald-300/30 rounded-full blur-3xl' />
+
+            <div className='relative m-20 mb-0'>
+                <motion.div
+                    initial={{opacity: 0, y: 20}}
+                    whileInView={{opacity: 1, y: 0}}
+                    viewport={{once: true, margin: '-60px'}}
+                    transition={{duration: 0.5}}
+                    className='flex justify-between items-end'
+                >
                     <div className='block'>
-                        <h2 className='font-semibold'>Modern finance,</h2>
-                        <p>Simplified</p>
+                        <span className='inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-700 bg-emerald-100/80 px-3 py-1 rounded-full mb-3'>
+                            <Sparkles size={12} /> Modern Finance, Simplified
+                        </span>
+                        <h2 className='font-bold text-4xl text-gray-900' style={{ fontFamily: '"Antonio", serif' }}>Why choose us?</h2>
                     </div>
-                    <div className='block'>
-                        <h1 className='font-bold'>Why Choose us</h1>
-                        <p>Banking made easy, secure and rewarding for you.</p>
+                    <div className='block text-right max-w-sm'>
+                        <p className='text-gray-500'>Banking made easy, secure & rewarding for you</p>
                     </div>
-                </div>
-                <div className='flex items-center justify-between mt-20 gap-5'>
-                    <div className='bg-amber-100 rounded-2xl hover:scale-105 transition-all duration-300'>
-                        <div className='p-10'>
-                            <div className='flex items-center justify-center'>
-                                <div>
-                                   <img src="/Images/Landing Page/1.png" alt="logo" className='w-37.5 h-33'/>
+                </motion.div>
+
+                <div className='grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-5 mt-14'>
+                    <motion.div
+                        initial={{opacity:0, y: 24}}
+                        whileInView={{opacity: 1, y: 0}}
+                        viewport={{once: true, margin: '-60px'}}
+                        transition={{duration: 0.5, delay: 0}}
+                        whileHover={{y: -6}}
+                        className='relative md:col-span-2 md:row-span-2 rounded-3xl bg-white/60 backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_50px_rgba(0,0,0,0.1)] transition-shadow duration-300 p-10 flex flex-col overflow-hidden'
+                    >
+                        <div className='absolute -top-16 -right-16 w-56 h-56 bg-amber-300/30 rounded-full blur-3xl'></div>
+                        <div className='flex flex-col justify-between h-full lg:max-w-[45%]'>
+                            <div>
+                                <div className='w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center shadow-sm'>
+                                    <ShieldCheck size={28} className='text-amber-700' />
                                 </div>
+                                <h1 className='font-bold text-2xl text-gray-900 mt-6'>Safe & Secure</h1>
+                                <p className='text-gray-800 mt-2'>We protect every account behind the scenes, so your members can bank with total confidence - no technical know-how required.</p>
                             </div>
-                            <div className='items-center justify-center text-center mt-5'>
-                                <h1 className='font-bold'>Safe & secure</h1>
-                                <p>Advanced encryption & multi-factor login.</p>
+                            <div className='flex items-center gap-2 text-sm font-semibold text-amber-700 mt-8'>
+                                Bank-grade Protection <ChevronRight size={16} />
                             </div>
                         </div>
-                    </div>
-                    <div className='bg-slate-100 rounded-2xl hover:scale-105 transition-all duration-300'>
-                        <div className='p-10'>
-                            <div className='flex items-center justify-center'>
-                                <div>
-                                   <img src="/Images/Landing Page/2..png" alt="logo" className='w-37.5 h-33 object-cover'/>
+
+                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1'> 
+                            {[
+                                { icon: Lock, label: 'Your money stays yours' },
+                                { icon: KeyRound, label: 'Only you can log in' },
+                                { icon: Radar, label: 'We watch for anything unusual' },
+                                { icon: BellRing, label: "You're notify right away" },
+                            ].map((item) => (
+                                <div key={item.label} className='flex items-center gap-3 bg-white/70 border border-white/70 rounded-2xl px-4 py-3'>
+                                    <div className='w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0'>
+                                        <item.icon size={15} className='text-amber-700' />
+                                    </div>
+                                    <span className='text-sm font-medium text-gray-700'>{item.label}</span>
+                                    <CheckCircle2 size={14} className='text-emerald-500 ml-auto flex-shrink-0' />
                                 </div>
-                            </div>
-                            <div className='items-center justify-center text-center mt-5'>
-                                <h1 className='font-bold'>Always On</h1>
-                                <p>24/7 account access from anywhere.</p>
-                            </div>
+                            ))}
                         </div>
-                    </div>
-                    <div className='bg-cyan-100 rounded-2xl hover:scale-105 transition-all duration-300'>
-                        <div className='p-10'>
-                            <div className='flex items-center justify-center'>
-                                <div>
-                                   <img src="/Images/Landing Page/3.png" alt="logo" className='w-37.5 h-33'/>
-                                </div>
-                            </div>
-                            <div className='items-center justify-center text-center mt-5'>
-                                <h1 className='font-bold'>Rewarding</h1>
-                                <p>Cashback, points & Partner discount.</p>
-                            </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{opacity: 0, y: 24}}
+                        whileInView={{opacity: 1, y: 0}}
+                        viewport={{once: true, margin: '-60px'}}
+                        transition={{duration: 0.5, delay: 0.12}}
+                        whileHover={{y: -6}}
+                        className='relative rounded-3xl bg-white/60 backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_50px_rgba(0,0,0,0.1)] transition-shadow duration-300 p-7 flex items-center gap-4 overflow-hidden'
+                    >
+                        <div className='absolute -bottom-10 -right-10 w-32 h-32 bg-sky-300/30 rounded-full blur-3xl'></div>
+                        <div className='relative w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-sky-100 to-sky-200 flex items-center justify-center shadow-sm'>
+                            <Clock size={24} className='text-sky-700' />
                         </div>
-                    </div>
+                        <div className='relative'>
+                            <h1 className='font-bold text-lg text-gray-900'>Always on</h1>
+                            <p className='text-gray-500 text-sm'>24/7 account access from anywhere</p>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{opacity: 0, y:24}}
+                        whileInView={{opacity: 1, y: 0}}
+                        viewport={{once: true, margin: '-60px'}}
+                        transition={{ duration: 0.5, delay: 0.24}}
+                        whileHover={{y: -6}}
+                        className='relative rounded-3xl bg-white/60 backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_50px_rgba(0,0,0,0.1)] transition-shadow duration-300 p-7 flex items-center gap-4 overflow-hidden'
+                    >
+                        <div className='absolute -bottom-10 -right-10 w-32 h-32 bg-cyan-300/30 rounded-full blur-3xl'></div>
+                        <div className='relative w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-cyan-100 to-cyan-200 flex items-center justify-center shadow-sm'>
+                            <Gift size={24} className='text-cyan-700' />
+                        </div>
+                        <div className='relative'>
+                            <h1 className='font-bold text-lg text-gray-900'>Rewarding</h1>
+                            <p className='text-gray-500 text-sm'>Cashback, points & Partner discount</p>
+                        </div>
+                    </motion.div>
+
                 </div>
-                <div className='flex items-center justify-between mt-10 gap-5'>
-                    <div className='bg-emerald-100 rounded-xl w-full h-40'>
-                        <div className='flex items-center justify-center w-full h-20'>
-                            <div>
-                                <img src="/Images/Landing Page/4.png" alt="" className='w-10 h-10'/>
-                            </div>
-                        </div>
-                        <div className='items-center justify-center text-center'>
-                            <h1 className='text-3xl font-bold'>1K+</h1>
-                            <p className='text-lg'>Active Users</p>
-                        </div>
-                    </div>
-                    <div className='bg-emerald-100 rounded-xl w-full h-40'>
-                        <div className='flex items-center justify-center w-full h-20'>
-                            <div>
-                                <img src="/Images/Landing Page/5.png" alt=""  className='w-10 h-10'/>
-                            </div>
-                        </div>
-                        <div className='items-center justify-center text-center'>
-                            <h1 className='text-2xl font-bold'>100%</h1>
-                            <p>Secure & encrypted</p>
-                        </div>
-                    </div>
-                    <div className='bg-emerald-100 rounded-xl w-full h-40'>
-                        <div className='flex items-center justify-center w-full h-20'>
-                            <div>
-                                <img src="/Images/Landing Page/6.png" alt="" className='w-10 h-10'/>
-                            </div>
-                        </div>
-                        <div className='items-center justify-center text-center'>
-                            <h1 className='text-2xl font-bold'>24/7</h1>
-                            <p>Up-time Guaranteed</p>
-                        </div>
-                    </div>
-                    <div className='bg-emerald-100 rounded-xl w-full h-40'>
-                        <div className='flex items-center justify-center w-full h-20'>
-                            <div>
-                                <img src="/Images/Landing Page/7.png" alt="" className='w-10 h-10'/>
-                            </div>
-                        </div>
-                        <div className='items-center justify-center text-center'>
-                            <h1 className='text-2xl font-bold flex items-center justify-center text-center gap-1'>4.9 <Star /></h1>
-                            <p>Web-site store rating</p>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </section>
         <section className='splitContent relative min-h-screen flex items-center justify-center bg-[#0d1f1a]'>
