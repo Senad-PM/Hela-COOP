@@ -1,15 +1,24 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import { SplitText, gsap }from 'gsap/all'
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Star, UserPlus, ChevronRight, AtSign, Landmark, MapPin, Stars, Users, Sparkles, Clock, ShieldCheck, Lock, KeyRound, Radar, BellRing, CheckCircle2, Gift } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import CountUp from '../components/CountUp'
 
 const Home = () => {
 
     const sectionRef = useRef(null)
     const sliderRef = useRef(null)
+
+    const heroRoles = ['Members', 'Treasurers', 'Staff', 'Everyone']
+    const [roleIndex, setRoleIndex] = useState(0)
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setRoleIndex((i) => (i + 1) % heroRoles.length)
+        }, 2200)
+        return () => clearInterval(interval)
+    }, [])
 
     useGSAP(() => {
 
@@ -127,7 +136,20 @@ const Home = () => {
                         <div className='title' style={{clipPath: "polygon(50% 0, 50% 0, 50% 100%, 50% 100%)",}}>
                             <h1 className='font-bold font-sans text-9xl' style={{ fontFamily: '"Antonio", serif' }}>Cooperative Finance, Simplified</h1>
                             <div className='flex items-center justify-center mt-5'>
-                                <p className='font-semibold font-sans text-2xl mt-5'> Reliable, secure, and built for you.</p>
+                                <p className='font-semibold font-sans text-2xl mt-5 flex items-center gap-2'> Reliable, secure, and built for 
+                                    <AnimatePresence mode='wait'>
+                                        <motion.span
+                                            key={heroRoles[roleIndex]}
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            transition={{ duration: 0.35, ease: 'easeOut' }}
+                                            className='inline-block text-green-300 min-w-[110px] text-left'
+                                        >
+                                            {heroRoles[roleIndex]}.
+                                        </motion.span>
+                                    </AnimatePresence>
+                                </p>
                             </div>
                         </div>
                         <div className='flex items-center justify-center mt-5'>
@@ -200,34 +222,36 @@ const Home = () => {
                         className='relative md:col-span-2 md:row-span-2 rounded-3xl bg-white/60 backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_50px_rgba(0,0,0,0.1)] transition-shadow duration-300 p-10 flex flex-col overflow-hidden'
                     >
                         <div className='absolute -top-16 -right-16 w-56 h-56 bg-amber-300/30 rounded-full blur-3xl'></div>
-                        <div className='flex flex-col justify-between h-full lg:max-w-[45%]'>
-                            <div>
-                                <div className='w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center shadow-sm'>
-                                    <ShieldCheck size={28} className='text-amber-700' />
-                                </div>
-                                <h1 className='font-bold text-2xl text-gray-900 mt-6'>Safe & Secure</h1>
-                                <p className='text-gray-800 mt-2'>We protect every account behind the scenes, so your members can bank with total confidence - no technical know-how required.</p>
-                            </div>
-                            <div className='flex items-center gap-2 text-sm font-semibold text-amber-700 mt-8'>
-                                Bank-grade Protection <ChevronRight size={16} />
-                            </div>
-                        </div>
-
-                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1'> 
-                            {[
-                                { icon: Lock, label: 'Your money stays yours' },
-                                { icon: KeyRound, label: 'Only you can log in' },
-                                { icon: Radar, label: 'We watch for anything unusual' },
-                                { icon: BellRing, label: "You're notify right away" },
-                            ].map((item) => (
-                                <div key={item.label} className='flex items-center gap-3 bg-white/70 border border-white/70 rounded-2xl px-4 py-3'>
-                                    <div className='w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0'>
-                                        <item.icon size={15} className='text-amber-700' />
+                        <div className='relative flex flex-col lg:flex-row lg:items-center gap-10 flex-1'>
+                            <div className='flex flex-col justify-between h-full lg:max-w-[45%]'>
+                                <div>
+                                    <div className='w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center shadow-sm'>
+                                        <ShieldCheck size={28} className='text-amber-700' />
                                     </div>
-                                    <span className='text-sm font-medium text-gray-700'>{item.label}</span>
-                                    <CheckCircle2 size={14} className='text-emerald-500 ml-auto flex-shrink-0' />
+                                    <h1 className='font-bold text-2xl text-gray-900 mt-6'>Safe & Secure</h1>
+                                    <p className='text-gray-800 mt-2'>We protect every account behind the scenes, so your members can bank with total confidence - no technical know-how required.</p>
                                 </div>
-                            ))}
+                                <div className='flex items-center gap-2 text-sm font-semibold text-amber-700 mt-8'>
+                                    Bank-grade Protection <ChevronRight size={16} />
+                                </div>
+                            </div>
+
+                            <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1'> 
+                                {[
+                                    { icon: Lock, label: 'Your money stays yours' },
+                                    { icon: KeyRound, label: 'Only you can log in' },
+                                    { icon: Radar, label: 'We watch for anything unusual' },
+                                    { icon: BellRing, label: "You're notify right away" },
+                                ].map((item) => (
+                                    <div key={item.label} className='flex items-center gap-3 bg-white/70 border border-white/70 rounded-2xl px-4 py-3'>
+                                        <div className='w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0'>
+                                            <item.icon size={15} className='text-amber-700' />
+                                        </div>
+                                        <span className='text-sm font-medium text-gray-700'>{item.label}</span>
+                                        <CheckCircle2 size={14} className='text-emerald-500 ml-auto flex-shrink-0' />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </motion.div>
 
