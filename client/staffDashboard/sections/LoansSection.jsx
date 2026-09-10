@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { fetchLoanStats, fetchLoans } from '../../src/api/loansApi';
 import { AlertTriangle, Clock, DollarSign, Landmark, Search, Loader2 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { SkeletonStatGrid, SkeletonTable } from '../../components/Skeleton';
+import AddLoan from './AddLoan';
 
 
 const currency = (n) => `Rs. ${Number(n || 0).toLocaleString()}`;
@@ -15,6 +16,7 @@ const LoansSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [showAddLoan, setShowAddLoan] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -43,9 +45,29 @@ const LoansSection = () => {
 
   return (
     <div className='flex flex-col gap-4'>
-      <div>
-        <h1 className='text-xl font-bold text-gray-800'>Loans</h1>
-        <p className='text-sm text-gray-500'>Active loans and applications</p>
+      <div className='flex items-center justify-between'>
+        <div>
+          <h1 className='text-xl font-bold text-gray-800'>Loans</h1>
+          <p className='text-sm text-gray-500'>Active loans and applications</p>
+        </div>
+        <button
+          onClick={() => setShowAddLoan(true)}
+          className='px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition'
+        >
+          + New Loan Application
+        </button>
+          <AnimatePresence>
+            {showAddLoan && (
+              <AddLoan
+                onClose={() => setShowAddLoan(false)}
+                onCreated={async () => {
+                  const [loanResult, statsResult] = await Promise.all([fetchLoans(), fetchLoanStats()]);
+                  setLoans(loanResult.data || []);
+                  setStats(statsResult);
+                }}
+              />
+            )}
+          </AnimatePresence>
       </div>
 
       {loading ? (

@@ -9,3 +9,8 @@ export const fetchLoanStats = async () => {
   const { data } = await axiosClient.get("/loan/statics");
   return data; 
 };
+
+export const applyForLoan = async (loanData) => {
+  const { data } = await api.post('/loan/create', loanData);
+  return data;
+};

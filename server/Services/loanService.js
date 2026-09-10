@@ -36,6 +36,15 @@ exports.createLoan=async(loanData,user)=>{
     if(loanType==="emergency"){
         interestRate=15;
     }
+    if(loanType==="housing"){
+        interestRate=8;
+    }
+    if(loanType==="education"){
+        interestRate=9;
+    }
+    if(loanType==="agriculture"){
+        interestRate=7;
+    }
     const savingExist=await Savings.findOne({customer:customerExist._id,accountType:"regular"});
     if(!savingExist){
         throw new Error("savings account not found");
@@ -46,22 +55,40 @@ exports.createLoan=async(loanData,user)=>{
     //console.log(savingExist.accountNumber);
     let loanNumber;
     if(loanType==="personal"){
-    const loanCount=await Loan.countDocuments({loanType:"personal"});
-    const nextloan=loanCount+1;
-    const fomatNumber=nextloan.toString().padStart(4,"0");
+        const loanCount=await Loan.countDocuments({loanType:"personal"});
+        const nextloan=loanCount+1;
+        const fomatNumber=nextloan.toString().padStart(4,"0");
     loanNumber=`PLOAN-${fomatNumber}`;      
     }
     if(loanType==="buisness"){
-    const loanCount=await Loan.countDocuments({loanType:"buisness"});
-    const nextloan=loanCount+1;
-    const fomatNumber=nextloan.toString().padStart(4,"0");
+        const loanCount=await Loan.countDocuments({loanType:"buisness"});
+        const nextloan=loanCount+1;
+        const fomatNumber=nextloan.toString().padStart(4,"0");
     loanNumber=`BLOAN-${fomatNumber}`;      
     }
     if(loanType==="emergency"){
-    const loanCount=await Loan.countDocuments({loanType:"emergency"});
-    const nextloan=loanCount+1;
-    const fomatNumber=nextloan.toString().padStart(4,"0");
+        const loanCount=await Loan.countDocuments({loanType:"emergency"});
+        const nextloan=loanCount+1;
+        const fomatNumber=nextloan.toString().padStart(4,"0");
     loanNumber=`ELOAN-${fomatNumber}`;      
+    }
+    if(loanType==="housing"){
+        const loanCount=await Loan.countDocuments({loanType:"housing"});
+        const nextloan=loanCount+1;
+        const fomatNumber=nextloan.toString().padStart(4,"0");
+        loanNumber=`HLOAN-${fomatNumber}`;      
+    }
+    if(loanType==="education"){
+        const loanCount=await Loan.countDocuments({loanType:"education"});
+        const nextloan=loanCount+1;
+        const fomatNumber=nextloan.toString().padStart(4,"0");
+        loanNumber=`EDLOAN-${fomatNumber}`;      
+    }
+    if(loanType==="agriculture"){
+        const loanCount=await Loan.countDocuments({loanType:"agriculture"});
+        const nextloan=loanCount+1;
+        const fomatNumber=nextloan.toString().padStart(4,"0");
+        loanNumber=`AGLOAN-${fomatNumber}`;      
     }
     const installment=calculateEmi(principalAmount,interestRate,durationMonths);
     const newLoan=await Loan.create({

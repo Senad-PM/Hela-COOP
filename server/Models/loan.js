@@ -26,7 +26,10 @@ const loanSchema=new mongoose.Schema({
         enum:[
             "personal",
             "buisness",
-            "emergency"
+            "emergency",
+            "housing",
+            "education",
+            "agriculture"
         ],
         required:true
     },
