@@ -50,7 +50,8 @@ exports.createsavings=async(savingsData,user)=>{
                 const fomatNumber=nextAcount.toString().padStart(4,"0");
                 accountNumber=`REG-${fomatNumber}`;
 
-        }
+        }                                                                                                                                                                                                                                                                                                                                                                                       
+        
         let maturityDate=new Date();
         if(accountType==="fixed"){
                 const fixedCount=await Savings.countDocuments({accountType:"fixed"});
@@ -115,6 +116,7 @@ exports.deposit=async(depositData,user)=>{
       //console.log(savingsExist);
       const newTransaction=await Transaction.create({
                  transactionNumber,
+                Customer:savingsExist.customer,
                  savingsAccount:savingsExist._id,
                  accountType:savingsExist.accountType,
                  accountNumber,
@@ -157,6 +159,7 @@ exports.withdraw=async(withdrawData,user)=>{
       //console.log(savingsExist);
       const newTransaction=await Transaction.create({
                  transactionNumber,
+                 Customer:savingsExist.customer,
                  savingsAccount:savingsExist._id,
                  accountType:savingsExist.accountType,
                  accountNumber,

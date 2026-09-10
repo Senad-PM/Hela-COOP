@@ -357,6 +357,10 @@ const fillMissingMonths =(monthlytransaction)=>{
     return(result);
 }
 exports.customerDashedboard=async(customer)=>{
+     const today=new Date();
+    today.setHours(0,0,0,0);
+    const lastThirtyDates=new Date(today);
+    lastThirtyDates.setDate(lastThirtyDates.getDate()-29);
        const customerSavingBalance=await savings.aggregate([
           {
             $match:
@@ -378,15 +382,117 @@ exports.customerDashedboard=async(customer)=>{
        ({Customer:customer,accountType:"regular"})
        .select("balance");
 
-       const customerFixedSavingBalance=await savings.findOne({Customer:customer,accountType:"fixed"}).select("balance");
+       const customerFixedSavingBalance=await savings.find({Customer:customer,accountType:"fixed"}).select("balance");
        const customerActiveLoancount= await loan.countDocuments({Customer:customer,status:"active"});
+       const nextpayment=await loan.findOne({Customer:customer,status:"active",nextDueDate:{
+          $gte:new Date()
+         }
+       }).select("nextDueDate monthlyInstallment").sort({nextDueDate: 1});
+       const recentTransaction=await Transaction.find({Customer:customer}).select("createdAt transactionType amount description").limit(5).sort({createdAt:-1});
+       const activeLoans = await Loan.find({Customer:customer}).select("loanNumber principalAmount outstandingBalance monthlyInstallment nextDueDate").sort({createdAt:-1});
+        
+      const getmonthlytransactionsummery=async(customer)=>{
+ //Days
+         const today=new Date();
+         const lastTwelveMonths=new Date(today);
+         lastTwelveMonths.setMonth(lastTwelveMonths.getMonth()-11);
+         lastTwelveMonths.setDate(1);
+         lastTwelveMonths.setHours(0, 0, 0, 0);    
+     const monthlytransaction=await Transaction.aggregate([{
+        $match:{
+            Customer:customer,
+            createdAt:{
+                 $gte:lastTwelveMonths,
+                 $lt:today
+            },
+            transactionType: {
+                $in: ["deposit", "withdraw"]
+               }
+        }
+       },{
+        $group:{
+           _id:{
+            $dateToString: {
+                 format: "%Y-%m",
+                 date: "$createdAt"
+        }
+           },
+            deposits: {
+            $sum: {
+               $cond: [
+                { $eq: ["$transactionType", "deposit"] },
+              "$amount",
+                  0
+                     ]
+                }
+            },
+            withdraw: {
+            $sum: {
+               $cond: [
+                { $eq: ["$transactionType", "withdraw"] },
+              "$amount",
+                  0
+                     ]
+                }
+            },
+        }
+    },{
+            $sort:{
+            _id:1
+        }
+   }]);
+   return(monthlytransaction);
+};
+const fillMissingMonths =(monthlyActivity)=>{
+    const result=[];
+    //date
+    const today = new Date();
+    const lastTwelveMonths = new Date(today);
+    lastTwelveMonths.setMonth(lastTwelveMonths.getMonth() - 11);
+    lastTwelveMonths.setDate(1);
+    lastTwelveMonths.setHours(0,0,0,0);
 
+    for (let i=0; i<12; i++){
+        const month=new Date(lastTwelveMonths);
+        month.setMonth(month.getMonth() + i);
+        const year=month.getFullYear();
+        const formattedMonth = `${year}-${String(month.getMonth() + 1).padStart(2, "0")}`;
+       
+        const monthData = monthlyActivity.find(
+              item => item._id === formattedMonth
+        );
+        if(monthData){
+           result.push({
+             month:formattedMonth,
+             deposits: monthData.deposits,
+             withdraw: monthData.withdraw
+           });
+        }else{
+           result.push({
+              month:formattedMonth,
+               deposits: 0,
+               withdraw: 0
+           });
+        }
+        
+    }
+    return(result);
+}
+       
+    const monthlyActivity=await getmonthlytransactionsummery(customer);
+    console.log(monthlyActivity);
+    console.log(Array.isArray(monthlyActivity));
+    const completeMonthlyActivity=fillMissingMonths(monthlyActivity);
        return({
         topcards:{
             customerTotalSavings:customerSavingBalance,
             regularSavingBalance:customerregularsavingsbalnce,
             fixedSavingsBalance:customerFixedSavingBalance,
-            ActiveLoanCount:customerActiveLoancount
-        }
+            ActiveLoanCount:customerActiveLoancount,
+            nextPaymentDates:nextpayment
+        },
+        MyRecentTransactions:recentTransaction,
+        MyActiveLoans:activeLoans,
+        MonthlyActivities:completeMonthlyActivity
        });
 }
