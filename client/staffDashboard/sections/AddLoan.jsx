@@ -1,4 +1,4 @@
-import { Home, Briefcase, GraduationCap, Sprout, User, X, Check, TriangleAlert, Hash, Wallet, AtSign, ShieldCheck, Calendar, Phone, CreditCard, Mail, MapPin, ChevronLeft, Loader2 } from 'lucide-react';
+import { Home, Briefcase, GraduationCap, Sprout, User, X, Check, TriangleAlert, Hash, Wallet, AtSign, ShieldCheck, Calendar, Phone, CreditCard, Mail, MapPin, ChevronLeft, Loader2, Search } from 'lucide-react';
 import React, { useState } from 'react'
 import { findCustomerByNIC } from '../../../client/src/api/customerApi';
 import { applyForLoan } from '../../src/api/loansApi';
@@ -8,33 +8,14 @@ const emptyForm = {
     loanType: "housing",
     loanAmmount: 1000,
     loanTerm: 36,
-    interestRateType: "fixed",
     purpose: "",
-
-    accountNumber: "",
-    accountType: "saving",
-    userName: "",
-    status: "active",
-    repaymentMethod: "auto",
-    repaymentDate: "",
-
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    NIC: "",
-    dateOfBirth: "",
-    email: "",
-    addressLine: "",
-    city: "",
-    district: "",
-    postalCode: "",
-
+    memberSearch: "",
     agreed: false,
 };
 
 const Loan_Types = [
     {key: "housing", label: "Housing", limit: "Up to 500K", max: 500000, icon: Home },
-    {key: "business", label: "Business", limit: "Up to 250K", max: 250000, icon: Briefcase },
+    {key: "buisness", label: "Business", limit: "Up to 250K", max: 250000, icon: Briefcase },
     {key: "personal", label: "Personal", limit: "Up to 50K", max: 50000, icon: User },
     {key: "education", label: "Education", limit: "Up to 80K", max: 80000, icon: GraduationCap },
     {key: "agriculture", label: "Agriculture", limit: "Up to 100K", max: 100000, icon: Sprout },
@@ -73,9 +54,8 @@ const STEP_COLORS = {
 
 const STEPS = [
     {key: "loan", label: "Loan Details", badge: "Step 1 - Loan Details", heading: "Choose your loan", subtitle: "Select a loan type and set your preferred amount and term.", color: "indigo"},
-    {key: "account", label: "Account Setup", badge: "Step 2 - Account Setup", heading: "Set up your account", subtitle: "Link an existing account or create repayment details.", color: "purple"},
-    {key: "personal", label: "Personal Info", badge: "Step 3 - Personal Info", heading: "Where can we reach you?", subtitle: "Personal details and address for the application.", color: "pink"},
-    {key: "review", label: "Review and Save", badge: "Step 4 - Review & Save", heading: "Almost there!", subtitle: "Review your application before submitting.", color: "emerald"},
+    {key: "member", label: "Find Member", badge: "Step 2 - Find Member", heading: "Who is this loan for?", subtitle: "Look up the member by NIC or customer number", color: "purple"},
+    {key: "review", label: "Review and Save", badge: "Step 3 - Review & Save", heading: "Almost there!", subtitle: "Review your application before submitting.", color: "emerald"},
 ];
 
 const Field = ({ label, icon: Icon, ...props }) => (
@@ -137,22 +117,19 @@ const AddLoan = ({ onClose, onCreated }) => {
 
     const validateStep = () => {
         if (step === 0) {
-            if (!form.loanType || !form.loanAmmount || Number(form.loanAmmount) <= 0){
+            if (!form.loanType || !form.loanAmmount || Number(form.loanAmmount ?? form.loanAmmount) <= 0){
                 return "Please select a loan type and a valid amount."
             }
         }
         if (step === 1) {
-            if (!form.accountNumber || !form.userName) {
-                return "Please fill in the account details."
+            if (!foundCustomer) {
+                return "Please look up and confirm a member before continuing."
             }
         }
         if (step === 2) {
-            if(!form.firstName || !form.lastName || !form.NIC || !form.phoneNumber || !form.email || !form.addressLine || !form.city) {
-                return "Please fill in all personal details."
+            if(!form.agreed) {
+                return "Please confirm the terms before submitting."
             }
-        }
-        if (step === 3) {
-            if (!form.agreed) return "Please confirm the terms before submitting."
         }
         return "";
     };
@@ -203,33 +180,17 @@ const AddLoan = ({ onClose, onCreated }) => {
 
         try{
             const application = await applyForLoan({
+                customerNumber: foundCustomer.customerNumber,
                 loanType: form.loanType,
-                loanAmmount: Number(form.loanAmmount),
-                loanTerm: Number(form.loanTerm),
-                interestRateType: form.interestRateType,
-                purpose: form.purpose,
-                accountNumber: form.accountNumber,
-                accountType: form.accountType,
-                userName: form.userName,
-                status: form.status,
-                repaymentMethod: form.repaymentMethod,
-                repaymentDate: form.repaymentDate,
-                firstName: form.firstName,
-                lastName: form.lastName,
-                phoneNumber: form.phoneNumber,
-                NIC: form.NIC,
-                dateOfBirth: form.dateOfBirth,
-                email: form.email,
-                addressLine: form.addressLine,
-                city: form.city,
-                district: form.district,
-                postalCode: form.postalCode,
+                principalAmount: Number(form.loanAmmount),
+                durationMonths: Number(form.loanTerm),
             });
 
-            setReferenceNumber(application?.referenceNumber || `LN-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 89999)}`);
+            setReferenceNumber(application?.loanNumber || "-");
             onCreated?.();
             setSuccess(true);
             setForm(emptyForm);
+            setFoundCustomer(null);
         } catch (err) {
             setError(err.response?.data?.message || "Could not submit the loan application. Check the fields and try again.")
         } finally {
@@ -391,10 +352,6 @@ const AddLoan = ({ onClose, onCreated }) => {
                                                 <option value="48">48 months</option>
                                                 <option value="60">60 months</option>
                                             </Select>
-                                            <Select label="Interest Rate Type" value={form.interestRateType} onChange={set("interestRateType")}>
-                                                <option value="fixed">Fixed Rate</option>
-                                                <option value="variable">Variable Rate</option>
-                                            </Select>
                                         </div>
 
                                         <div className='flex flex-col gap-1'>
@@ -412,80 +369,63 @@ const AddLoan = ({ onClose, onCreated }) => {
 
                                 {step === 1 && (
                                     <div className='flex flex-col gap-5'>
-                                        <div>
-                                            <p className='text-xs font-bold text-gray-500 uppercase tracking-wide mb-3'>Account Information</p>
-                                            <div className='grid grid-cols-2 gap-4'>
-                                                <Field icon={Hash} label={"Account Number"} value={form.accountNumber} onChange={set("accountNumber")} placeholder="Ex: 160-xxx-xxx-xxxx" />
-                                                <Select icon={Wallet} label={"Account Type"} value={form.accountType} onChange={set("accountType")} >
-                                                    <option value="saving">Saving</option>
-                                                    <option value="fixed">Fixed deposit</option>
-                                                </Select>
-                                                <Field icon={AtSign} label={"User Name / Member ID"} value={form.userName} onChange={set("userName")} placeholder="Kamal" />
-                                                <Select icon={ShieldCheck} label={"Status"} value={form.status} onChange={set("status")} >
-                                                    <option value="active">Active</option>
-                                                    <option value="inactive">Inactive</option>
-                                                </Select>
+                                        <div className='flex items-end gap-3'>
+                                            <div className='flex-1'>
+                                                <Field icon={Search} label="NIC or Customer Number" value={form.memberSearch} onChange={set("memberSearch")} placeholder="Ex: 200345315560 or CUS-0001" />
                                             </div>
+                                            <button type='button' onClick={handleSearchMember} disabled={searching}
+                                                className='flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-50'
+                                            >
+                                                {searching ? <Loader2 size={15} className='animate-spin' /> : <Search size={15} />}
+                                                {searching ? "Searching..." : "Search"}
+                                            </button>
                                         </div>
-                                        <div>
-                                            <p className='text-xs font-bold text-gray-500 uppercase tracking-wide mb-3'>Repayment Information</p>
-                                            <div className='grid grid-cols-2 gap-4'>
-                                                <Select label="Repayment Method" value={form.repaymentMethod} onChange={set("repaymentMethod")}>
-                                                    <option value="auto">Auto Debit</option>
-                                                    <option value="manual">Manual</option>
-                                                </Select>
-                                                <Field icon={Calendar} label="Repayment Date" type="date" value={form.repaymentDate} onChange={set("repaymentDate")} />
-                                            </div>
-                                        </div>
+
+                                        <AnimatePresence>
+                                            {foundCustomer && (
+                                                <motion.div
+                                                    initial={{opacity: 0, y: -8}}
+                                                    animate={{opacity: 1, y: 0}}
+                                                    className='rounded-2xl border-2 border-purple-200 bg-purple-50 p-5'
+                                                >
+                                                    <p className='text-xs font-bold text-purple-600 uppercase tracking-wide mb-3'>Member Found</p>
+                                                    <div className='grid grid-cols-2 gap-x-4 gap-y-3'>
+                                                        <div>
+                                                            <p className='text-[11px] text-gray-400'>Full Name</p>
+                                                            <p className='text-sm font-semibold text-gray-800'>{foundCustomer.firstName} {foundCustomer.lastName}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className='text-[11px] text-gray-400'>Customer Number</p>
+                                                            <p className='text-sm font-semibold text-gray-800'>{foundCustomer.customerNumber}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className='text-[11px] text-gray-400'>NIC</p>
+                                                            <p className='text-sm font-semibold text-gray-800'>{foundCustomer.NIC}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className='text-[11px] text-gray-400'>Phone</p>
+                                                            <p className='text-sm font-semibold text-gray-800'>{foundCustomer.phoneNumber}</p>
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
                                 )}
 
                                 {step === 2 && (
-                                    <div className='flex flex-col gap-5'>
-                                        <div className='grid grid-cols-3 gap-4'>
-                                            <Field icon={User} label="First name" value={form.firstName} onChange={set("firstName")} placeholder="Malith" />
-                                            <Field icon={User} label="Last name" value={form.lastName} onChange={set("lastName")} placeholder="Senad" />
-                                            <Field icon={Phone} label="Phone Number" value={form.phoneNumber} onChange={set("phoneNumber")} placeholder="077 xxx xxxx" />
-                                            <Field icon={CreditCard} label="NIC number" value={form.NIC} onChange={set("NIC")} placeholder="200345315560" />
-                                            <Field icon={Calendar} label="Date of Birth" type="date" value={form.dateOfBirth} onChange={set("dateOfBirth")} />
-                                            <Field icon={Mail} label="Email Address" value={form.email} onChange={set("email")} placeholder="example@gmail.com" />
-                                        </div>
-                                        <div>
-                                            <p className='text-xs font-bold text-gray-500 uppercase tracking-wide mb-3'>Address & Contact</p>
-                                            <div className='flex flex-col gap-4'>
-                                                <Field icon={Home} label="Address Line" value={form.addressLine} onChange={set("addressLine")} placeholder="Peradeniya, Kandy" />
-                                                <div className='grid grid-cols-3 gap-4'>
-                                                    <Field icon={MapPin} label="City" value={form.city} onChange={set("city")} placeholder="Kandy" />
-                                                    <Field label="District" value={form.district} onChange={set("district")} placeholder="Kandy" />
-                                                    <Field icon={Hash} label="Postal Code" value={form.postalCode} onChange={set("postalCode")} placeholder="EX: 80000" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {step === 3 && (
                                     <div className='flex flex-col gap-4'>
-                                        <div className='grid grid-cols-2 gap-4'>
-                                            <SummaryCard title="Loan Details" icon={Wallet} color="indigo" rows={[
-                                                ["Loan Type", Loan_Types.find((t) => t.key === form.loanType)?.label],
-                                                ["Loan Amount", Number(form.loanAmmount || 0).toLocaleString()],
-                                                ["Term", `${form.loanTerm} months`],
-                                                ["Rate Type", form.interestRateType === "fixed" ? "Fixed Rate" : "Variable Rate"],
-                                            ]} />
-                                            <SummaryCard title="Account Details" icon={CreditCard} color="purple" rows={[
-                                                ["Account Number", form.accountNumber],
-                                                ["Account Type", form.accountType === "fixed" ? "Fixed Deposit" : "Savings"],
-                                                ["Repayment", form.repaymentMethod === "auto" ? "Auto Debit" : "Manual"],
-                                                ["Repayment Date", form.repaymentDate],
-                                            ]} />
-                                        </div>
-                                        <SummaryCard title="Personal Info" icon={User} color="pink" rows={[
-                                            ["Full Name", `${form.firstName} ${form.lastName}`],
-                                            ["NIC", form.NIC],
-                                            ["Address", `${form.addressLine}, ${form.city}`],
-                                            ["Phone", form.phoneNumber],
-                                            ["Email", form.email],
+                                        
+                                        <SummaryCard title="Loan Details" icon={Wallet} color="indigo" rows={[
+                                            ["Loan Type", Loan_Types.find((t) => t.key === form.loanType)?.label],
+                                            ["Loan Amount", Number(form.loanAmmount || 0).toLocaleString()],
+                                            ["Term", `${form.loanTerm} months`],
+                                        ]} />
+                                        <SummaryCard title="Member" icon={User} color="purple" rows={[
+                                            ["Full Name", `${foundCustomer?.firstName || ""} ${foundCustomer?.lastName || ""}`],
+                                            ["Customer Number", foundCustomer?.customerNumber],
+                                            ["NIC", foundCustomer?.NIC],
+                                            ["Phone", foundCustomer?.phoneNumber],
                                         ]} />
 
                                         <label className='flex items-start gap-2 rounded-2xl border-2 border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-gray-700 cursor-pointer'>
