@@ -75,7 +75,7 @@ exports.createCustomer=async(customerData,user)=>{
         dateOfBirth:newCustomer.dateOfBirth,
         createdBy:newCustomer.createdBy,
         createdAt:newCustomer.createdAt
-    })
+    });
 
 };
 const buildFilter=(query)=>{
@@ -166,7 +166,19 @@ exports.getCustomerBYId=async(id)=>{
     if(!findCustomer){
         throw new Error("Customer not found");
     }
-    return findCustomer;
+    return ({
+        customerNumber:findCustomer.customerNumber,
+        NIC:findCustomer.NIC,
+        firstName:findCustomer.firstName,
+        Lastname:findCustomer.lastName,
+        email:findCustomer.email,
+        phoneNumber:findCustomer.phoneNumber,
+        occupation:findCustomer.occupation,
+        city:findCustomer.city,
+        address:findCustomer.address,
+        postalCode:findCustomer.postalCode,
+        dateOfBirth:findCustomer.dateOfBirth
+    });
 }
 exports.update=async(customerNumber,updatebody)=>{
    const {firstName,lastName,email,phoneNumber,city,address,postalCode,}=updatebody;
@@ -224,4 +236,5 @@ exports.activate=async(customerNumber)=>{
     await customerExist.save();
     return("customer succesfully activated");
 };
+
 

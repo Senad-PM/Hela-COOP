@@ -30,9 +30,11 @@ exports.getCustomerByCustomerNumber=async(req,res,next)=>{
     }
 };
 exports.getCustomerById=async(req,res,next)=>{
-    console.log("controller reached");
+    
     try{
-        const result=await getCustomerBYId(req.params.id);
+        console.log("controller reached");
+        const id =req.params.id;
+        const result=await getCustomerBYId(id);
         res.status(200).json(result);
     }catch(error){
         next(error);
