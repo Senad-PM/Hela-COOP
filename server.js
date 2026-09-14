@@ -29,7 +29,8 @@ const savingsRoutes=require("./Routes/savingsRoutes");
 const transactionRouter=require("./Routes/transactionRoutes");
 const adminRoutes=require("./Routes/dashedboardRoutes");
 const loanRoutes=require("./Routes/loanRoutes");
-const customerAuthRoutes=require("./Routes/customerAuthRoutes")
+const customerAuthRoutes=require("./Routes/customerAuthRoutes");
+const customerPortalRoutes=require("./Routes/customerPortalRoutes");
 app.use("/api/auth",authRoutes);
 app.use("/api/user",userRoutes);
 app.use("/api/customer",customerRoutes);
@@ -38,6 +39,7 @@ app.use("/api/transactions",transactionRouter);
 app.use("/api/dashedboard",adminRoutes);
 app.use("/api/loan",loanRoutes);
 app.use("/api/customerAuth",customerAuthRoutes);
+app.use("/api/Portal",customerPortalRoutes);
 
 app.use(errorhandler);
 const PORT=process.env.PORT || 5000;
