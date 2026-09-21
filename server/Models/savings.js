@@ -1,77 +1,86 @@
-const mongoose=require("mongoose");
+const{createsavings,deposit,withdraw,getByAccountNumber,getAllSavings,deactivate,activate,applyDailyInterest}=require("../Services/savingsService");
+const logActivity=require("../Utils/logActivity");
 
-const savingsSchema= new mongoose.Schema({
-    accountNumber:{
-        type:String,
-        required:true,
-        unique:true,
-        trim:true,
-        match: [
-           /^(REG|FIX)-[0-9]{4}$/,
-           "Invalid account number format"
-        ]
-    },
-   /* customerNumber:{
-        type:String,
-        required:true
-    }, */
-    customer:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Customer",
-        required:true
-    },
-    accountType:{
-        type:String,
-        enum:["regular","fixed"],
-        required:true
-    },
-    balance:{
-        type:Number,
-        required:true,
-        default:0,
-        min:0
-    },
-    interestRate:{
-        type:Number,
-        required:true,
-        min:0,
-        max:100
-    },
-    durationMonths:{
-         type:Number,
-         required:function(){
-            return this.accountType==="fixed";
-         },
-         enum:[3,6,12],
-         min:1
-    },
-    maturityDate:{
-        type:Date,
-    },
-    isMatured:{
-        type:Boolean,
-        default:false
-    },
-    isActive:{
-          type:Boolean,
-          default:true
-    },
-    lastInterestApplied:{
-        type:Date
-    },
-    accuredInterest:{
-        type:Number,
-        default:0,
-        min:0
-    },
-    createdBy:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
+
+exports.addSavingsAcount=async(req,res,next)=>{
+    try{
+    const user=req.user._id;
+    const savingsData=req.body;
+    const result=await createsavings(savingsData,user);
+    await logActivity({
+        performedBy:user,
+        action:"Added savings account",
+        actionType:"savings",
+        ref:result?.accountNumber
+    });
+    res.status(200).json(result);
+    }catch(error){
+      // console.log(error)
+        next(error);
     }
+};
+exports.savingsDeposit=async(req,res,next)=>{
+  try{
+    const depositData=req.body;
+    const user=req.user._id;
+    const result=await deposit(depositData,user);
+    res.status(200).json(result);
+  }catch(error){
+    next(error);
+  }
+};
+exports.savingsWithdraw=async(req,res,next)=>{
+  try{
+    const withdrawData=req.body;
+    const user=req.user._id;
+    const result=await withdraw(withdrawData,user)
+    res.status(200).json(result);
+  }catch(error){
+    next(error);
+  }
+};
+exports.getSavingsByAccountNumber=async(req,res,next)=>{
+   try{
+        const {accountNumber}=req.params;
+        const result=await getByAccountNumber(accountNumber);
+        res.status(200).json(result);
+   }catch(error){
+      next(error);
+   }
+};
+exports.getSavings=async(req,res,next)=>{
+  try{
+       const result=await getAllSavings(req.query);
+       res.status(200).json(result);
+  }catch(error){
+    next(error);
+  }
+};
+exports.acountDeactivate=async(req,res,next)=>{
+       try{
+              const {accountNumber}=req.params;
+              const result=await deactivate(accountNumber);
+              res.status(200).json(result);
+       }catch(error){
+         next(error);
+       }
+};
+exports.accountActivate=async(req,res,next)=>{
+      try{
+             const {accountNumber}=req.params;
+              const result=await activate(accountNumber);
+              res.status(200).json(result);
+      }catch(error){
+        next(error);
+      }
+};
+exports.interestApply=async(req,res,next)=>{
+  try{
+     const{accountNumber}=req.params;
+     const result=await applyDailyInterest(accountNumber);
+     res.status(200).json(result);
+  }catch(error){
+    next(error);
+  }
 
-},{
-    timestamps:true
-}
-);
-module.exports=mongoose.model("Savings",savingsSchema);
+};

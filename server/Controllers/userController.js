@@ -1,10 +1,17 @@
 const {createUser,getUsers,getUsersById,update,deactivate,activate}=require("../Services/userService");
+const logActivity=require("../Utils/logActivity");
 
 exports.registerUser=async(req,res,next)=>{
     try{
     const{userName,email,password,role}=req.body;
     console.log(req.body);
     const result= await createUser(userName,email,password,role);
+    await logActivity({
+        performedBy:req.user._id,
+        action:`Added ${role}`,
+        actionType:"user",
+        ref:userName
+    });
     res.status(201).json(result);
     }catch(error){
         next(error);

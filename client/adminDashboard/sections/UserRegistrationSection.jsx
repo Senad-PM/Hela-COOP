@@ -1,9 +1,9 @@
 import {useState} from 'react'
-import { TriangleAlertIcon, CheckCircleIcon, User, KeyRound, Shield, RotateCcw, CreditCard, Calendar,AtSign } from 'lucide-react';
+import { TriangleAlertIcon, CheckCircleIcon, User, KeyRound, Shield, RotateCcw, CreditCard, Calendar,AtSign, Loader2 } from 'lucide-react';
 import { registerUser } from '../../src/api/userApi';
 import Field from '../components/Field';
 
-const UserRegistrationSection = ( onRegistered ) => {
+const UserRegistrationSection = ({ onRegistered }) => {
     const [formData, setFormData] = useState({
         firstName: "", lastName: "",
         nic: "", dob: "",
@@ -43,7 +43,7 @@ const UserRegistrationSection = ( onRegistered ) => {
             email: formData.email,
             role: formData.role,
           });
-          setFromSuccess(`${result.userName} was created. A setup emailwas sent to ${result.email}.`);
+          setFromSuccess(`${result.userName} was created. A setup email was sent to ${result.email}.`);
           handleReset();
           onRegistered?.();
         }catch (err) {

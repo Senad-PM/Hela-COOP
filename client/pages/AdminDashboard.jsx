@@ -2,6 +2,7 @@ import {useState, useEffect, useCallback} from 'react'
 import { Home, UserPlus, UserRound, Settings, ClipboardList } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchUsers } from '../src/api/userApi';
+import { fetchActivityLogs, clearActivityLogs, fetchSettings, updateSettings } from "../src/api/adminApi";
 import HomeSection from '../adminDashboard/sections/HomeSection';
 import UserRegistrationSection from '../adminDashboard/sections/UserRegistrationSection';
 import UsersSection from '../adminDashboard/sections/UsersSection';

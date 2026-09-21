@@ -82,7 +82,7 @@ const ActivityLogSection = () => {
   
           <div className="space-y-1">
             {paginated.map((logs, i) => (
-              <div key={i} className={`grid grid-cols-4 px-4 py-3 rounded-xl items-center text-sm transition-colors duration-200 hover:bg-emerald-50 ${i % 2 == 0 ? "bg-amber-50/60" : "bg-stone-100/40}"}`}>
+              <div key={i} className={`grid grid-cols-4 px-4 py-3 rounded-xl items-center text-sm transition-colors duration-200 hover:bg-emerald-50 ${i % 2 == 0 ? "bg-amber-50/60" : "bg-stone-100/40"}`}>
                 <span className="text-xs text-gray-500">{logs.date}</span>
                 <div className="flex items-center gap-2">
                   <div className={`flex items-center justify-center w-7 h-7 rounded-full ${logs.color} text-white text-xs font-bold flex-shrink-0`}>
@@ -91,7 +91,7 @@ const ActivityLogSection = () => {
                   <span className="text-xs font-medium text-gray-700">{logs.user}</span>
                 </div>
                 <span className={`text-xs font-semibold ${logs.actionColor}`}>{logs.action}</span>
-                <span className="tex-xs text-gray-500">{logs.ref}</span>
+                <span className="text-xs text-gray-500">{logs.ref}</span>
               </div>
             ))}
           </div>

@@ -53,7 +53,6 @@ const Navbar = () => {
             })
             console.log('Login success:', response.data)
             const role = response.data.role
-            const isStaffRole = role === 'manager' || role === 'staff'
             closeForm()
             
             localStorage.setItem('accessToken', response.data.accessToken)
@@ -62,10 +61,10 @@ const Navbar = () => {
 
             if (role === 'admin'){
                 localStorage.setItem('isAdmin', 'true')
-                closeForm()
                 navigate('/admin')
-            }else if (isStaffRole){
-                closeForm()
+            }else if (role === 'manager'){
+                navigate('/manager')
+            }else if (role === 'staff'){
                 navigate('/staff')
             }else{
                 setError('Unrecognized role for this account.')
@@ -131,7 +130,11 @@ const Navbar = () => {
                     className='relative w-full max-w-md rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_8px_60px_rgba(0,0,0,0.6)] overflow-hidden'
                 >
 
-                    <div className={`pointer-events-none absolute -top-24 -right-24 w-64 h-64 rounded-full blur-3xl opacity-30 transition-colors duration-500 ${portal === 'admin' ? 'bg-amber-400' : 'bg-lime-400'}`} />
+                    <div className={`pointer-events-none absolute -top-24 -right-24 w-64 h-64 rounded-full blur-3xl opacity-30 transition-colors duration-500 ${
+                        portal === 'admin' ? 'bg-amber-400' : 
+                        portal === 'manager' ? "bg-sky-400" : 
+                        "bg-lime-400"
+                    }`} />
                     <div className='relative p-8'>
                         
                         <div className='flex justify-between items-start'>
@@ -148,14 +151,25 @@ const Navbar = () => {
                             </button>
                         </div>
 
-                        <div className='relative mt-6 grid grid-cols-2 gap-1 p-1 rounded-full bg-white/5 border border-white/10'>
-                            <span className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-all duration-300 ease-out ${portal === 'admin' ? 'translate-x-[calc(100%+4px)] bg-amber-400' : 'translate-x-0 bg-lime-400'}`} />
+                        <div className='relative mt-6 grid grid-cols-3 gap-1 p-1 rounded-full bg-white/5 border border-white/10'>
+                            <span className={`absolute top-1 bottom-1 w-[calc(33.333%-5.33px)] rounded-full transition-all duration-300 ease-out ${
+                                    portal === 'admin' ? 'translate-x-[calc(200%+8px)] bg-amber-400' : 
+                                    portal === 'manager' ? "translate-x-[calc(100%+4px)] bg-sky-400" : 
+                                    'translate-x-0 bg-lime-400'}`
+                                } />
                             <button
                                 type='button'
                                 onClick={() => { setPortal('staff'); setError('') }}
                                 className={`relative z-10 flex items-center justify-center gap-1.5 py-2 rounded-full text-sm font-semibold transition-colors duration-300 cursor-pointer ${portal === 'staff' ? 'text-black' : 'text-white/60 hover:text-white'}`}
                             >
                                 <UserRound className='w-4 h-4' /> Staff
+                            </button>
+                            <button
+                                type='button'
+                                onClick={() => { setPortal('manager'); setError('') }}
+                                className={`relative z-10 flex items-center justify-center gap-1.5 py-2 rounded-full text-sm font-semibold transition-colors duration-300 cursor-pointer ${portal === 'manager' ? 'text-black' : 'text-white/60 hover:text-white'}`}
+                            >
+                                <UserRound className='w-4 h-4' /> Manager
                             </button>
                             <button
                                 type='button'
@@ -223,7 +237,7 @@ const Navbar = () => {
                                         {loading ? (
                                             <><Loader2 className='w-4.5 h-4.5 animate-spin' /> Signing in...</>
                                         ) : (
-                                            <>Log in to {portal === 'admin' ? 'Admin' : 'Staff'} portal <ArrowRight className='w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200' /></>
+                                            <>Log in to {portal === 'admin' ? 'Admin' : portal === 'manager' ? 'Manager' : 'Staff'} portal <ArrowRight className='w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200' /></>
                                         )}
                                    </button>
                                 </div>
