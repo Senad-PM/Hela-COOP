@@ -1,12 +1,17 @@
 const {createCustomer,getcustomer,getCustomerByCN,update,deactivate,activate,getCustomerBYId}=require("../Services/customerService");
-
-
+const logActivity=require("../Utils/logActivity");
 
 exports.addCustomer=async(req,res,next)=>{
     try{
         const customerData=req.body;
         const user=req.user._id;
         const result=await createCustomer(customerData,user);
+        await logActivity({
+            performedBy:user,
+            action:"Added member",
+            actionType:"customer",
+            ref:result?.customerNumber
+        });
         res.status(200).json(result);
     }catch(error){
         next(error)
@@ -65,4 +70,3 @@ exports.activateCustomer=async(req,res,next)=>{
         next(error);
     }
 };
-

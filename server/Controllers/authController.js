@@ -5,13 +5,12 @@ const{ login,forgotPassword,resetPassword,refreshTokenGenarate,logOut}=require("
 
 exports.signin=async(req,res,next)=>{
     try{
-        const{email,password}=req.body;
-       const result=await login(email,password);
+       const{email,password,portal}=req.body;
+       const result=await login(email,password,portal);
        res.status(200).json(result);
     }catch(error){
         console.log(error);
-        next (error);
-        
+        next (error);        
     }
 };
 exports.forgotpasswords=async(req,res,next)=>{

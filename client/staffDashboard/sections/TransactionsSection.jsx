@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { fetchTransactions } from '../../src/api/transactionsApi';
 import { ArrowDownCircle, ArrowLeftRight, ArrowUpCircle, Search, Loader2, Wallet } from 'lucide-react';
 import { motion } from "motion/react";
+import { SkeletonStatGrid, SkeletonTable } from '../../components/Skeleton';
 
 const currency = (n) => `Rs. ${Number(n || 0).toLocaleString()}`;
 const dateTime = (d) => new Date(d).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
@@ -61,7 +62,10 @@ const TransactionsSection = () => {
         <p className='text-sm text-gray-500'>All Transaction History (most recent 200)</p>
       </div>
 
-      <div className='grid grid-cols-4 gap-4'>
+      {loading ? (
+        <SkeletonStatGrid count={4} cols={4} />
+      ) : (
+        <div className='grid grid-cols-4 gap-4'>
         <motion.div 
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -104,6 +108,7 @@ const TransactionsSection = () => {
           </div>
         </div>
       </div>
+    )}
 
       <div className='bg-emerald-50 rounded-2xl p-5'>
         <div className='flex items-center justify-between mb-4 flex-wrap gap-3'>
@@ -134,9 +139,7 @@ const TransactionsSection = () => {
 
         <div className='max-h-96 overflow-y-auto space-y-1 pr-1'>
           {loading ? (
-            <p className='flex items-center justify-center gap-2 text-sm text-gray-400 py-8'>
-              <Loader2 size={16} className='animate-spin' /> Loading transactions...
-            </p>
+            <SkeletonTable cols={6} rows={7} />
           ) : error ? (
             <p className='text-center text-sm text-red-400 py-8'>{error}</p>
           ) : filtered.length === 0 ? (

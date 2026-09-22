@@ -1,4 +1,5 @@
 const {createLoan,loanApproved,loanReject,loanDistribution,getloans,getLoansByNumber,loanStatics}=require("../Services/loanService");
+const logActivity=require("../Utils/logActivity");
 
 exports.loanCreation=async(req,res,next)=>{
      try{
@@ -15,6 +16,12 @@ exports.approveLoan=async(req,res,next)=>{
          const {loanNumber}=req.params;
          const user=req.user._id;
          const result=await loanApproved(loanNumber,user);
+         await logActivity({
+            performedBy:user,
+            action:"Approved loan",
+            actionType:"loan",
+            ref:loanNumber
+         });
          res.status(200).json(result);
       }catch(error){
             next(error);
@@ -25,6 +32,12 @@ exports.rejectLoan=async(req,res,next)=>{
          const {loanNumber}=req.params;
          const user=req.user._id;
          const result=await loanReject(loanNumber,user);
+         await logActivity({
+            performedBy:user,
+            action:"Rejected loan",
+            actionType:"loan",
+            ref:loanNumber
+         });
          res.status(200).json(result);
       }catch(error){
           next(error);

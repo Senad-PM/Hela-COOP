@@ -6,7 +6,7 @@ const jwt=require("jsonwebtoken");
 const crypto=require("crypto");
 const user = require("../Models/user");
 
-exports.login=async(email,password)=>{
+exports.login=async(email,password, portal)=>{
     const userExist=await User.findOne({email}).select("+password");
     if(!userExist){
         throw new Error("Invalid credentials");
@@ -17,6 +17,21 @@ exports.login=async(email,password)=>{
     const ismatch=await userExist.comparePassword(password);
     if(!ismatch){
         throw new Error("invalid credentials");
+    }
+
+    if(portal === 'admin' || portal === 'staff'){
+        const isStaffRole = userExist.role === "staff" || userExist.role === "manager";
+        const isAdminRole = userExist.role === "admin";
+        if(portal === "admin" && !isAdminRole){
+            const err = new Error("This isn't an Admin account. Try the Staff tab instead.");
+            err.statusCode = 403;
+            throw err;
+        }
+        if(portal === "staff" && !isStaffRole){
+            const err = new Error("This isn't a Staff account. Try the Admin tab instead.");
+            err.statusCode = 403;
+            throw err;
+        }
     }
     const accessToken=generateToken(userExist._id);
     const refreshToken=generateRefreshToken(userExist._id);

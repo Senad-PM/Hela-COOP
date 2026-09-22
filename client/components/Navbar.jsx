@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { X, Menu, XIcon, UserRound, ShieldCheck, Mail, Lock} from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { X, Menu, XIcon, UserRound, ShieldCheck, Mail, Lock, EyeOff, Eye, ArrowRight, Loader2} from 'lucide-react'
 import axios from 'axios'
 import { AnimatePresence, animate, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom' 
@@ -21,6 +21,14 @@ const Navbar = () => {
 
     const navigate = useNavigate()
 
+    const [scrolled, setScrolled] = useState(false)
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 40)
+        onScroll()
+        window.addEventListener('scroll', onScroll, { passive: true })
+        return () => window.removeEventListener('scroll', onScroll)
+    }, [])
+
     const openForm = () => SetFormIsOpen(true)
     const closeForm = () => {
         SetFormIsOpen(false)
@@ -28,6 +36,8 @@ const Navbar = () => {
         setError('')
         setEmail('')
         setPassword('')
+        setShowPassword(false)
+        setPortal('staff')
     }
 
     // Login handler
@@ -38,19 +48,23 @@ const Navbar = () => {
         try {
             const response = await axios.post('http://localhost:8080/api/auth/login', {
                 email,
-                password
+                password,
+                portal
             })
             console.log('Login success:', response.data)
+            const role = response.data.role
             closeForm()
             
             localStorage.setItem('accessToken', response.data.accessToken)
             localStorage.setItem('refreshToken', response.data.refreshToken)
-            localStorage.setItem('role', response.data.role)
+            localStorage.setItem('role', role)
 
-            if (response.data.role == 'admin'){
+            if (role === 'admin'){
                 localStorage.setItem('isAdmin', 'true')
                 navigate('/admin')
-            }else if (response.data.role === 'manager' || response.data.role === 'staff'){
+            }else if (role === 'manager'){
+                navigate('/manager')
+            }else if (role === 'staff'){
                 navigate('/staff')
             }else{
                 setError('Unrecognized role for this account.')
@@ -65,19 +79,23 @@ const Navbar = () => {
     }
 
   return (
-    <header className='w-full top-0 fixed z-50 backdrop-blur-sm bg-lime-500/20'>
+    <header className={`w-full top-0 fixed z-50 transition-all duration-300 ease-out ${
+        scrolled ? 
+        "bg-white/85 backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.08)]" :
+        "bg-lime-500/20 backdrop-blur-sm shadow-none"
+    }`}>
         <div className='flex items-center justify-between p-5 h-15'>
             <div>
                 <h1 className='font-serif font-semibold text-2xl'>Hela-COOP</h1>
             </div>
-            <ul className='gap-3 font-semibold md:flex hidden cursor-pointer rounded-2xl bg-white/30'>
+            <ul className='gap-3 font-semibold md:flex hidden cursor-pointer rounded-2xl bg-white/30 shadow-2xl'>
                 <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>Feature</li>
                 <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'> Benefits & Tools</li>
                 <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>About Us</li>
                 <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>Contact</li>
             </ul>
             <div onClick={openForm} className='gap-5 md:flex hidden'>
-                <button className='bg-white rounded-2xl pr-5 pl-5 p-2 font-semibold hover:bg-emerald-400 hover:text-white hover:scale-105 duration-300 ease-in-out transition-all'>Log in</button>
+                <button className='bg-white rounded-2xl pr-5 pl-5 p-2 font-semibold hover:bg-emerald-400 hover:text-white hover:scale-105 duration-300 ease-in-out transition-all shadow-2xl'>Log in</button>
             </div>
             <div className='md:hidden'>
                 <button onClick={ toggleMenu }>
@@ -96,12 +114,13 @@ const Navbar = () => {
                 </ul>
             </div>
         )}
+        <AnimatePresence>
         {formISOpen && (
             <motion.div
                 initial={{opacity: 0}}
                 animate={{opacity: 1}}
                 exit={{opacity: 0}}
-                className='flex items-center justify-center p-4 fixed top-0 left-0 w-scree h-screen bg-black/80 backdrop-blur-md z-50'
+                className='flex items-center justify-center p-4 fixed top-0 left-0 w-screen h-screen bg-black/80 backdrop-blur-md z-50'
             >
                 <motion.div
                     initial={{opacity: 0, y: 24, scale: 0.97}}
@@ -111,7 +130,11 @@ const Navbar = () => {
                     className='relative w-full max-w-md rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_8px_60px_rgba(0,0,0,0.6)] overflow-hidden'
                 >
 
-                    <div className={`pointer-events-none absolute -top-24 -right-24 w-64 h-64 rounded-full blur-3xl opacity-30 transition-colors duration-500 ${portal === 'admin' ? 'bg-amber-400' : 'bg-lime-400'}`} />
+                    <div className={`pointer-events-none absolute -top-24 -right-24 w-64 h-64 rounded-full blur-3xl opacity-30 transition-colors duration-500 ${
+                        portal === 'admin' ? 'bg-amber-400' : 
+                        portal === 'manager' ? "bg-sky-400" : 
+                        "bg-lime-400"
+                    }`} />
                     <div className='relative p-8'>
                         
                         <div className='flex justify-between items-start'>
@@ -128,14 +151,25 @@ const Navbar = () => {
                             </button>
                         </div>
 
-                        <div className='relative mt-6 grid grid-cols-2 gap-1 p-1 rounded-full bg-white/5 border border-white/10'>
-                            <span className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-all duration-300 ease-out ${portal === 'admin' ? 'translate-x-[calc(100%+4px)] bg-amber-400' : 'translate-x-0 bg-lime-400'}`} />
+                        <div className='relative mt-6 grid grid-cols-3 gap-1 p-1 rounded-full bg-white/5 border border-white/10'>
+                            <span className={`absolute top-1 bottom-1 w-[calc(33.333%-5.33px)] rounded-full transition-all duration-300 ease-out ${
+                                    portal === 'admin' ? 'translate-x-[calc(200%+8px)] bg-amber-400' : 
+                                    portal === 'manager' ? "translate-x-[calc(100%+4px)] bg-sky-400" : 
+                                    'translate-x-0 bg-lime-400'}`
+                                } />
                             <button
                                 type='button'
                                 onClick={() => { setPortal('staff'); setError('') }}
                                 className={`relative z-10 flex items-center justify-center gap-1.5 py-2 rounded-full text-sm font-semibold transition-colors duration-300 cursor-pointer ${portal === 'staff' ? 'text-black' : 'text-white/60 hover:text-white'}`}
                             >
                                 <UserRound className='w-4 h-4' /> Staff
+                            </button>
+                            <button
+                                type='button'
+                                onClick={() => { setPortal('manager'); setError('') }}
+                                className={`relative z-10 flex items-center justify-center gap-1.5 py-2 rounded-full text-sm font-semibold transition-colors duration-300 cursor-pointer ${portal === 'manager' ? 'text-black' : 'text-white/60 hover:text-white'}`}
+                            >
+                                <UserRound className='w-4 h-4' /> Manager
                             </button>
                             <button
                                 type='button'
@@ -164,7 +198,7 @@ const Navbar = () => {
                                 <label htmlFor="email" className='text-sm font-medium text-white/70 block mb-2'>Email</label>
                                 <div className='relative'>
                                     <Mail className='absolute left-4 top-1/3 -transale-y-1/2 w-4.5 h-4.5 text-white/40 pointer-events-none' />
-                                    <input type='email' id='email' value={email }
+                                    <input type="email" id='email' value={email }
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
                                         placeholder='you@gmail.com'
@@ -176,6 +210,36 @@ const Navbar = () => {
                                 <label htmlFor="password" className='text-sm font-medium text-white/70 block mb-2'>Password</label>
                                 <div className='relative'>
                                     <Lock className='absolute left-4 top-1/3 -transale-y-1/2 w-4.5 h-4.5 text-white/40 pointer-events-none' />
+                                    <input
+                                        id='password'
+                                        type={showPassword ? "text" : "password"}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        placeholder='Enter you password here..'
+                                        className='w-full text-white placeholder-white/30 bg-white/5 border border-white/10 pl-11 pr-11 py-3 rounded-xl outline-none focus:border-lime-400/60 focus:bg-white/10 focus:ring-2 focus:ring-lime-400/20 transition-all duration-200'
+                                    />
+                                    <button 
+                                        type='button'
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className='absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors duration-200 cursor-pointer'
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                    >
+                                        {showPassword ? <Eye className='w-4.5 h-4.5' /> : <EyeOff className='w-4.5 h-4.5' />}
+                                    </button>
+                                </div>
+                                <div className='mt-6'>
+                                   <button
+                                    type='submit'
+                                    disabled={loading}
+                                    className='group w-full flex items-center justify-center gap-2 rounded-xl bg-white p-3 font-semibold text-base cursor-pointer hover:bg-lime-400 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed'
+                                   >
+                                        {loading ? (
+                                            <><Loader2 className='w-4.5 h-4.5 animate-spin' /> Signing in...</>
+                                        ) : (
+                                            <>Log in to {portal === 'admin' ? 'Admin' : portal === 'manager' ? 'Manager' : 'Staff'} portal <ArrowRight className='w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200' /></>
+                                        )}
+                                   </button>
                                 </div>
                             </div>
                         </form>
@@ -185,6 +249,7 @@ const Navbar = () => {
                 </motion.div>
             </motion.div>
         )}
+        </AnimatePresence>
     </header>
   )
 }

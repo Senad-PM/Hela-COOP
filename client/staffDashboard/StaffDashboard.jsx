@@ -41,7 +41,7 @@ const StaffDashboard = () => {
 
     const [activeSection, setActiveSection] = useState("overview");
     const role = localStorage.getItem("role");
-    const roleLable = role ? role.charAt(0).toUpperCase() + role.slice(1) : "staff";
+    const rolelable = role ? role.charAt(0).toUpperCase() + role.slice(1) : "staff";
     const ActiveComponent = NAV_ITEMS.find((item) => item.key === activeSection)?.Component ?? OverviewSection; 
 
   return (
@@ -53,7 +53,7 @@ const StaffDashboard = () => {
                     Hela <span className='text-emerald-400'>COOP</span>
                 </h1>
                 <span className='mt-2 w-fit text-xs font-semibold bg-emerald-800/70 text-emerald-300 px-3 py-1 rounded-full'>
-                    {roleLable}
+                    {rolelable}
                 </span>
                 <hr className='mt-5 border-t border-gray-700' />
 
