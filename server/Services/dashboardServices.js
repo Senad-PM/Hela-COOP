@@ -253,8 +253,11 @@ exports.managerDashedboard=async()=>{
           $gte:100000
        }
      })
-    .select("transactionNumber accountNumber transactionType amount").
-    populate("performedBy","userName").limit(5)
+    .select("transactionNumber accountNumber transactionType amount createdAt savingsAccount loanAccount")
+    .populate("performedBy","userName")
+    .populate({path:"savingsAccount",select:"customer",populate:{path:"customer",select:"firstName lastName"}})
+    .populate({path:"loanAccount",select:"customer",populate:{path:"customer",select:"firstName lastName"}})
+    .limit(5)
     .sort({createdAt:-1});
     return{
      overview:{
@@ -267,7 +270,9 @@ exports.managerDashedboard=async()=>{
         },
      monthlyChart:{
         monthlyDepositVolume:completeMonthlyDeposit,
-        monthlyWithdrawVolume:completeMonthlyWithdraw
+        monthlyWithdrawVolume:completeMonthlyWithdraw,
+        monthlyLoanRepaymentVolume:completeMonthlyLoanRepayment,
+        monthlyLoanDisbursementVolume:completeMonthlyDisbursement
      },
      loanStatics:{
         completeLoanStatistics

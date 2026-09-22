@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { AnimatePresence, motion } from "motion/react";
 import Sidebar, { NAV_ITEMS } from './Sidebar';
+import OverviewSection from './sections/OverviewSection';
+import AccountsSection from './sections/AccountsSection';
 
 const ManagerDashboard = () => {
 
@@ -22,9 +24,16 @@ const ManagerDashboard = () => {
                             exit={{ opacity: 0, y: -12 }}
                             transition={{ duration: 0.25, ease: "easeInOut" }}
                         >
-                            {/* TODO: swap for the real section components as each one is built */}
-                            <h2 className='text-2xl font-semibold'>{activeLabel}</h2>
-                            <p className='text-gray-500 mt-2'>{activeLabel} section coming soon.</p>
+                            {activeSection === 'overview' ? (
+                                <OverviewSection onNavigate={setActiveSection} />
+                            ) : activeSection === 'accounts' ? (
+                                <AccountsSection />
+                            ) : (
+                                <>
+                                    <h1 className='text-2xl font-semibold'>{activeLabel}</h1>
+                                    <p className='text-gray-500 mt-2'>{activeLabel} Section is coming soon</p>
+                                </>
+                            )}
                         </motion.div>
                     </AnimatePresence>
                 </div>

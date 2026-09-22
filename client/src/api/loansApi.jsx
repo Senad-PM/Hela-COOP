@@ -14,3 +14,13 @@ export const applyForLoan = async (loanData) => {
   const { data } = await axiosClient.post('/loan/create', loanData);
   return data;
 };
+
+export const approveLoan = async (loanNumber) => {
+  const { data } = await axiosClient.patch(`/loan/${loanNumber}/approve`);
+  return data;
+};
+
+export const rejectLoan = async (loanNumber) => {
+  const { data } = await axiosClient.patch(`/loan/${loanNumber}/reject`);
+  return data;
+};
