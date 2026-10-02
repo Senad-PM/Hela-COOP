@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Sidebar, { NAV_ITEMS } from './Sidebar';
 import OverviewSection from './sections/OverviewSection';
 import AccountsSection from './sections/AccountsSection';
+import TransactionSection from './sections/TransactionSection';
 
 const ManagerDashboard = () => {
 
@@ -28,6 +29,8 @@ const ManagerDashboard = () => {
                                 <OverviewSection onNavigate={setActiveSection} />
                             ) : activeSection === 'accounts' ? (
                                 <AccountsSection />
+                            ) : activeSection === 'transactions' ? (
+                                <TransactionSection />
                             ) : (
                                 <>
                                     <h1 className='text-2xl font-semibold'>{activeLabel}</h1>

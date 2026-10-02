@@ -58,7 +58,9 @@ exports.getTransactions=async(query)=>{
         const transactions=await  Transaction.find(filter).populate(
                                          "performedBy",
                                          "userName role"
-                                        ).sort(sortoption).skip(skip).limit(limit);
+                                        ).populate({path:"savingsAccount",select:"customer",populate:{path:"customer",select:"firstName lastName"}})
+                                        .populate({path:"loanAccount",select:"customer",populate:{path:"customer",select:"firstName lastName"}})
+                                        .sort(sortoption).skip(skip).limit(limit);
                     if(transactions===0){
                         throw new Error ("no transactions found");
                     }
