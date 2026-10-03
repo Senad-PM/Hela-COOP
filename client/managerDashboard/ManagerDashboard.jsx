@@ -4,6 +4,7 @@ import Sidebar, { NAV_ITEMS } from './Sidebar';
 import OverviewSection from './sections/OverviewSection';
 import AccountsSection from './sections/AccountsSection';
 import TransactionSection from './sections/TransactionSection';
+import LoansSection from './sections/LoansSection';
 
 const ManagerDashboard = () => {
 
@@ -31,6 +32,8 @@ const ManagerDashboard = () => {
                                 <AccountsSection />
                             ) : activeSection === 'transactions' ? (
                                 <TransactionSection />
+                            ) : activeSection === 'loans' ? (
+                                <LoansSection />
                             ) : (
                                 <>
                                     <h1 className='text-2xl font-semibold'>{activeLabel}</h1>
