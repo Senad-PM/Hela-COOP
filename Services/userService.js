@@ -6,8 +6,9 @@ const crypto=require("crypto");
 const sendEmail=require("../Utils/sendEmail");
 const buildPagination=require("../Utils/buildPaginations");
 const buildSort=require("../Utils/buildSort");
+const activity=require("../Models/activity");
 
-exports.createUser=async(userName,email,password,role)=>{
+exports.createUser=async(userName,email,password,role,user)=>{
            console.log(userName, email, role);
            if(!userName || !email|| !role){
              throw new Error("all field must be filled ");
@@ -38,7 +39,19 @@ exports.createUser=async(userName,email,password,role)=>{
           console.log(error);
           throw new Error("email sending failed")
         }
-        
+          const activityCount= await activity.countDocuments();
+          const nextActivity=activityCount+1;
+          const format=nextActivity.toString().padStart(4,"0");
+          const activityNumber=`ACT-${format}`;
+          const newActivity=await activity.create({
+                  activityNumber,
+                  performedBy:user,
+                  action:"create user",
+                  entityType:"user",
+                  entityId:newUser.id,
+                  targetLabel:newUser.userName,
+                  description:`user ${userName} created `
+              });
           await newUser.save();
            return({
              id:newUser._id,
@@ -104,7 +117,7 @@ exports.getUsersById=async(id)=>{
       }
       return findUser;
 };
-exports.update=async(id,updatebody)=>{
+exports.update=async(id,updatebody,user)=>{
     const{userName,role,isActive}=updatebody;
     const updateData={};
     if(userName !== undefined){
@@ -120,9 +133,22 @@ exports.update=async(id,updatebody)=>{
     if(!userExist){
       throw new Error("user not found");
     }
+          const activityCount= await activity.countDocuments();
+          const nextActivity=activityCount+1;
+          const format=nextActivity.toString().padStart(4,"0");
+          const activityNumber=`ACT-${format}`;
+          const newActivity=await activity.create({
+                  activityNumber,
+                  performedBy:User,
+                  action:"update user",
+                  entityType:"user",
+                  entityId:userExist.id,
+                  targetLabel:userExist.userName,
+                  description:`user ${userName} created `
+              });
     return userExist;
 }
-exports.deactivate=async(id)=>{
+exports.deactivate=async(id,user)=>{
   const userExist=await User.findById(id).select("-password -refreshToken");
   if(!userExist){
     throw new Error("User not found");
@@ -131,11 +157,24 @@ exports.deactivate=async(id)=>{
     throw new Error("User already deactivated");
   }
   userExist.isActive=false;
+  const activityCount= await activity.countDocuments();
+          const nextActivity=activityCount+1;
+          const format=nextActivity.toString().padStart(4,"0");
+          const activityNumber=`ACT-${format}`;
+          const newActivity=await activity.create({
+                  activityNumber,
+                  performedBy:User,
+                  action:"deactivate user",
+                  entityType:"user",
+                  entityId:userExist.id,
+                  targetLabel:userExist.userName,
+                  description:`user ${userName} deactivated `
+              });
   await userExist.save();
-
+  
   return userExist;
 }
-exports.activate=async(id)=>{
+exports.activate=async(id,user)=>{
   const userExist=await User.findById(id).select("-password -refreshToken");
   if(!userExist){
     throw new Error("User not found");
@@ -144,6 +183,19 @@ exports.activate=async(id)=>{
     throw new Error("User already activated");
   }
   userExist.isActive=true;
+  const activityCount= await activity.countDocuments();
+          const nextActivity=activityCount+1;
+          const format=nextActivity.toString().padStart(4,"0");
+          const activityNumber=`ACT-${format}`;
+          const newActivity=await activity.create({
+                  activityNumber,
+                  performedBy:User,
+                  action:"activate user",
+                  entityType:"user",
+                  entityId:userExist.id,
+                  targetLabel:userExist.userName,
+                  description:`user ${userName} activated `
+              });
   await userExist.save();
   return userExist;
 }

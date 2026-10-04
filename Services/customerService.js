@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const sendEmail= require ("../Utils/sendEmail");
 const crypto=require("crypto");
 const bcrypt=require("bcrypt");
+const activity=require("../Models/activity");
 
 exports.createCustomer=async(customerData,user)=>{
     const{NIC,firstName,lastName,email,phoneNumber,occupation,city,address,postalCode,dateOfBirth}=customerData;
@@ -53,6 +54,20 @@ exports.createCustomer=async(customerData,user)=>{
           console.log(error);
           throw new Error("email sending failed")
         }
+    const activityCount= await activity.countDocuments();
+    const nextActivity=activityCount+1;
+    const format=nextActivity.toString().padStart(4,"0");
+    const activityNumber=`ACT-${format}`;
+    const newActivity=await activity.create({
+        activityNumber,
+        performedBy:user,
+        action:"new Customer",
+        entityType:"Customer",
+        entityId:newCustomer.id,
+        targetLabel:newCustomer.customerNumber,
+        description:"new customer created"
+    });
+    
      await newCustomer.save();
            return({
              id:newCustomer._id,
@@ -180,7 +195,7 @@ exports.getCustomerBYId=async(id)=>{
         dateOfBirth:findCustomer.dateOfBirth
     });
 }
-exports.update=async(customerNumber,updatebody)=>{
+exports.update=async(customerNumber,updatebody,user)=>{
    const {firstName,lastName,email,phoneNumber,city,address,postalCode,}=updatebody;
    const updateData={};
    if(firstName!==undefined){
@@ -208,10 +223,23 @@ exports.update=async(customerNumber,updatebody)=>{
    if(!customerExist){
          throw new Error ("user not found");
    }
+    const activityCount= await activity.countDocuments();
+    const nextActivity=activityCount+1;
+    const format=nextActivity.toString().padStart(4,"0");
+    const activityNumber=`ACT-${format}`;
+    const newActivity=await activity.create({
+        activityNumber,
+        performedBy:user,
+        action:"update Customer",
+        entityType:"Customer",
+        entityId:customerExist.id,
+        targetLabel:customerExist.customerNumber,
+        description:"customer field updated"
+    });
    return customerExist;
    
 };
-exports.deactivate=async(customerNumber)=>{
+exports.deactivate=async(customerNumber,user)=>{
     const customerExist=await Customer.findOne({customerNumber});
     if(!customerExist){
         throw new Error("customer not found");
@@ -220,11 +248,24 @@ exports.deactivate=async(customerNumber)=>{
         throw new Error("customer already deactivated");
     }
     customerExist.isActive=false;
+    const activityCount= await activity.countDocuments();
+    const nextActivity=activityCount+1;
+    const format=nextActivity.toString().padStart(4,"0");
+    const activityNumber=`ACT-${format}`;
+    const newActivity=await activity.create({
+        activityNumber,
+        performedBy:user,
+        action:"deactivate Customer",
+        entityType:"Customer",
+        entityId:customerExist.id,
+        targetLabel:customerExist.customerNumber,
+        description:`customer -${customerNumber} deactivated`
+    });
     await customerExist.save();
     return("customer succesfully deactivated");
 };
 
-exports.activate=async(customerNumber)=>{
+exports.activate=async(customerNumber,user)=>{
     const customerExist=await Customer.findOne({customerNumber});
     if(!customerExist){
         throw new Error("customer not found");
@@ -233,6 +274,19 @@ exports.activate=async(customerNumber)=>{
         throw new Error("customer already activated");
     }
     customerExist.isActive=true;
+    const activityCount= await activity.countDocuments();
+    const nextActivity=activityCount+1;
+    const format=nextActivity.toString().padStart(4,"0");
+    const activityNumber=`ACT-${format}`;
+    const newActivity=await activity.create({
+        activityNumber,
+        performedBy:user,
+        action:"activate Customer",
+        entityType:"Customer",
+        entityId:customerExist.id,
+        targetLabel:customerExist.customerNumber,
+        description:`customer -${customerNumber} activated`
+    });
     await customerExist.save();
     return("customer succesfully activated");
 };

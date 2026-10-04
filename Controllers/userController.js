@@ -3,8 +3,9 @@ const {createUser,getUsers,getUsersById,update,deactivate,activate}=require("../
 exports.registerUser=async(req,res,next)=>{
     try{
     const{userName,email,password,role}=req.body;
+    const user=req.user._id
     console.log(req.body);
-    const result= await createUser(userName,email,password,role);
+    const result= await createUser(userName,email,password,role,user);
     res.status(201).json(result);
     }catch(error){
         next(error);
@@ -29,7 +30,8 @@ exports.getUserById=async(req,res,next)=>{
 }
 exports.updateUser=async(req,res,next)=>{
     try{
-        const result=await update(req.params.id,req.body);
+        const user=req.user._id
+        const result=await update(req.params.id,req.body,user);
         res.status(200).json(result);
     }catch(error){
         next(error);
@@ -37,7 +39,8 @@ exports.updateUser=async(req,res,next)=>{
 }
 exports.deactivateUser=async(req,res,nex)=>{
     try{
-        const result=await deactivate(req.params.id);
+        const user=req.user._id
+        const result=await deactivate(req.params.id,user);
         res.status(200).json(result);
     }catch(error){
         next(error);
@@ -45,7 +48,8 @@ exports.deactivateUser=async(req,res,nex)=>{
 }
 exports.activateUser=async(req,res,next)=>{
     try{
-        const result=await activate(req.params.id);
+        const user=req.user._id
+        const result=await activate(req.params.id,user);
         res.status(200).json(result);
     }catch(error){
         next(error);

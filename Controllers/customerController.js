@@ -30,7 +30,6 @@ exports.getCustomerByCustomerNumber=async(req,res,next)=>{
     }
 };
 exports.getCustomerById=async(req,res,next)=>{
-    
     try{
         console.log("controller reached");
         const id =req.params.id;
@@ -44,7 +43,8 @@ exports.updateCustomer=async(req,res,next)=>{
      try{
         const{customerNumber}=req.params;
         const updateBody=req.body;
-        const result=await update(customerNumber,updateBody);
+        const user=req.user._id;
+        const result=await update(customerNumber,updateBody,user);
         res.status(200).json(result); 
      }catch(error){
         next(error);
@@ -53,7 +53,8 @@ exports.updateCustomer=async(req,res,next)=>{
 exports.deactivateCustomer=async(req,res,next)=>{
     try{
         const{customerNumber}=req.params;
-        const result=await deactivate(customerNumber);
+         const user=req.user._id;
+        const result=await deactivate(customerNumber,user);
         res.status(200).json(result);
     }catch(error){
         next(error)
@@ -62,7 +63,8 @@ exports.deactivateCustomer=async(req,res,next)=>{
 exports.activateCustomer=async(req,res,next)=>{
     try{
        const{customerNumber}=req.params;
-       const result=await activate(customerNumber);
+       const user=req.user._id;
+       const result=await activate(customerNumber,user);
        res.status(200).json(result);
     }catch(error){
         next(error);
