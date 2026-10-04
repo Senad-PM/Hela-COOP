@@ -1,5 +1,5 @@
 import {useState, useEffect, useCallback} from 'react'
-import { Home, UserPlus, UserRound, Settings, ClipboardList } from 'lucide-react';
+import { Home, UserPlus, UserRound, Settings, ClipboardList, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchUsers } from '../src/api/userApi';
 import { fetchActivityLogs, clearActivityLogs, fetchSettings, updateSettings } from "../src/api/adminApi";
@@ -8,6 +8,7 @@ import UserRegistrationSection from '../adminDashboard/sections/UserRegistration
 import UsersSection from '../adminDashboard/sections/UsersSection';
 import SettingSection from '../adminDashboard/sections/SettingSection';
 import ActivityLogSection from '../adminDashboard/sections/ActivityLogSection';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
     const [activeSection, setActiveSection] = useState("home");
@@ -16,6 +17,14 @@ const AdminDashboard = () => {
     const [usersError, setUsersError] = useState("");
     const role = localStorage.getItem("role");
     const roleLabel = role ? role.charAt(0).toUpperCase() + role.slice(1) : "Admin";
+
+    const navigate = useNavigate();
+    const handleLogOut = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("user");
+      navigate("/");
+  };
   
     const loadUsers = useCallback(async () => {
       setUsersLoading(true);
@@ -45,13 +54,11 @@ const AdminDashboard = () => {
     const NavItem = ({ icon: Icon, label, isActive, onClick }) => (
       <div onClick={onClick}
         className={`relative group flex items-center gap-3 cursor-pointer rounded-xl px-3 py-2.5 transition-colors duration-200 ease-out hover:translate-x-1 ${
-          isActive
-            ? "text-emerald-300" : "text-gray-300 hover:text-emerald-200"
+          isActive ? "bg-lime-300" : "text-gray-300 hover:text-lime-200"
         }`}
       >
         {isActive && (
           <motion.div
-            //layoutId="activeNavPill"
             className="absolute inset-0 bg-emerald-800/60 border-l-4 border-emerald-400 rounded-xl shadow-[0_0_14px_rgba(16,185,129,0.18)]"
             transition={{ type: "spring", stiffness: 380, damping: 32 }}
           />
@@ -71,9 +78,9 @@ const AdminDashboard = () => {
               <h1
                 className="text-3xl font-bold w-fit transition-transform duration-300 hover:scale-105" style={{ fontFamily: '"Antonio", serif' }}
               >
-                Hela <span className="text-emerald-400">COOP</span>
+                Hela <span className="text-lime-400">COOP</span>
               </h1>
-              <span className="mt-2 w-fit text-xs font-semibold bg-emerald-800/70 text-emerald-300 px-3 py-1 rounded-full">
+              <span className="mt-2 w-fit text-xs font-semibold bg-lime-800/70 text-lime-300 px-3 py-1 rounded-full">
                 {roleLabel}
               </span>
               <hr className="mt-5 border-t border-gray-700" />
@@ -88,6 +95,23 @@ const AdminDashboard = () => {
                   />
                 ))}
               </nav>
+              <div className='mt-auto flex items-center gap-3 pt-5 border-t border-gray-700'>
+                    <div className='flex items-center justify-center w-9 h-9 rounded-full bg-lime-400 text-black font-semibold text-sm flex-shrink-0'>
+                        A
+                    </div>
+                    <div className='flex flex-col leading-tight overflow-hidden flex-1 min-w-0'>
+                        <span className='text-sm font-semibold truncate'>Admin</span>
+                        <span className='text-xs text-gray-400 truncate'>Hela COOP</span>
+                    </div>
+                    <button
+                        onClick={handleLogOut}
+                        title='Logout'
+                        aria-label='Logout'
+                        className='flex-shrink-0 p-2 rounded-lg text-gray-400 hover:text-red-400 hover:bg-white/5 transition-colors cursor-pointer'
+                    >
+                        <LogOut size={18} />
+                    </button>
+                </div>
             </div>
             <div className="flex-1 h-full rounded-2xl bg-[#f5f0e8] p-5 overflow-auto">
               <AnimatePresence mode="wait">

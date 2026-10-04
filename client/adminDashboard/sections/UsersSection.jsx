@@ -9,11 +9,11 @@ const UsersSection = ({users = [], loading, error}) => {
     const filtered = useFilteredUsers(users, search, roleFilter)
   
     return(
-      <div className="flex flex-col gap-5 pt-4 px-2">
+      <div className="flex flex-col gap-5">
         
         <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4 flex items-start justify-between">
           <div>
-            <h1 className="text-xl font-bold text-gray-800">User</h1>
+            <h1 className="text-2xl font-serif font-semibold text-gray-800">User</h1>
             <p className="text-sm text-gray-500 mt-0.5">All Managers and Staff accounts</p>
           </div>
           <div className="flex items-center gap-3 text-gray-500 pt-1">

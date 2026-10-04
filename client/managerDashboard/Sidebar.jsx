@@ -1,6 +1,7 @@
 import React from 'react'
-import { LayoutGrid, Users, ArrowLeftRight, Landmark, LineChart, Settings as SettingsIcon } from "lucide-react";
+import { LayoutGrid, Users, ArrowLeftRight, Landmark, LineChart, Settings as SettingsIcon, LogOut } from "lucide-react";
 import { motion } from "motion/react";
+import { useNavigate } from 'react-router-dom';
 
 export const NAV_ITEMS = [
     { key: "overview", label: "Overview", icon: LayoutGrid },
@@ -45,6 +46,15 @@ const Sidebar = ({ activeSection, onSelect, user }) => {
         .join("")
         .toUpperCase();
 
+    const navigate = useNavigate();
+
+    const handleLogOut = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("user");
+        navigate("/");
+    };
+
     return (
         <div className='flex flex-col w-64 flex-shrink-0 text-white h-full'>
             <h1 className='text-3xl font-bold' style={{ fontFamily: '"Antonio", serif' }}>
@@ -71,10 +81,18 @@ const Sidebar = ({ activeSection, onSelect, user }) => {
                 <div className='flex items-center justify-center w-9 h-9 rounded-full bg-lime-400 text-black font-semibold text-sm flex-shrink-0'>
                     {initials || "M"}
                 </div>
-                <div className='flex flex-col leading-tight overflow-hidden'>
+                <div className='flex flex-col leading-tight overflow-hidden flex-1 min-w-0'>
                     <span className='text-sm font-semibold truncate'>{displayName}</span>
                     <span className='text-xs text-gray-400 truncate'>{displayTitle}</span>
                 </div>
+                <button
+                    onClick={handleLogOut}
+                    title='Logout'
+                    aria-label='Logout'
+                    className='flex-shrink-0 p-2 rounded-lg text-gray-400 hover:text-red-400 hover:bg-white/5 transition-colors cursor-pointer'
+                >
+                    <LogOut size={18} />
+                </button>
             </div>
         </div>
     )

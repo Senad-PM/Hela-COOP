@@ -54,10 +54,10 @@ const UserRegistrationSection = ({ onRegistered }) => {
       };
     
       return (
-        <div className="flex flex-col gap-5 pt-4 px-2">
+        <div className="flex flex-col gap-5">
     
           <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4">
-            <h1 className="text-xl font-bold text-gray-800">User Registration</h1>
+            <h1 className="text-2xl font-serif font-semibold text-gray-800">User Registration</h1>
             <p className="text-sm text-gray-500 mt-0.5">Create a new Staff or Manager account</p>
           </div>
           
@@ -126,14 +126,14 @@ const UserRegistrationSection = ({ onRegistered }) => {
             <button
               onClick={handleReset}
               disabled={submitting}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-2xl border-2 border-gray-300 text-green-400 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 transition-all duration-150 hover:scale-105 active:scale-95"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-green-600 text-white text-sm font-semibold hover:bg-green-600 disabled:opacity-50 transition-all duration-150 hover:scale-105 active:scale-95"
             >
               <RotateCcw size={15} /> Reset
             </button>
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-2xl border-2 border-gray-300 text-green-400 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 transition-all duration-150 hover:scale-105 active:scale-95"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-green-600 text-white text-sm font-semibold hover:bg-green-600 disabled:opacity-50 transition-all duration-150 hover:scale-105 active:scale-95"
             >
               {submitting ? <Loader2 size={15} className="animate-spin" /> : null}
               {submitting ? "Registering..." : "Register"}

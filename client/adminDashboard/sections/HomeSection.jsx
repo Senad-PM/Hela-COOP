@@ -17,7 +17,7 @@ const HomeSection = ({ users = [], loading, error }) => {
     const newThisMonth = users.filter((u) => new Date(u.createdAt) >= startOfMonth).length;
   
     return (
-      <div className="flex flex-col gap-5 pt-4 px-2 h-full">
+      <div className="flex flex-col gap-5 h-full">
   
         <div className="bg-white/90 border border-emerald-100 p-2 rounded-2xl flex items-center justify-between shrink-0">
           <h1>Welcome to Hela-COOP</h1>

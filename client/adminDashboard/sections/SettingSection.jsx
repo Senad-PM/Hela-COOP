@@ -46,11 +46,11 @@ const SettingSection = () => {
       );
     
       return(
-        <div className="flex flex-col gap-5 pt-4 px-2">
+        <div className="flex flex-col gap-5">
           
           <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4 flex items-start justify-between">
             <div>
-              <h1 className="text-xl font-bold text-gray-800">Hela-COOP Setting</h1>
+              <h1 className="text-2xl font-serif font-semibold text-gray-800">Hela-COOP Setting</h1>
               <p className="text-sm text-gray-500 mt-0.5">General, contact system preferences</p>
             </div>
             <div className="flex items-center gap-3 text-gray-500 pt-1">
@@ -118,7 +118,7 @@ const SettingSection = () => {
               <p className="text-xs text-amber-700">Bank details and payment gateways are not included - HelaCOOP does not support bank transfers.</p>
             </div>
             <div className="flex justify-end pb-4">
-              <button className="px-6 py-2.5 rounded-2xl bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#245a41] transition">
+              <button className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-green-600 text-white text-sm font-semibold hover:bg-green-600 disabled:opacity-50 transition-all duration-150 hover:scale-105 active:scale-95">
                 Save Setting
               </button>
             </div>

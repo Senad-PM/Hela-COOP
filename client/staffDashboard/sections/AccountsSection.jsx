@@ -53,8 +53,8 @@ const AccountsSection = () => {
       <div>
         <div className='flex items-center justify-between'>
           <div>
-            <h1 className='text-xl font-bold text-gray-800'>Accounts</h1>
-            <p className='text-sm text-gray-500'>Manage all members savings accounts</p>
+            <h1 className='text-2xl font-serif font-semibold text-gray-800'>Accounts</h1>
+            <p className='text-sm text-gray-500 mt-1'>Manage all members savings accounts</p>
           </div>
           <button onClick={() => setShowAddModal(true)} className='flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#245a41] transition'>
             <UserPlus size={15} />New Account

@@ -36,8 +36,8 @@ const SettingsSection = () => {
   return (
     <div className='flex flex-col gap-4'>
       <div>
-        <h1 className='text-xl font-bold text-gray-800'>Settings</h1>
-        <p className='text-sm text-gray-500'>System and account preferences</p>
+        <h1 className='text-2xl font-serif font-semibold text-gray-800'>Settings</h1>
+        <p className='text-sm text-gray-500 mt-1'>System and account preferences</p>
       </div>
 
       {notice && (
