@@ -8,6 +8,10 @@ const Navbar = () => {
 
     const [mobileMenu, SetMobileMenu] = useState(false)
     const toggleMenu = () => SetMobileMenu(!mobileMenu)
+    const scrollToSection = (id) => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        SetMobileMenu(false)
+    }
 
     const [formISOpen, SetFormIsOpen] = useState(false)
     const [isRegister, SetIsRegister] = useState(false)
@@ -89,10 +93,10 @@ const Navbar = () => {
                 <h1 className='font-serif font-semibold text-2xl'>Hela-COOP</h1>
             </div>
             <ul className='gap-3 font-semibold md:flex hidden cursor-pointer rounded-2xl bg-white/30 shadow-2xl'>
-                <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>Feature</li>
-                <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'> Benefits & Tools</li>
-                <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>About Us</li>
-                <li className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>Contact</li>
+                <li onClick={() => scrollToSection('feature')}className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>Feature</li>
+                <li onClick={() => scrollToSection('benefits')} className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'> Benefits & Tools</li>
+                <li onClick={() => scrollToSection('about')} className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>About Us</li>
+                <li onClick={() => scrollToSection('contact')} className='px-4 py-1.5 rounded-full transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] hover:text-white hover:scale-105'>Contact</li>
             </ul>
             <div onClick={openForm} className='gap-5 md:flex hidden'>
                 <button className='bg-white rounded-2xl pr-5 pl-5 p-2 font-semibold hover:bg-emerald-400 hover:text-white hover:scale-105 duration-300 ease-in-out transition-all shadow-2xl'>Log in</button>

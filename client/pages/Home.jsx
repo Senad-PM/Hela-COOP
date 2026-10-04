@@ -123,7 +123,7 @@ const Home = () => {
 
   return (
     <>
-        <section className='relative min-h-screen flex items-center justify-center pt-16 sm:pt-20 bg-green-50'>
+        <section id="feature" className='relative min-h-screen flex items-center justify-center pt-16 sm:pt-20 bg-green-50'>
             <div>
                 <div className='absolute top-10 left-4 sm:left-5 w-48 sm:w-72 h-48 sm:h-72 bg-lime-400/50 rounded-full blur-3xl animate-pulse'></div>
                 <div className='absolute bottom-5 right-3 sm:right-2 w-64 sm:w-96 h-64 sm:h-96 bg-lime-400/50 rounded-full blur-3xl animate-pulse delay-1000'></div>
@@ -189,7 +189,7 @@ const Home = () => {
                 ))}
             </div>
         </section>
-        <section className='relative pt-1 pb-20 bg-green-50 overflow-hidden'>
+        <section id="benefits" className='relative pt-1 pb-20 bg-green-50 overflow-hidden scroll-mt-20'>
             <div className='absolute top-40 -left-20 w-72 h-72 bg-lime-300/30 rounded-full blur-3xl' /> 
             <div className='absolute bottom-10 -right-10 w-80 h-80 bg-emerald-300/30 rounded-full blur-3xl' />
 
@@ -302,7 +302,7 @@ const Home = () => {
                 <h1 className='m3'>it's a promise we keep together.</h1>
             </div>
         </section>
-        <section className='w-full min-h-screen bg-emerald-50 flex flex-col justify-center'>
+        <section id="about" className='w-full min-h-screen bg-emerald-50 flex flex-col justify-center scroll-mt-20'>
             <div className='p-20 flex justify-between items-center gap-20'>
                 <div className='space-y-5 w-2/3'>
                     <div>
@@ -421,7 +421,7 @@ const Home = () => {
                 ))}
             </div>
         </section>
-        <section className='w-full bg-emerald-50'>
+        <section id="contact" className='w-full bg-emerald-50'>
             <div className='pb-10 px-20 pt-20'>
                 <div className='relative'>
                     <img src="/Images/Landing Page/footer.png" alt="" className='w-full h-[340px] object-cover rounded-2xl' />

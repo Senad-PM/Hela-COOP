@@ -9,7 +9,7 @@ const UsersSection = ({users = [], loading, error}) => {
     const filtered = useFilteredUsers(users, search, roleFilter)
   
     return(
-      <div className="flex flex-col gap-5 pt-4 px-2">
+      <div className="flex flex-col gap-5">
         
         <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4 flex items-start justify-between">
           <div>
