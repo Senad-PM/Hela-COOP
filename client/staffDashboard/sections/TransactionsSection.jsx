@@ -58,8 +58,8 @@ const TransactionsSection = () => {
   return (
     <div className='flex flex-col gap-4'>
       <div>
-        <h1 className='text-xl font-bold text-gray-800'>Transactions</h1>
-        <p className='text-sm text-gray-500'>All Transaction History (most recent 200)</p>
+        <h1 className='text-2xl font-serif font-semibold text-gray-800'>Transactions</h1>
+        <p className='text-sm text-gray-500 mt-1'>All Transaction History (most recent 200)</p>
       </div>
 
       {loading ? (

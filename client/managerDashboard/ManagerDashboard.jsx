@@ -5,6 +5,8 @@ import OverviewSection from './sections/OverviewSection';
 import AccountsSection from './sections/AccountsSection';
 import TransactionSection from './sections/TransactionSection';
 import LoansSection from './sections/LoansSection';
+import ReportsSection from './sections/ReportsSection';
+import SettingSection from './sections/SettingSection';
 
 const ManagerDashboard = () => {
 
@@ -34,11 +36,10 @@ const ManagerDashboard = () => {
                                 <TransactionSection />
                             ) : activeSection === 'loans' ? (
                                 <LoansSection />
+                            ) : activeSection === 'reports' ? (
+                                <ReportsSection />
                             ) : (
-                                <>
-                                    <h1 className='text-2xl font-semibold'>{activeLabel}</h1>
-                                    <p className='text-gray-500 mt-2'>{activeLabel} Section is coming soon</p>
-                                </>
+                                <SettingSection />
                             )}
                         </motion.div>
                     </AnimatePresence>

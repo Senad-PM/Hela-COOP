@@ -57,7 +57,7 @@ const UserRegistrationSection = ({ onRegistered }) => {
         <div className="flex flex-col gap-5 pt-4 px-2">
     
           <div className="bg-[#f5f0e8] rounded-2xl px-6 py-4">
-            <h1 className="text-xl font-bold text-gray-800">User Registration</h1>
+            <h1 className="text-2xl font-serif font-semibold text-gray-800">User Registration</h1>
             <p className="text-sm text-gray-500 mt-0.5">Create a new Staff or Manager account</p>
           </div>
           

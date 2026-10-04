@@ -19,8 +19,8 @@ const ReportsSection = () => {
   return (
     <div className='flex flex-col gap-4'>
       <div>
-        <h1 className='text-xl font-bold text-gray-800'>Reports</h1>
-        <p className='text-sm text-gray-500'>Generate and download reports</p>
+        <h1 className='text-2xl font-serif font-semibold text-gray-800'>Reports</h1>
+        <p className='text-sm text-gray-500 mt-1'>Generate and download reports</p>
       </div>
 
       {notice && (

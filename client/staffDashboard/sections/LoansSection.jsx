@@ -47,8 +47,8 @@ const LoansSection = () => {
     <div className='flex flex-col gap-4'>
       <div className='flex items-center justify-between'>
         <div>
-          <h1 className='text-xl font-bold text-gray-800'>Loans</h1>
-          <p className='text-sm text-gray-500'>Active loans and applications</p>
+          <h1 className='text-2xl font-serif font-semibold text-gray-800'>Loans</h1>
+          <p className='text-sm text-gray-500 mt-1'>Active loans and applications</p>
         </div>
         <button
           onClick={() => setShowAddLoan(true)}

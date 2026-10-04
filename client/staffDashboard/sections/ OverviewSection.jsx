@@ -159,7 +159,7 @@ const  OverviewSection = ({ onNavigate }) => {
     <div className='flex flex-col gap-4'>
       <div>
         <div>
-          <h1 className='text-xl font-bold text-gray-800'>Welcome back to Hela-COOP</h1>
+          <h1 className='text-2xl font-serif font-semibold text-gray-800'>Welcome back to Hela-COOP</h1>
           <p className='text-sm text-gray-500'>
             {new Date().toLocaleDateString(undefined, {weekday: "long", year: "numeric", month: "long", day: "numeric"})}
           </p>
