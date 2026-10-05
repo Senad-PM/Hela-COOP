@@ -371,7 +371,7 @@ const AddLoan = ({ onClose, onCreated }) => {
                                     <div className='flex flex-col gap-5'>
                                         <div className='flex items-end gap-3'>
                                             <div className='flex-1'>
-                                                <Field icon={Search} label="NIC or Customer Number" value={form.memberSearch} onChange={set("memberSearch")} placeholder="Ex: 200345315560 or CUS-0001" />
+                                                <Field icon={Search} label="NIC" value={form.memberSearch} onChange={set("memberSearch")} placeholder="Ex: 200345315560" />
                                             </div>
                                             <button type='button' onClick={handleSearchMember} disabled={searching}
                                                 className='flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-50'

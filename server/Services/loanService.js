@@ -13,6 +13,7 @@ const buildSort=require("../Utils/buildSort");
 exports.createLoan=async(loanData,user)=>{
 
     const {customerNumber,loanType,principalAmount,durationMonths}=loanData;
+    console.log(loanType);
     if(customerNumber===undefined || loanType===undefined || principalAmount===undefined || durationMonths===undefined){
         throw new Error("all fileds must be filled");
     }
@@ -35,6 +36,12 @@ exports.createLoan=async(loanData,user)=>{
     }
     if(loanType==="housing"){
         interestRate=15;
+    }
+    if(loanType==="education"){
+        interestRate=7;
+    }
+    if(loanType==="agriculture"){
+        interestRate=12;
     }
     const savingExist=await Savings.findOne({customer:customerExist._id,accountType:"regular"});
     if(!savingExist){
@@ -62,6 +69,18 @@ exports.createLoan=async(loanData,user)=>{
     const nextloan=loanCount+1;
     const fomatNumber=nextloan.toString().padStart(4,"0");
     loanNumber=`HLOAN-${fomatNumber}`;      
+    }
+    if(loanType==="agriculture"){
+        const loanCount=await Loan.countDocuments({loanType:"agriculture"});
+        const nextloan=loanCount+1;
+        const fomatNumber=nextloan.toString().padStart(4,"0");
+        loanNumber=`ALOAN-${fomatNumber}`;      
+    }
+    if(loanType==="education"){
+        const loanCount=await Loan.countDocuments({loanType:"education"});
+        const nextloan=loanCount+1;
+        const fomatNumber=nextloan.toString().padStart(4,"0");
+        loanNumber=`ELOAN-${fomatNumber}`;      
     }
     const installment=calculateEmi(principalAmount,interestRate,durationMonths);
     const newLoan=await Loan.create({

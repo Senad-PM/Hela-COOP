@@ -16,7 +16,7 @@ exports.savingsDeposit=async(req,res,next)=>{
   try{
     const depositData=req.body;
     const user=req.user._id;
-    const result=await deposit(depositData,user);
+    const result = await deposit(req.body, req.user);
     res.status(200).json(result);
   }catch(error){
     next(error);
@@ -60,9 +60,9 @@ exports.acountDeactivate=async(req,res,next)=>{
 };
 exports.accountActivate=async(req,res,next)=>{
       try{
-             const {accountNumber}=req.params;
-              const result=await activate(accountNumber);
-              res.status(200).json(result);
+        const {accountNumber}=req.params;
+        const result=await activate(accountNumber);
+        res.status(200).json(result);
       }catch(error){
         next(error);
       }
