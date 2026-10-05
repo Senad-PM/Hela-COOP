@@ -97,84 +97,68 @@ exports.createsavings=async(savingsData,user)=>{
         });
         return(newAcount);
 };
-exports.deposit=async(depositData,user)=>{
-      const{accountNumber,amount}=depositData;
-      if(!accountNumber || !amount){
-        throw new Error("all must be filled");
-      }
-      const savingsExist=await Savings.findOne({accountNumber});
-      if(!savingsExist){
-        throw new Error("invalid account number");
-      }
-      if(savingsExist.isActive===false){
-         throw new Error("account is not active cannot deposit");
-      }
-      if(!savingsExist.accountType==="regular"){
-        throw new Error("only regular savings can deposit money");
-      }
-      const balance=savingsExist.balance+amount;
-      let transactionNumber
-      const transactionsCount=await Transaction.countDocuments();
-      const nextCount=transactionsCount+1;
-      const transNumber=nextCount.toString().padStart(4,"0");
-      transactionNumber=`TRAN-${transNumber}`;
-      //console.log(savingsExist);
-      const newTransaction=await Transaction.create({
-                 transactionNumber,
-                 savingsAccount:savingsExist._id,
-                 accountType:savingsExist.accountType,
-                 accountNumber,
-                 transactionType:"deposit",
-                 amount,
-                 balanceAfter:balance,
-                 performedBy:user._id,
-                 description:"deposit"
-        });
-        
-       savingsExist.balance = balance;
-       await savingsExist.save();
-        return (balance);
-      
+const MIN_BALANCE = 1000;
+
+const nextTransactionNumber = async () => {
+  const count = await Transaction.countDocuments();
+  return `TRAN-${(count + 1).toString().padStart(4, "0")}`;
 };
-exports.withdraw=async(withdrawData,user)=>{
-   const {accountNumber,amount}=withdrawData;
-   if(!accountNumber || !amount){
-        throw new Error("all field must be field");
-   }
-   const savingsExist=await Savings.findOne({accountNumber});
-   if(!savingsExist){
-        throw new Error("savings account not found ");
-   }
-   if(savingsExist.isActive===false){
-        throw new Error("account is not active")
-   }
-   if(!savingsExist.accountType==="regular"){
-         throw new Error("accountType should be regular");
-   }
-   if(savingsExist.balance-amount<=1000){
-        throw new Error("insufficient balance");
-   }
-   const balance=savingsExist.balance-amount;
-    let transactionNumber
-      const transactionsCount=await Transaction.countDocuments();
-      const nextCount=transactionsCount+1;
-      const transNumber=nextCount.toString().padStart(4,"0");
-      transactionNumber=`TRAN-${transNumber}`;
-      //console.log(savingsExist);
-      const newTransaction=await Transaction.create({
-                 transactionNumber,
-                 savingsAccount:savingsExist._id,
-                 accountType:savingsExist.accountType,
-                 accountNumber,
-                 transactionType:"withdraw",
-                 amount,
-                 balanceAfter:balance,
-                 performedBy:user._id,
-                 description:"withdraw"
-        });
-        savingsExist.balance=balance;
-        await savingsExist.save();
-        return(balance);
+
+exports.deposit = async (depositData, user) => {
+  const { accountNumber } = depositData;
+  const amount = Number(depositData.amount); // body values can arrive as strings
+  if (!accountNumber || !Number.isFinite(amount) || amount <= 0) {
+    throw new Error("account number and a valid amount are required");
+  }
+  const savingsExist = await Savings.findOne({ accountNumber });
+  if (!savingsExist) throw new Error("invalid account number");
+  if (savingsExist.isActive === false) throw new Error("account is not active, cannot deposit");
+  if (savingsExist.accountType !== "regular") throw new Error("only regular savings can deposit money");
+
+  const balance = savingsExist.balance + amount;
+  await Transaction.create({
+    transactionNumber: await nextTransactionNumber(),
+    savingsAccount: savingsExist._id,
+    accountType: savingsExist.accountType,
+    accountNumber,
+    transactionType: "deposit",
+    amount,
+    balanceAfter: balance,
+    performedBy: user._id,
+    description: "deposit",
+  });
+  savingsExist.balance = balance;
+  await savingsExist.save();
+  return balance;
+};
+
+exports.withdraw = async (withdrawData, user) => {
+  const { accountNumber } = withdrawData;
+  const amount = Number(withdrawData.amount);
+  if (!accountNumber || !Number.isFinite(amount) || amount <= 0) {
+    throw new Error("account number and a valid amount are required");
+  }
+  const savingsExist = await Savings.findOne({ accountNumber });
+  if (!savingsExist) throw new Error("savings account not found");
+  if (savingsExist.isActive === false) throw new Error("account is not active");
+  if (savingsExist.accountType !== "regular") throw new Error("only regular savings can withdraw money");
+  if (savingsExist.balance - amount < MIN_BALANCE) throw new Error("insufficient balance");
+
+  const balance = savingsExist.balance - amount;
+  await Transaction.create({
+    transactionNumber: await nextTransactionNumber(),
+    savingsAccount: savingsExist._id,
+    accountType: savingsExist.accountType,
+    accountNumber,
+    transactionType: "withdraw",
+    amount,
+    balanceAfter: balance,
+    performedBy: user._id,
+    description: "withdraw",
+  });
+  savingsExist.balance = balance;
+  await savingsExist.save();
+  return balance;
 };
 exports.getByAccountNumber=async(accountNumber)=>{
         if(!accountNumber){
