@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { X, Menu, XIcon, UserRound, ShieldCheck, Mail, Lock, EyeOff, Eye, ArrowRight, Loader2} from 'lucide-react'
 import axios from 'axios'
+import axiosClient from '../src/api/axiosClient'
 import { AnimatePresence, animate, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom' 
 
@@ -50,7 +51,7 @@ const Navbar = () => {
         setLoading(true)
         setError('')
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/login', {
+            const response = await axiosClient.post('/auth/login', {
                 email,
                 password,
                 portal

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { fetchLoanStats, fetchLoans } from '../../src/api/loansApi';
+import { disburseLoan, fetchLoanStats, fetchLoans } from '../../src/api/loansApi';
 import { AlertTriangle, Clock, DollarSign, Landmark, Search, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SkeletonStatGrid, SkeletonTable } from '../../components/Skeleton';
@@ -17,6 +17,15 @@ const LoansSection = () => {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [showAddLoan, setShowAddLoan] = useState(false);
+  const [disbursingLoan, setDisbursingLoan] = useState(null);
+  const [disburseError, setDisburseError] = useState("");
+  const [disburseNotice, setDisburseNotice] = useState("");
+
+  const refresh = async () => {
+    const [loanResult, statsResult] = await Promise.all([fetchLoans(), fetchLoanStats()]);
+    setLoans(loanResult.data || []);
+    setStats(statsResult);
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -35,8 +44,24 @@ const LoansSection = () => {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => { cancelled =true; }
+    return () => { cancelled = true; }
   }, []);
+
+  const handleDisburse = async (loanNumber) => {
+    setDisbursingLoan(loanNumber);
+    setDisburseError("");
+    setDisburseNotice("");
+    const loan = loans.find((l) => l.loanNumber === loanNumber);
+    try {
+      await disburseLoan(loanNumber);
+      await refresh();
+      setDisburseNotice(`${loanNumber} disbursed — ${currency(loan?.principalAmount)} credited to the customer's savings account.`);
+    } catch (err) {
+      setDisburseError(err?.response?.data?.message || `Could not disburse ${loanNumber}.`);
+    } finally {
+      setDisbursingLoan(null);
+    }
+  };
 
   const filtered = loans.filter((l) => {
     const name = `${l.customer?.firstName || ""} ${l.customer?.lastName || ""}`.toLowerCase();
@@ -60,11 +85,7 @@ const LoansSection = () => {
             {showAddLoan && (
               <AddLoan
                 onClose={() => setShowAddLoan(false)}
-                onCreated={async () => {
-                  const [loanResult, statsResult] = await Promise.all([fetchLoans(), fetchLoanStats()]);
-                  setLoans(loanResult.data || []);
-                  setStats(statsResult);
-                }}
+                onCreated={refresh}
               />
             )}
           </AnimatePresence>
@@ -131,12 +152,20 @@ const LoansSection = () => {
           </div>
         </div>
 
-        <div className='grid grid-cols-6 px-4 py-2 text-xs font-semibold uppercase text-gray-500 bg-white/60 rounded-xl mb-1'>
+        <div className='grid grid-cols-7 px-4 py-2 text-xs font-semibold uppercase text-gray-500 bg-white/60 rounded-xl mb-1'>
           <span>Loan ID</span>
           <span className='col-span-2'>Applicant</span>
           <span>Amount (Rs.)</span>
           <span>Outstanding / Next Due</span>
+          <span>Status</span>
+          <span></span>
         </div>
+        {disburseError && (
+          <p className='text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2 mb-1'>{disburseError}</p>
+        )}
+        {disburseNotice && (
+          <p className='text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2 mb-1'>{disburseNotice}</p>
+        )}
 
         <div className='max-h-96 overflow-y-auto space-y-1 pr-1'>
           {loading ? (
@@ -147,11 +176,35 @@ const LoansSection = () => {
             <p className='text-center text-sm text-gray-400 py-8'>No loans found</p>
           ) : (
             filtered.map((l, i) => (
-              <div key={l._id} className={`grid grid-cols-6 px-4 py-3 rounded-xl items-center text-sm ${i % 2 === 0 ? "bg-white/70" : "bg-white/40"}`}>
+              <div key={l._id} className={`grid grid-cols-7 px-4 py-3 rounded-xl items-center text-sm ${i % 2 === 0 ? "bg-white/70" : "bg-white/40"}`}>
                 <span className='font-medium text-gray-800'>{l.loanNumber}</span>
                 <span className='col-span-2 text-gray-700'>{l.customer?.firstName} {l.customer?.lastName}</span>
                 <span className="text-gray-800">{currency(l.principalAmount)}</span>
                 <span className='text-xs text-gray-600'>{currency(l.outstandingBalance)} outstanding · due {shortDate(l.nextDueDate)}</span>
+                <span className={`w-fit text-xs font-semibold rounded-full px-2.5 py-1 ${
+                  l.isOverdue ? "bg-red-100 text-red-700" :
+                  l.status === "active" ? "bg-emerald-100 text-emerald-700" :
+                  l.status === "approved" ? "bg-sky-100 text-sky-700" :
+                  l.status === "pending" ? "bg-amber-100 text-amber-700" :
+                  l.status === "closed" ? "bg-gray-100 text-gray-600" :
+                  "bg-red-100 text-red-700"
+                }`}>
+                  {(l.isOverdue ? "overdue" : l.status || "").toUpperCase()}
+                </span>
+                <span>
+                  {l.status === "approved" && (
+                    disbursingLoan === l.loanNumber ? (
+                      <Loader2 size={14} className='animate-spin text-gray-400' />
+                    ) : (
+                      <button
+                        onClick={() => handleDisburse(l.loanNumber)}
+                        className='text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-full px-3 py-1.5 transition'
+                      >
+                        Disburse
+                      </button>
+                    )
+                  )}
+                </span>
               </div>
             ))
           )}

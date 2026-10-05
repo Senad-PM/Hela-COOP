@@ -1,17 +1,19 @@
 import React, { useState } from 'react'
-import { LayoutGrid, Users, ArrowLeftRight, Landmark, LineChart, Settings as SettingsIcon, LogOut } from "lucide-react";
+import { LayoutGrid, Users, ArrowLeftRight, Landmark, LineChart, Settings as SettingsIcon, LogOut, User } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import OverviewSection from './sections/ OverviewSection';
+import OverviewSection from './sections/OverviewSection';
 import AccountsSection from "./sections/AccountsSection";
 import TransactionsSection from "./sections/TransactionsSection";
 import LoansSection from "./sections/LoansSection";
 import ReportsSection from "./sections/ReportsSection";
 import SettingsSection from "./sections/SettingsSection";
 import { useNavigate } from 'react-router-dom';
+import CustomerSection from './sections/CustomerSection';
 
 const NAV_ITEMS = [
     { key: "overview", label: "Overview", icon: LayoutGrid, Component: OverviewSection },
     { key: "accounts", label: "Accounts", icon: Users, Component: AccountsSection },
+    { key: "customer", label: "Customer", icon: User, Component: CustomerSection },
     { key: "transactions", label: "Transactions", icon: ArrowLeftRight, Component: TransactionsSection },
     { key: "loans", label: "Loans", icon: Landmark, Component: LoansSection },
     { key: "reports", label: "Reports", icon: LineChart, Component: ReportsSection },

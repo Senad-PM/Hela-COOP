@@ -267,7 +267,7 @@ const AddAccounts = ({ onClose, onCreated }) => {
                                 <p className='text-[10px] font-bold text-gray-400 tracking-wide uppercase'>Member Number</p>
                                 <p className='text-sm font-bold text-gray-800'>{createdAccountNumber || "-"}</p>
                             </div>
-                            <button onClick={onClose} className='mt-8 px-6 py-2.5 rounded-xl border-2 border-red-200 text-red-500 text-sx font-semibold hover:bg-red-50 transition'>
+                            <button onClick={onClose} className='mt-8 px-6 py-2.5 rounded-xl border-2 border-red-200 text-red-500 text-xs font-semibold hover:bg-red-50 transition'>
                                 Close
                             </button>
 
@@ -280,7 +280,7 @@ const AddAccounts = ({ onClose, onCreated }) => {
                             transition={{ duration: 0.2 }}
                             className='flex flex-col flex-1'
                         >
-                            <span className={`w-fit text-[11px] font-bold px-3 py-1 rounded-ful ${colors.badge}`}>
+                            <span className={`w-fit text-[11px] font-bold px-3 py-1 rounded-full ${colors.badge}`}>
                                 {current.badge}
                             </span>
                             <h2 className='text-2xl font-bold text-gray-800 mt-3'>{current.heading}</h2>
@@ -329,8 +329,8 @@ const AddAccounts = ({ onClose, onCreated }) => {
                                                         <opt.icon size={16} className={form.accountType === opt.key ? "text-purple-600" : "text-gray-400"} />
                                                     </div>
                                                     <div>
-                                                        <p className='font-sm font-semibold text-gray-800'>{opt.label}</p>
-                                                        <p className='font-xs text-gray-400'>{opt.desc}</p>
+                                                        <p className='text-sm font-semibold text-gray-800'>{opt.label}</p>
+                                                        <p className='text-xs text-gray-400'>{opt.desc}</p>
                                                     </div>
                                                 </button>
                                             ))}
@@ -346,7 +346,7 @@ const AddAccounts = ({ onClose, onCreated }) => {
                                                 >
                                                     <label className='text-xs font-semibold text-gray-600'>Term</label>
                                                     <div className='flex gap-2'>
-                                                        {[{ v: "1", l: "1 year" }, { v: "3", l: "3 years" }, { v: "5", l: "5 years" }].map((t) => (
+                                                        {[{ v: "3", l: "3 months" }, { v: "6", l: "6 months" }, { v: "12", l: "12 months" }].map((t) => (
                                                             <button key={t.v} type='button'
                                                                 onClick={() => setForm({ ...form, durationMonths: t.v })}
                                                                 className={`px-4 py-2 rounded-full text-xs font-semibold border-2 transition-all ${
@@ -403,7 +403,7 @@ const AddAccounts = ({ onClose, onCreated }) => {
                                         ]} />
                                         <SummaryCard title="Account Info" icon={Wallet} color="purple" rows={[
                                             ["Account Type", form.accountType === "fixed" ? "Fixed Deposit" : "Regular"],
-                                            ["Term", form.accountType === "fixed" ? `${form.durationMonths} year(s)` : "-"],
+                                            ["Term", form.accountType === "fixed" ? `${form.durationMonths} month(s)` : "-"],
                                             ["Initial Deposit", `Rs. ${Number(form.initailDeposits || 0).toLocaleString()}`],
                                         ]} />
                                     </div>

@@ -77,14 +77,16 @@ const customerSchema=new mongoose.Schema({
             message:"Customer must be at least 18 years old"
         }
     },
+    district:{ type: String, trim: true },
+    status:{ type: String, enum: ["active", "dormant", "suspended"], default: "active" },
     isActive:{
-        type:Boolean,
-        default:true
+        type: Boolean,
+        default: true
     },
     createdBy:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
     }
 
 },{

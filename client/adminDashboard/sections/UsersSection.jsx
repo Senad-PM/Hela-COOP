@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import UserTable, { useFilteredUsers } from '../components/UserTable';
+import UserTable, { useFilteredUsers } from '../components/userTable';
 import { Bell, RotateCcw, User, Search } from 'lucide-react';
 
 const UsersSection = ({users = [], loading, error}) => {
