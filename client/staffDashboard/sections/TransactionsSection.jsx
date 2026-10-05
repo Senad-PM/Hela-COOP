@@ -8,6 +8,16 @@ const currency = (n) => `Rs. ${Number(n || 0).toLocaleString()}`;
 const dateTime = (d) => new Date(d).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 const isToday = (d) => new Date(d).toDateString() === new Date().toDateString();
 
+const TYPE_LABELS = {
+  deposit: "Deposit",
+  withdraw: "Withdraw",
+  interest: "Interest",
+  loanDistribute: "Loan Distribute",
+  loanAccountOpening: "Loan Account Opening",
+  loanRepayment: "Loan Repayment",
+};
+const ALL_TYPES = Object.keys(TYPE_LABELS);
+
 const TYPE_STYLES = {
   deposit: "bg-emerald-100 text-emerald-600",
   withdraw: "bg-amber-100 text-amber-600",
@@ -123,7 +133,8 @@ const TransactionsSection = () => {
             <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}
               className='border border-gray-200 rounded-xl px-3 py-1.5 text-xs outline-none bg-white text-gray-600 capitalize'
             >
-              {typeOptions.map((o) => <option key={o}>{o}</option>)}
+              <option value="All types">All types</option>
+              {ALL_TYPES.map((t) => <option key={t} value={t}>{TYPE_LABELS[t]}</option>)}
             </select>
           </div>
         </div>
@@ -154,7 +165,7 @@ const TransactionsSection = () => {
               >
                 <span className='font-medium text-gray-800'>{dateTime(t.createdAt)}</span>
                 <span className='text-gray-700'>{t.transactionNumber}</span>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium w-fit capitalize ${TYPE_STYLES[t.transactionType] || "bg-gray-100 text-gray-600"}`}>{t.transactionType}</span>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium w-fit capitalize ${TYPE_STYLES[t.transactionType] || "bg-gray-100 text-gray-600"}`}>{TYPE_LABELS[t.transactionType] || t.transactionType}</span>
                 <span className='text-gray-600'>{t.accountNumber}</span>
                 <span className='text-gray-800'>{currency(t.amount)}</span>
                 <span className='text-gray-600'>{t.performedBy?.userName || "—"}</span>

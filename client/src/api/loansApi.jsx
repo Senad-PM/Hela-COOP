@@ -24,3 +24,8 @@ export const rejectLoan = async (loanNumber) => {
   const { data } = await axiosClient.patch(`/loan/${loanNumber}/reject`);
   return data;
 };
+
+export const disburseLoan = async (loanNumber) => {
+  const { data } = await axiosClient.patch(`/loan/${loanNumber}/disbursed`);
+  return data;
+};

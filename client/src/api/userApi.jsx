@@ -18,3 +18,13 @@ export const registerUser = async ({ userName, email, role }) => {
   });
   return data;
 };
+
+export const deactivateUser = async (id) => {
+  const { data } = await axiosClient.patch(`/user/${id}/deactivate`);
+  return data;
+};
+
+export const activateUser = async (id) => {
+  const { data } = await axiosClient.patch(`/user/${id}/activate`);
+  return data;
+};

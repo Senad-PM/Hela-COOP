@@ -1,8 +1,8 @@
 import {useState} from 'react'
 import { User, Users, Search, Bell, RotateCcw, MoveUp, CircleCheckBig, CircleSlash2 } from 'lucide-react';
-import UserTable, { useFilteredUsers } from '../components/UserTable';
+import UserTable, { useFilteredUsers } from '../components/userTable';
 
-const HomeSection = ({ users = [], loading, error }) => {
+const HomeSection = ({ users = [], loading, error, onToggleActive }) => {
 
     const [search, setSearch] = useState("");
     const [roleFilter, setRoleFilter] = useState("All roles");
@@ -114,7 +114,7 @@ const HomeSection = ({ users = [], loading, error }) => {
           </div>
   
           <div className="flex-1 min-h-0 overflow-y-auto pr-1">
-            <UserTable users = {filtered} loading = {loading} error = {error} />
+            <UserTable users={filtered} loading={loading} error={error} onToggleActive={onToggleActive} />
           </div>
         
         </div>

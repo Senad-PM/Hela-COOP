@@ -57,9 +57,15 @@ exports.createsavings=async(savingsData,user)=>{
                 const nextAcount=fixedCount+1;
                 const fomatNumber=nextAcount.toString().padStart(4,"0");
                 accountNumber=`FIX-${fomatNumber}`;      
-                maturityDate.setMonth(
-                        maturityDate.getMonth()+durationMonths
-                );
+                const months = Number(durationMonths);
+
+                const startDate = new Date();
+
+                const testDate = new Date(startDate.getTime());
+
+                testDate.setMonth(testDate.getMonth() + months);
+
+                maturityDate = testDate;
         }
 
         const newAcount= await Savings.create({

@@ -42,14 +42,23 @@ exports.updateUser=async(req,res,next)=>{
         next(error);
     }
 }
-exports.deactivateUser=async(req,res,nex)=>{
-    try{
-        const result=await deactivate(req.params.id);
-        res.status(200).json(result);
-    }catch(error){
-        next(error);
+exports.deactivateUser = async (req, res, next) => {
+    try {
+      if (String(req.user._id) === String(req.params.id)) {
+        return res.status(400).json({ message: "You cannot deactivate your own account" });
+      }
+      const result = await deactivate(req.params.id);
+      await logActivity({
+        performedBy: req.user._id,
+        action: `Deactivated ${result.role}`,
+        actionType: "user",
+        ref: result.userName
+      });
+      res.status(200).json(result);
+    } catch (error) {
+      next(error);
     }
-}
+};
 exports.activateUser=async(req,res,next)=>{
     try{
         const result=await activate(req.params.id);
