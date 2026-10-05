@@ -14,3 +14,13 @@ export const findCustomerByNIC = async (NIC) => {
   const { data } = await axiosClient.get("/customer", { params: { search: NIC } });
   return data.data?.find((c) => c.NIC === NIC) || null;
 };
+
+export const fetchCustomers = async () => {
+  const { data } = await axiosClient.get("/customer", { params: { limit: 1000 } });
+  return data;
+};
+
+export const updateCustomer = async (customerNumber, payload) => {
+  const { data } = await axiosClient.put(`/customer/${customerNumber}`, payload);
+  return data;
+};

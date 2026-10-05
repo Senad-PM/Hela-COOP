@@ -33,7 +33,7 @@ exports.createLoan=async(loanData,user)=>{
     if(loanType==="buisness"){
         interestRate=10;
     }
-    if(loanType==="emergency"){
+    if(loanType==="housing"){
         interestRate=15;
     }
     const savingExist=await Savings.findOne({customer:customerExist._id,accountType:"regular"});
@@ -57,11 +57,11 @@ exports.createLoan=async(loanData,user)=>{
     const fomatNumber=nextloan.toString().padStart(4,"0");
     loanNumber=`BLOAN-${fomatNumber}`;      
     }
-    if(loanType==="emergency"){
-    const loanCount=await Loan.countDocuments({loanType:"emergency"});
+    if(loanType==="housing"){
+    const loanCount=await Loan.countDocuments({loanType:"housing"});
     const nextloan=loanCount+1;
     const fomatNumber=nextloan.toString().padStart(4,"0");
-    loanNumber=`ELOAN-${fomatNumber}`;      
+    loanNumber=`HLOAN-${fomatNumber}`;      
     }
     const installment=calculateEmi(principalAmount,interestRate,durationMonths);
     const newLoan=await Loan.create({

@@ -134,34 +134,21 @@ exports.getCustomerBYId=async(id)=>{
     }
     return findCustomer;
 }
-exports.update=async(customerNumber,updatebody)=>{
-   const {firstName,lastName,phoneNumber,city,address,postalCode}=updatebody;
-   const updateData={};
-   if(firstName!==undefined){
-       updateData.firstName=firstName;
-   }
-   if(lastName !== undefined){
-      updateData.lastName=lastName;
-   }
-   if(phoneNumber!==undefined){
-      updateData.phoneNumber=phoneNumber;
-   }
-   if(city!==undefined){
-    updateData.city=city;
-   }
-   if(address!==undefined){
-    updateData.address=address;
-   }
-   if(postalCode!==undefined){
-    updateData.postalCode=postalCode;
-   }
-   const customerExist=await Customer.findOneAndUpdate({customerNumber},updateData,{new:true,runValidators:true});
-   if(!customerExist){
-         throw new Error ("user not found");
-   }
-   return customerExist;
-   
+exports.update = async (customerNumber, updatebody) => {
+    const allowed = ["firstName", "lastName", "NIC", "email", "phoneNumber", "occupation",
+                     "city", "address", "postalCode", "dateOfBirth", "district", "status"];
+    const updateData = {};
+    allowed.forEach((k) => { if (updatebody[k] !== undefined) updateData[k] = updatebody[k]; });
+  
+    if (updateData.status !== undefined) updateData.isActive = updateData.status === "active";
+  
+    const customerExist = await Customer.findOneAndUpdate(
+      { customerNumber }, updateData, { new: true, runValidators: true }
+    );
+    if (!customerExist) throw new Error("customer not found");
+    return customerExist;
 };
+
 exports.deactivate=async(customerNumber)=>{
     const customerExist=await Customer.findOne({customerNumber});
     if(!customerExist){

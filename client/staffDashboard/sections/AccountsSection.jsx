@@ -4,6 +4,7 @@ import { Loader2, Search, User, UserCheck, UserPlus, UserX } from 'lucide-react'
 import { motion } from 'motion/react';
 import AddAccounts from './AddAccounts';
 import { SkeletonStatCard, SkeletonStatGrid, SkeletonTable } from '../../components/Skeleton';
+import AccountDetails from './AccountDetails';
 
 
 const currency = (n) => `Rs. ${Number(n || 0).toLocaleString()}`;
@@ -18,6 +19,7 @@ const AccountsSection = () => {
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [typeFilter, setTypeFilter] = useState("All Types");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState(null);
 
   const loadAccounts = async () => {
     setLoading(true);
@@ -158,10 +160,12 @@ const AccountsSection = () => {
           ) : (
             filtered.map((a, i) => (
               <motion.div key={a._id} 
+                onClick={() => setSelectedAccount(a)}
                 initial={{ opacity: 0 }} 
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.2 }}
-              className={`grid grid-cols-6 px-4 py-3 rounded-xl items-center text-sm transition-colors hover-bg-emerald-50 ${i % 2 === 0 ? "bg-white/70" : "bg-white/40"}`}>
+                className={`grid grid-cols-6 px-4 py-3 rounded-xl items-center text-sm transition-colors hover:bg-emerald-50 ${i % 2 === 0 ? "bg-white/70" : "bg-white/40"}`}
+              >
                 <span className='font-medium text-gray-800'>{a.accountNumber}</span>
                 <span className='col-span-2 text-gray-700'>{a.customer?.firstName} {a.customer?.lastName}</span>
                 <span className='capitalize text-gray-600'>{a.accountType}</span>
@@ -179,6 +183,10 @@ const AccountsSection = () => {
         <AddAccounts onClose={() => setShowAddModal(false)}
           onCreated={loadAccounts}
         />
+      )}
+
+      {selectedAccount && (
+        <AccountDetails account={selectedAccount} onClose={() => setSelectedAccount(null)} />
       )}
     </div>
   )

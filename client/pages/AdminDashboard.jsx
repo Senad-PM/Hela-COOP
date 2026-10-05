@@ -1,7 +1,7 @@
 import {useState, useEffect, useCallback} from 'react'
 import { Home, UserPlus, UserRound, Settings, ClipboardList, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fetchUsers } from '../src/api/userApi';
+import { fetchUsers, deactivateUser, activateUser } from '../src/api/userApi';
 import { fetchActivityLogs, clearActivityLogs, fetchSettings, updateSettings } from "../src/api/adminApi";
 import HomeSection from '../adminDashboard/sections/HomeSection';
 import UserRegistrationSection from '../adminDashboard/sections/UserRegistrationSection';
@@ -42,6 +42,20 @@ const AdminDashboard = () => {
     useEffect(() => {
       loadUsers();
     }, [loadUsers]);
+
+    const handleToggleActive = async (user) => {
+      if (user.isActive && !window.confirm(`Deactivate ${user.userName}?`)) return;
+      try {
+        const updated = user.isActive
+          ? await deactivateUser(user._id)
+          : await activateUser(user._id);
+        setUsers((prev) =>
+          prev.map((u) => (u._id === user._id ? { ...u, isActive: updated.isActive } : u))
+        );
+      } catch (err) {
+        alert(err.response?.data?.message || "Could not update user");
+      }
+    };
   
     const NAV_ITEMS = [
       { key: "home", label: "Home", icon: Home },
@@ -132,7 +146,7 @@ const AdminDashboard = () => {
                   {activeSection === "users" && <UsersSection users={users} loading={usersLoading} error={usersError} />}
                   {activeSection === "setting" && <SettingSection />}
                   {activeSection === "activity" && <ActivityLogSection />}
-                  {activeSection === "home" && <HomeSection users={users} loading={usersLoading} error={usersError} />}
+                  {activeSection === "home" && <HomeSection users={users} loading={usersLoading} error={usersError} onToggleActive={handleToggleActive} />}
                 </motion.div>
               </AnimatePresence>
             </div>
