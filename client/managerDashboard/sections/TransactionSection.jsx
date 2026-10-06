@@ -21,7 +21,7 @@ const initials = (person) => {
     return name === "Unknown" ? "?" : name.split(" ").map((p) => p[0]).join("").toUpperCase();
 };
 
-const txCustomer = (tx) => tx?.savingAccount?.customer || tx?.loanAccount?.customer || null;
+const txCustomer = (tx) => tx?.savingsAccount?.customer || tx?.loanAccount?.customer || null;
 
 const Type = {
     deposit: { label: "DEPOSIT", tab: "deposit", className: "bg-emerald-100 text-emerald-700"},

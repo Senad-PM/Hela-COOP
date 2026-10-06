@@ -10,6 +10,11 @@ export const fetchLoanStats = async () => {
   return data; 
 };
 
+export const fetchLoanByNumber = async (loanNumber) => {
+  const { data } = await axiosClient.get(`/loan/loans/${loanNumber}`);
+  return data;
+};
+
 export const applyForLoan = async (loanData) => {
   const { data } = await axiosClient.post('/loan/create', loanData);
   return data;
