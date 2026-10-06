@@ -32,7 +32,7 @@ const transactionSchema=new mongoose.Schema({
         amount:{
             type:Number,
             required:true,
-            min:1
+            //min:1
         },
         balanceAfter:{
             type:Number,
