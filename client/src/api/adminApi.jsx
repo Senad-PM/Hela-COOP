@@ -1,7 +1,7 @@
 import axiosClient from "./axiosClient";
 
-export const fetchActivityLogs = async (params = {}) => {
-    const { data } = await axiosClient.get("/dashedboard/activity-log", { params });
+export const fetchActivityLogs = async () => {
+    const { data } = await axiosClient.get("/activity", { params: { limit: 1000 } });
     return data;
 };
 

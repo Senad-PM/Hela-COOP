@@ -5,7 +5,7 @@ const Transaction=require("../Models/transactions");
 const Savings=require("../Models/savings");
 const debitLoanMoney=require("../Utils/depositLoan");
 const savings = require("../Models/savings");
-const  calculateAmortizationShedule=require("../Utils/calculateAmortizationShedule");
+const calculateAmortizationShedule=require("../Utils/calculateAmortizationShedule");
 const overDueEmail=require("../Utils/loanOverDueMail")
 const buildPagination=require("../Utils/buildPaginations");
 const buildSort=require("../Utils/buildSort");
@@ -304,60 +304,63 @@ exports.repayLoan=async(loanNumber)=>{
 
 };
 const buildFilter=(query)=>{
-        const filter={};
-        if(query.status!==undefined){
-                filter.status=query.status;
-        }
-        if(query.loanType!==undefined){
-                filter.loanType=query.loanType;
-        }
-        if(query.search && query.search.trim() !==""){
-                filter.$or=[
-                        {
-                              loanNumber:{
-                                $regex:query.search,
-                                $options:"i"
-                              }  
-                        },
-                        {
-                            customerNumber:{
-                                $regex:query.search,
-                                $options:"i"
-                            }
-                        }
-                ];
-        }
-        return filter;
+    const filter={};
+    if(query.status!==undefined){
+        filter.status=query.status;
     }
-exports.getloans=async(query)=>{
-       const filter=buildFilter(query);
-            const sortoption=buildSort(query);
-              const{limit,skip,page}=buildPagination(query);
-              const count=await Loan.countDocuments(filter);
-                        if(count > 0 && skip >= count){
-                           throw new Error("page not found");
-                        }
-              const loans=await  Loan.find(filter).select("loanNumber principalAmount nextDueDate outstandingBalance status isOverdue").populate(
-                              "customer",
-                              "customerNumber firstName lastName"
-                               ).sort(sortoption).skip(skip).limit(limit);
-               
-              return({
-                   "total":count,
-                   "page":page,
-                   "limit":limit,
-                   "data":loans
-               });
+    if(query.loanType!==undefined){
+        filter.loanType=query.loanType;
+    }
+    if(query.search && query.search.trim() !==""){
+        filter.$or=[
+            {
+                loanNumber:{
+                    $regex:query.search,
+                    $options:"i"
+                }  
+            },
+            {
+                customerNumber:{
+                    $regex:query.search,
+                    $options:"i"
+                }
+            }
+        ];
+    }
+    return filter;
+}
+
+exports.getloans = async (query) => {
+    const filter = buildFilter(query);
+    const sortoption = buildSort(query);
+    const { limit, skip, page } = buildPagination(query);
+    const count = await Loan.countDocuments(filter);
+    if (count > 0 && skip >= count) {
+      throw new Error("page not found");
+    }
+    const loans = await Loan.find(filter)
+      .select("loanNumber customer loanType principalAmount interestRate durationMonths monthlyInstallment remainingInstallments nextDueDate outstandingBalance status isOverdue installments")
+      .populate("customer", "customerNumber firstName lastName")
+      .sort(sortoption)
+      .skip(skip)
+      .limit(limit);
+      
+    return {
+      total: count,
+      page: page,
+      limit: limit,
+      data: loans,
+    };
 };
 exports.getLoansByNumber=async(loanNumber)=>{
-       if(!loanNumber){
-          throw new Error("loanNumber is undefined");
-       }
-       const loanExist=await Loan.findOne({loanNumber}).populate("customer","firstName lastName");
-       if(!loanExist){
-          throw new Error("loan not found");
-       }
-       return(loanExist);
+    if(!loanNumber){
+       throw new Error("loanNumber is undefined");
+    }
+    const loanExist=await Loan.findOne({loanNumber}).populate("customer","firstName lastName");
+    if(!loanExist){
+       throw new Error("loan not found");
+    }
+    return(loanExist);
 };
 exports.loanStatics=async()=>{
     const activeLoans=await Loan.countDocuments({status:"active"});

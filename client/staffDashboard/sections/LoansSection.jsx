@@ -4,10 +4,16 @@ import { AlertTriangle, Clock, DollarSign, Landmark, Search, Loader2 } from 'luc
 import { motion, AnimatePresence } from 'motion/react';
 import { SkeletonStatGrid, SkeletonTable } from '../../components/Skeleton';
 import AddLoan from './AddLoan';
+import LoanSchedule from './LoanSchedule';
 
 
 const currency = (n) => `Rs. ${Number(n || 0).toLocaleString()}`;
 const shortDate = (d) => (d ? new Date(d).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "—");
+
+const money2 = (n) =>
+  `Rs. ${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+const GRID = "grid-cols-[1fr_1.5fr_1fr_1fr_1.6fr_1fr_0.9fr]";
 
 const LoansSection = () => {
 
@@ -20,6 +26,7 @@ const LoansSection = () => {
   const [disbursingLoan, setDisbursingLoan] = useState(null);
   const [disburseError, setDisburseError] = useState("");
   const [disburseNotice, setDisburseNotice] = useState("");
+  const [selectedLoan, setSelectedLoan] = useState(null);
 
   const refresh = async () => {
     const [loanResult, statsResult] = await Promise.all([fetchLoans(), fetchLoanStats()]);
@@ -152,10 +159,11 @@ const LoansSection = () => {
           </div>
         </div>
 
-        <div className='grid grid-cols-7 px-4 py-2 text-xs font-semibold uppercase text-gray-500 bg-white/60 rounded-xl mb-1'>
+        <div className='grid grid-cols-7 gap-x-4 px-4 py-2 text-xs font-semibold uppercase text-gray-500 bg-white/60 rounded-xl mb-1'>
           <span>Loan ID</span>
-          <span className='col-span-2'>Applicant</span>
+          <span>Applicant</span>
           <span>Amount (Rs.)</span>
+          <span>Monthly Installment</span>
           <span>Outstanding / Next Due</span>
           <span>Status</span>
           <span></span>
@@ -176,11 +184,19 @@ const LoansSection = () => {
             <p className='text-center text-sm text-gray-400 py-8'>No loans found</p>
           ) : (
             filtered.map((l, i) => (
-              <div key={l._id} className={`grid grid-cols-7 px-4 py-3 rounded-xl items-center text-sm ${i % 2 === 0 ? "bg-white/70" : "bg-white/40"}`}>
+              <div
+                key={l._id}
+                onClick={() => setSelectedLoan(l)}
+                className={`cursor-pointer hover:bg-emerald-100/60 transition grid grid-cols-7 gap-x-4 px-4 py-3 rounded-xl items-center text-sm ${i % 2 === 0 ? "bg-white/70" : "bg-white/40"}`}
+              >
                 <span className='font-medium text-gray-800'>{l.loanNumber}</span>
-                <span className='col-span-2 text-gray-700'>{l.customer?.firstName} {l.customer?.lastName}</span>
+                <span className='col-span-1 text-gray-700'>{l.customer?.firstName} {l.customer?.lastName}</span>
                 <span className="text-gray-800">{currency(l.principalAmount)}</span>
-                <span className='text-xs text-gray-600'>{currency(l.outstandingBalance)} outstanding · due {shortDate(l.nextDueDate)}</span>
+                <span className='text-gray-800'>{l.status === "rejected" ? "—" : money2(l.monthlyInstallment)}</span>
+                <span className='text-xs text-gray-600'>
+                  <span className='block'>{currency(l.outstandingBalance)} outstanding</span>
+                  <span className='block text-gray-400'>due {shortDate(l.nextDueDate)}</span>
+                </span>
                 <span className={`w-fit text-xs font-semibold rounded-full px-2.5 py-1 ${
                   l.isOverdue ? "bg-red-100 text-red-700" :
                   l.status === "active" ? "bg-emerald-100 text-emerald-700" :
@@ -197,7 +213,7 @@ const LoansSection = () => {
                       <Loader2 size={14} className='animate-spin text-gray-400' />
                     ) : (
                       <button
-                        onClick={() => handleDisburse(l.loanNumber)}
+                        onClick={(e) => { e.stopPropagation(); handleDisburse(l.loanNumber); }}
                         className='text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-full px-3 py-1.5 transition'
                       >
                         Disburse
@@ -210,6 +226,11 @@ const LoansSection = () => {
           )}
         </div>
       </div>
+      <AnimatePresence>
+        {selectedLoan && (
+          <LoanSchedule loan={selectedLoan} onClose={() => setSelectedLoan(null)} />
+        )}
+</AnimatePresence>
     </div>
   )
 }
