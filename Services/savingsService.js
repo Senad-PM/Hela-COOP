@@ -53,15 +53,38 @@ exports.createsavings=async(savingsData,user)=>{
         }                                                                                                                                                                                                                                                                                                                                                                                       
         
         let maturityDate=new Date();
+
+ /*       console.log("Before:", maturityDate);
+        console.log("getMonth():", maturityDate.getMonth());
+        console.log("durationMonths:", durationMonths);
+        console.log("Number(durationMonths):", Number(durationMonths));
+        console.log(
+        "month being passed:",
+         maturityDate.getMonth() + Number(durationMonths)
+        );   */
         if(accountType==="fixed"){
                 const fixedCount=await Savings.countDocuments({accountType:"fixed"});
                 const nextAcount=fixedCount+1;
                 const fomatNumber=nextAcount.toString().padStart(4,"0");
                 accountNumber=`FIX-${fomatNumber}`;      
-                maturityDate.setMonth(
-                        maturityDate.getMonth()+durationMonths
-                );
-        }
+          
+                const months = Number(durationMonths);
+
+                const startDate = new Date();
+
+             //   console.log("startDate:", startDate);
+             //   console.log("startDate instanceof Date:", startDate instanceof Date);
+             //   console.log("months:", months);
+
+               const testDate = new Date(startDate.getTime());
+
+                testDate.setMonth(testDate.getMonth() + months);
+
+           //     console.log("testDate:", testDate);
+            
+               maturityDate = testDate;
+                  }
+           //    console.log("after:", maturityDate);
 
         const newAcount= await Savings.create({
                 accountNumber,

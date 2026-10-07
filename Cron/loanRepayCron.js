@@ -9,14 +9,14 @@ cron.schedule("0 0 * * *",async()=>{
         const loanExist=await Loan.find({status:"active"});
         for(const loan of loanExist){
             try{ 
-                 const today=new Date();
-                 const dueDate=loan.nextDueDate;
+                const today=new Date();
+                const dueDate=loan.nextDueDate;
                  
-               if(today.getTime()>=dueDate.getTime()){
+              if(today.getTime()>=dueDate.getTime()){
                     //console.log("its runnig");
                     //console.log("its runnig");
                  await repayLoan(loan.loanNumber);
-               }
+              }
              // console.log(loan.loanNumber);
                 
             }catch(error){

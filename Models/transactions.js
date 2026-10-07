@@ -11,7 +11,6 @@ const transactionSchema=new mongoose.Schema({
         Customer: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Customer",
-            required: true
         },
         savingsAccount:{
             type:mongoose.Schema.Types.ObjectId,

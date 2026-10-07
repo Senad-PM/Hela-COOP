@@ -3,12 +3,12 @@ const {protect,authorize} = require("../Middlewares/authMiddleware");
 const {apiLimiter} = require("../Middlewares/rateLimitter");
 const {getAllActivities,getById} = require("../Controllers/activityController");
 
-console.log(require("../Controllers/activityController"));
+//console.log(require("../Controllers/activityController"));
 
-console.log("protect:", typeof protect);
-console.log("authorize:", typeof authorize);
-console.log("getAllActivities:", typeof getAllActivities);
-console.log("getById:", typeof getById);
+//console.log("protect:", typeof protect);
+//console.log("authorize:", typeof authorize);
+//console.log("getAllActivities:", typeof getAllActivities);
+//console.log("getById:", typeof getById);
 
 const router =express.Router();
 

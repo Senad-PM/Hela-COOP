@@ -480,8 +480,8 @@ const fillMissingMonths =(monthlyActivity)=>{
 }
        
     const monthlyActivity=await getmonthlytransactionsummery(customer);
-    console.log(monthlyActivity);
-    console.log(Array.isArray(monthlyActivity));
+   // console.log(monthlyActivity);
+    //console.log(Array.isArray(monthlyActivity));
     const completeMonthlyActivity=fillMissingMonths(monthlyActivity);
        return({
         topcards:{
@@ -495,4 +495,4 @@ const fillMissingMonths =(monthlyActivity)=>{
         MyActiveLoans:activeLoans,
         MonthlyActivities:completeMonthlyActivity
        });
-}
+};
