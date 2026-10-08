@@ -69,7 +69,7 @@ const ActivityDetails = ({ activity, actionClass, onClose }) => {
             <Field label="Date & time" value={fullDate(activity.date)} />
             <Field label="Type" value={activity.entityType} />
             <Field label="Reference" value={activity.ref} />
-            <Field label="Record ID" value={activity.entityId} mono />
+            <Field label="Target label" value={activity.targetLabel} mono />
           </div>
 
           <Field label="Description" value={activity.description} />
