@@ -71,6 +71,7 @@ const ActivityLogSection = () => {
             activityNumber: l.activityNumber,
             entityType: l.entityType,
             entityId: l.entityId,
+            targetLabel: l.targetLabel,
             description: l.description,
           }))
           .sort((a, b) => new Date(b.date) - new Date(a.date)),
@@ -173,9 +174,6 @@ const ActivityLogSection = () => {
           </div>
 
           <div className="flex items-center justify-between pt-1 flex-wrap gap-2">
-            <p className="text-xs text-gray-500">
-              Showing {from}–{to} of {filtered.length} entries
-            </p>
             <div className="flex items-center gap-1">
               <button onClick={() => setCurrentPage(Math.max(page - 1, 1))}
                 disabled={page === 1}
