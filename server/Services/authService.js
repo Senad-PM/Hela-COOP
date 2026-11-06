@@ -19,19 +19,20 @@ exports.login=async(email,password, portal)=>{
         throw new Error("invalid credentials");
     }
 
-    if(portal === 'admin' || portal === 'staff'){
-        const isStaffRole = userExist.role === "staff" || userExist.role === "manager";
-        const isAdminRole = userExist.role === "admin";
-        if(portal === "admin" && !isAdminRole){
-            const err = new Error("This isn't an Admin account. Try the Staff tab instead.");
-            err.statusCode = 403;
-            throw err;
-        }
-        if(portal === "staff" && !isStaffRole){
-            const err = new Error("This isn't a Staff account. Try the Admin tab instead.");
-            err.statusCode = 403;
-            throw err;
-        }
+    const portalLabels = { admin: "Admin", manager: "Manager", staff: "Staff" };
+
+    if (!portalLabels[portal]) {
+    const err = new Error("Please choose a portal to log in.");
+    err.statusCode = 400;
+    throw err;
+    }
+
+    if (userExist.role !== portal) {
+    const err = new Error(
+        `This isn't a ${portalLabels[portal]} account. Try the ${portalLabels[userExist.role] || "correct"} tab instead.`
+    );
+    err.statusCode = 403;
+    throw err;
     }
     const accessToken=generateToken(userExist._id);
     const refreshToken=generateRefreshToken(userExist._id);

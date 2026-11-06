@@ -60,9 +60,10 @@ const Navbar = () => {
             const role = response.data.role
             closeForm()
             
-            localStorage.setItem('accessToken', response.data.accessToken)
-            localStorage.setItem('refreshToken', response.data.refreshToken)
-            localStorage.setItem('role', role)
+            localStorage.clear();
+            localStorage.setItem('accessToken', response.data.accessToken);
+            localStorage.setItem('refreshToken', response.data.refreshToken);
+            localStorage.setItem('role', role);
 
             if (role === 'admin'){
                 localStorage.setItem('isAdmin', 'true')
